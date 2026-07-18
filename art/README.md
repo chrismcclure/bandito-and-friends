@@ -14,6 +14,7 @@ Everything needed to keep the series visually consistent lives here — characte
 - **Approved generated artwork** in `references/<character>/official/` becomes the **canonical animation reference** once approved.
 - **Four-cats group portrait** in `public/images/characters/bandito-and-friends-group.png` is the **canonical squad reference**. See `references/group-artwork.md`.
 - **Title screen artwork** in `public/images/title/` is the **intro composition reference** (background, text, signage). See `references/title-artwork.md`.
+- **Canonical sprite sheets** in `art/canon/<character>/` are **approved production gameplay art**. See character folders and `references/<character>/sprite-sheet.md`.
 - **Future image generation should preserve both** — stylization follows the official cartoon reference; accuracy follows the real photograph.
 - **Official reference images** belong in `references/` — organized by character or location.
 - **Prompt templates** belong in `prompts/` — reusable generation prompts per character.
@@ -34,6 +35,11 @@ art/
     professor-spaghettio/
     girl-frederick/
     tortellini/
+
+  canon/              Approved production assets (sprite sheets, opening crawl, etc.)
+    bandito/
+    professor-spaghettio/
+    opening-crawl.md
 
   references/         Official approved reference images
     group-artwork.md  Four-cats group portrait (canonical squad reference)

@@ -1,6 +1,7 @@
 import { Application, Assets } from 'pixi.js';
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from './config.js';
 import { createIntroScene } from './scenes/IntroScene.js';
+import { createOpeningCrawlScene } from './scenes/OpeningCrawlScene.js';
 import { createThreatBoardPreviewScene } from './scenes/ThreatBoardPreviewScene.js';
 import { getDevSceneId } from './dev/sceneParam.js';
 
@@ -47,36 +48,91 @@ async function createStage(container) {
   return { app, frame, canvas };
 }
 
-async function runIntro(app, frame) {
-  const introScene = await createIntroScene();
-  app.stage.addChild(introScene.container);
+async function runOpeningCrawlOnly(app, frame) {
+  const crawlScene = createOpeningCrawlScene();
+  app.stage.addChild(crawlScene.container);
 
   let elapsed = 0;
 
-  introScene.setStartHandler(() => {
-    elapsed = 0;
-  });
-
-  const beginIntro = () => {
-    if (introScene.isStarted()) {
+  const begin = () => {
+    if (crawlScene.isStarted()) {
       return;
     }
 
     frame.classList.remove('awaiting-start');
-    introScene.start();
+    crawlScene.start();
   };
 
   frame.classList.add('awaiting-start');
-  frame.addEventListener('pointerdown', beginIntro);
+  frame.addEventListener('pointerdown', begin);
 
   app.ticker.add((ticker) => {
-    if (!introScene.isStarted()) {
-      introScene.update(0);
+    if (!crawlScene.isStarted()) {
+      crawlScene.update(0);
       return;
     }
 
     elapsed += ticker.deltaMS / 1000;
-    introScene.update(elapsed);
+    crawlScene.update(elapsed);
+  });
+}
+
+async function runOpeningSequence(app, frame) {
+  const crawlScene = createOpeningCrawlScene();
+  const introScene = await createIntroScene();
+
+  introScene.container.visible = false;
+  app.stage.addChild(introScene.container, crawlScene.container);
+
+  let phase = 'idle';
+  let crawlElapsed = 0;
+  let introElapsed = 0;
+
+  crawlScene.setCompleteHandler(() => {
+    phase = 'intro';
+    introElapsed = 0;
+    crawlScene.container.visible = false;
+    introScene.container.visible = true;
+    introScene.startFromTitle();
+  });
+
+  const begin = () => {
+    if (phase !== 'idle') {
+      return;
+    }
+
+    phase = 'crawl';
+    frame.classList.remove('awaiting-start');
+    introScene.unlockAudio();
+    crawlScene.start();
+  };
+
+  frame.classList.add('awaiting-start');
+  frame.addEventListener('pointerdown', begin);
+
+  app.ticker.add((ticker) => {
+    const delta = ticker.deltaMS / 1000;
+
+    if (phase === 'idle') {
+      crawlScene.update(0);
+      introScene.update(0);
+      return;
+    }
+
+    if (phase === 'crawl') {
+      crawlElapsed += delta;
+      crawlScene.update(crawlElapsed);
+      return;
+    }
+
+    if (phase === 'intro') {
+      introElapsed += delta;
+      introScene.update(introElapsed);
+
+      if (introScene.isComplete()) {
+        phase = 'episode';
+      }
+    }
   });
 }
 
@@ -98,6 +154,11 @@ export async function createApp(container) {
     return app;
   }
 
-  await runIntro(app, frame);
+  if (devScene === 'crawl') {
+    await runOpeningCrawlOnly(app, frame);
+    return app;
+  }
+
+  await runOpeningSequence(app, frame);
   return app;
 }

@@ -14,7 +14,7 @@ import { createIntroMusic } from '../audio/IntroMusic.js';
 
 /** Sequence timing (seconds). Adjust these to change the intro pacing. */
 export const INTRO_TIMING = {
-  LOOP_DURATION: 11.2,
+  LOOP_DURATION: 14.1,
 
   CARD_1_START: 0.6,
   CARD_1_END: 1.8,
@@ -38,16 +38,16 @@ export const INTRO_TIMING = {
   IMPACT_FLASH_END: 5.4,
 
   TITLE_START: 5.4,
-  TITLE_END: 8.3,
+  TITLE_END: 11.2,
 
-  BLACK_4_START: 8.3,
-  BLACK_4_END: 8.55,
+  BLACK_4_START: 11.2,
+  BLACK_4_END: 11.45,
 
-  EPISODE_START: 8.55,
-  EPISODE_END: 10.5,
+  EPISODE_START: 11.45,
+  EPISODE_END: 13.4,
 
-  BLACK_CLOSE_START: 10.5,
-  BLACK_CLOSE_END: 11.2,
+  BLACK_CLOSE_START: 13.4,
+  BLACK_CLOSE_END: 14.1,
 };
 
 /** Motion tuning. Adjust strength, duration, and scale values here. */
@@ -390,7 +390,10 @@ export async function createIntroScene() {
   await introAudio.preload();
 
   let started = false;
+  let skipTextCards = false;
+  let introComplete = false;
   let onStart = null;
+  let onComplete = null;
 
   const card1 = createCenteredText('IN A QUIET HOUSE...');
   const card2 = createCenteredText('AN ANCIENT EVIL...');
@@ -575,9 +578,37 @@ export async function createIntroScene() {
     flashOverlay.visible = alpha > 0;
   }
 
+  function finishIntro(loopTime) {
+    updateCard1(loopTime);
+    updateCard2(loopTime);
+    updateCard3(loopTime);
+    updateTitleArtwork(loopTime);
+    updateEpisodeTitles(loopTime);
+    updateFlashOverlay(loopTime);
+  }
+
   function update(elapsedSeconds) {
-    const loopTime = elapsedSeconds % INTRO_TIMING.LOOP_DURATION;
-    const loopIndex = Math.floor(elapsedSeconds / INTRO_TIMING.LOOP_DURATION);
+    if (introComplete) {
+      return;
+    }
+
+    let loopTime;
+    let loopIndex = 0;
+
+    if (skipTextCards) {
+      loopTime = INTRO_TIMING.TITLE_START + elapsedSeconds;
+
+      if (loopTime >= INTRO_TIMING.BLACK_CLOSE_END) {
+        finishIntro(INTRO_TIMING.BLACK_CLOSE_END);
+        introComplete = true;
+        introMusic.stop();
+        onComplete?.();
+        return;
+      }
+    } else {
+      loopTime = elapsedSeconds % INTRO_TIMING.LOOP_DURATION;
+      loopIndex = Math.floor(elapsedSeconds / INTRO_TIMING.LOOP_DURATION);
+    }
 
     updateCard1(loopTime);
     updateCard2(loopTime);
@@ -599,6 +630,30 @@ export async function createIntroScene() {
     onStart = handler;
   }
 
+  function setCompleteHandler(handler) {
+    onComplete = handler;
+  }
+
+  function isComplete() {
+    return introComplete;
+  }
+
+  function unlockAudio() {
+    introAudio.unlock();
+  }
+
+  function startFromTitle() {
+    if (started) {
+      return;
+    }
+
+    started = true;
+    skipTextCards = true;
+    introAudio.resetTriggers();
+    introMusic.restart();
+    startOverlay.visible = false;
+  }
+
   function start() {
     if (started) {
       return;
@@ -612,5 +667,15 @@ export async function createIntroScene() {
     onStart?.();
   }
 
-  return { container, update, isStarted, setStartHandler, start };
+  return {
+    container,
+    update,
+    isStarted,
+    isComplete,
+    setStartHandler,
+    setCompleteHandler,
+    start,
+    startFromTitle,
+    unlockAudio,
+  };
 }

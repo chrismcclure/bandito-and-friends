@@ -16,8 +16,10 @@ Drop image assets here. Files in `public/` are served at the site root (e.g. `/i
 | File | Status |
 |------|--------|
 | `characters/bandito-and-friends-group.png` | **Canonical** — approved four-cats group portrait |
+| `characters/bandito/bandito-sprite-sheet.png` | **Canonical** — approved Bandito gameplay sprite sheet |
+| `characters/professor-spaghettio/professor-sprite-sheet.png` | **Canonical** — approved Professor SpaghettiO gameplay sprite sheet |
 
-See `art/references/group-artwork.md` for character identification and design features.
+See `art/references/group-artwork.md`, `art/references/bandito/sprite-sheet.md`, and `art/references/professor-spaghettio/sprite-sheet.md`.
 
 ## Title artwork
 
@@ -35,9 +37,12 @@ See `art/references/title-artwork.md` for change details.
 ```
 characters/bandito-and-friends-group.png
 
+characters/bandito/bandito-sprite-sheet.png
 characters/bandito/bandito-idle.png
 characters/bandito/bandito-walk-01.png
 characters/bandito/bandito-walk-02.png
+
+characters/professor-spaghettio/professor-sprite-sheet.png
 
 characters/professor-spaghettio/professor-idle.png
 

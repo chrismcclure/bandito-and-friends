@@ -5,7 +5,8 @@ Permanent character bible for Bandito — leader and protector of Meow City.
 **Reference photograph:** `art/references/bandito/real/bandito-reference-01.png`  
 **Reference notes:** `art/references/bandito/notes.md`  
 **Group portrait:** `public/images/characters/bandito-and-friends-group.png` (canonical four-cats reference)  
-**Title screen:** `public/images/title/Bandito-and-friends-v2.png` (intro composition)
+**Title screen:** `public/images/title/Bandito-and-friends-v2.png` (intro composition)  
+**Sprite sheet:** `public/images/characters/bandito/bandito-sprite-sheet.png` (canonical gameplay sprites — approved from `bandito-sprite-v5`)
 
 ---
 
@@ -131,7 +132,7 @@ When generating or commissioning artwork of Bandito:
 3. **Preserve the white neck-and-shoulder band** — wraps around the back of the neck and shoulders, extending just behind the collar; canonical tuxedo marking, never omitted
 4. **Do not simplify or redesign the tuxedo pattern** — no symmetric faces, no generic black-and-white cat
 5. **Match the real reference photograph** at `art/references/bandito/real/bandito-reference-01.png`
-6. **Match approved official pixel-art references** in `art/references/bandito/official/` once they exist
+6. **Match approved official pixel-art references** in `art/references/bandito/official/` — especially `bandito-sprite-sheet.png`
 7. **Preserve proportions** — young, lean, large ears; not chubby, not adult-sized
 8. **Preserve eye color and ear shape** from references
 9. **Personality through pose**, not distorted expressions
@@ -149,5 +150,7 @@ Future artwork should resemble **both** the real reference photographs **and** t
 | Reference notes | `art/references/bandito/notes.md` |
 | Real photograph | `art/references/bandito/real/bandito-reference-01.png` |
 | Official pixel-art refs | `art/references/bandito/official/` |
+| Sprite sheet | `art/references/bandito/sprite-sheet.md` |
+| Canon production assets | `art/canon/bandito/` |
 | Prompt templates | `art/prompts/bandito/` |
 | Story role | `story/episode-01-the-sock-monster.md` |

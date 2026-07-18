@@ -70,6 +70,7 @@ Personality is expressed through **pose and context**, not exaggerated cartoon f
 | File | Purpose |
 |------|---------|
 | `real/bandito-reference-01.png` | Primary biological reference — front-facing heroic pose |
-| `official/` | Approved cartoon/animation references (empty until artwork is created) |
+| `official/bandito-sprite-sheet.png` | **Canonical gameplay sprite sheet** (approved) |
+| `official/candidates/` | Superseded generation experiments |
 
 When generating or reviewing artwork, compare against this photograph first, then against any approved official reference in `official/`.

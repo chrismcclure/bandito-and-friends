@@ -57,6 +57,7 @@ When stylization differs between references, the **group portrait governs** how 
 - Round gold wire-frame glasses (permanent)
 - Purple collar, gold S medallion
 - Large fluffy orange build, wise inventor presence
+- **Approved sprite sheet:** `public/images/characters/professor-spaghettio/professor-sprite-sheet.png`
 
 ### Tortellini
 - Green collar, gold T medallion
