@@ -125,14 +125,15 @@ Status key: `[ ]` placeholder · `[x]` final art approved
 
 | Status | ID | File | Duration | Dialogue |
 |--------|----|------|----------|----------|
-| [ ] | 05a | `shot-05a-bandito-patrol.svg` | 2.5s | Another peaceful day in Meow City. |
-| [ ] | 05b | `shot-05b-bandito-stops.svg` | 1.5s | — |
+| [x] | 05a | `shot-05a-bandito-patrol.png` | 2.5s | Another peaceful day in Meow City. / Bandito is on patrol. |
+| [x] | 05b | `shot-05b-bandito-stops.png` | 2.0s | Bandito is shocked at what he finds on patrol. |
 
 ### Scene 6 — Sock Discovery
 
 | Status | ID | File | Duration | Dialogue |
 |--------|----|------|----------|----------|
-| [ ] | 06a | `shot-06a-sock-reveal.svg` | 1.5s | — |
+| [x] | 05c | `shot-05c-bandito-finds-sock.png` | 2.5s | Is it a regular sock or could it possibly be... |
+| [x] | 06a | `shot-06a-sock-reveal.png` | 3.0s | Sir Sockington... the sock monster. |
 | [ ] | 06b | `shot-06b-bandito-shocked.svg` | 1.5s | This is no ordinary object... |
 | [ ] | 06c | `shot-06c-bandito-assemble.svg` | 1.5s | Bandito Team, assemble! |
 
@@ -195,7 +196,7 @@ Status key: `[ ]` placeholder · `[x]` final art approved
 | Cue | Shots |
 |-----|-------|
 | `intro-theme` | Meet the Team, episode card |
-| `adventure-calm` | 05a–05b |
+| `adventure-calm` | 05a–05c |
 | `tension-rise` | 06a–06c |
 | `battle-prep` | 07a–07c |
 | `battle-montage` | 08a–09c |

@@ -50,33 +50,34 @@ Config: `src/data/episode-01-shots.js` · Preview mode: `?scene=episode`
 
 | # | Shot ID | Scene | Status | Preview |
 |---|---------|-------|--------|---------|
-| 11 | 05a | Bandito on patrol | Placeholder | [Open shot 5](http://localhost:5173/?scene=episode&shot=5) |
-| 12 | 05b | Bandito stops | Placeholder | [Open shot 6](http://localhost:5173/?scene=episode&shot=6) |
-| 13 | 06a | Sock reveal | Placeholder | [Open shot 7](http://localhost:5173/?scene=episode&shot=7) |
-| 14 | 06b | Bandito shocked | Placeholder | [Open shot 8](http://localhost:5173/?scene=episode&shot=8) |
-| 15 | 06c | Bandito assemble | Placeholder | [Open shot 9](http://localhost:5173/?scene=episode&shot=9) |
-| 16 | 07a | Team arrives | Placeholder | [Open shot 10](http://localhost:5173/?scene=episode&shot=10) |
-| 17 | 07b | Professor scans | Placeholder | [Open shot 11](http://localhost:5173/?scene=episode&shot=11) |
-| 18 | 07c | Attack stances | Placeholder | [Open shot 12](http://localhost:5173/?scene=episode&shot=12) |
-| 19 | 08a | Bandito charges | Placeholder | [Open shot 13](http://localhost:5173/?scene=episode&shot=13) |
-| 20 | 08b | Girl Frederick leaps | Placeholder | [Open shot 14](http://localhost:5173/?scene=episode&shot=14) |
-| 21 | 08c | Professor device | Placeholder | [Open shot 15](http://localhost:5173/?scene=episode&shot=15) |
-| 22 | 08d | Sock waiting | Placeholder | [Open shot 16](http://localhost:5173/?scene=episode&shot=16) |
-| 23 | 08e | Team shock | Placeholder | [Open shot 17](http://localhost:5173/?scene=episode&shot=17) |
-| 24 | 09a | Tortellini — wall | Placeholder | [Open shot 18](http://localhost:5173/?scene=episode&shot=18) |
-| 25 | 09b | Tortellini — paw | Placeholder | [Open shot 19](http://localhost:5173/?scene=episode&shot=19) |
-| 26 | 09c | Bandito admires | Placeholder | [Open shot 20](http://localhost:5173/?scene=episode&shot=20) |
-| 27 | 10a | Greatest threat | Placeholder | [Open shot 21](http://localhost:5173/?scene=episode&shot=21) |
-| 28 | 10b | Tortellini walks | Placeholder | [Open shot 22](http://localhost:5173/?scene=episode&shot=22) |
-| 29 | 10c | Squish | Placeholder | [Open shot 23](http://localhost:5173/?scene=episode&shot=23) |
-| 30 | 10d | Monster defeated | Placeholder | [Open shot 24](http://localhost:5173/?scene=episode&shot=24) |
-| 31 | 10e | Celebration | Placeholder | [Open shot 25](http://localhost:5173/?scene=episode&shot=25) |
-| 32 | 11a | Human view | Placeholder | [Open shot 26](http://localhost:5173/?scene=episode&shot=26) |
-| 33 | 11b | Human legs | Placeholder | [Open shot 27](http://localhost:5173/?scene=episode&shot=27) |
-| 34 | 11c | Sock picked up | Placeholder | [Open shot 28](http://localhost:5173/?scene=episode&shot=28) |
-| 35 | 12a | Heroic return | Placeholder | [Open shot 29](http://localhost:5173/?scene=episode&shot=29) |
-| 36 | 12b | Freeze frame | Placeholder | [Open shot 30](http://localhost:5173/?scene=episode&shot=30) |
-| 37 | 12c | Closing card | Placeholder | [Open shot 31](http://localhost:5173/?scene=episode&shot=31) |
+| 11 | 05a | Another peaceful day… / Bandito is on patrol. | Final | [Open shot 5](http://localhost:5173/?scene=episode&shot=5) |
+| 12 | 05b | Bandito is shocked at what he finds on patrol. | Final | [Open shot 6](http://localhost:5173/?scene=episode&shot=6) |
+| 13 | 05c | Is it a regular sock or could it possibly be... | Final | [Open shot 7](http://localhost:5173/?scene=episode&shot=7) |
+| 14 | 06a | Sir Sockington... the sock monster. | Final | [Open shot 8](http://localhost:5173/?scene=episode&shot=8) |
+| 15 | 06b | Bandito shocked | Placeholder | [Open shot 9](http://localhost:5173/?scene=episode&shot=9) |
+| 16 | 06c | Bandito assemble | Placeholder | [Open shot 10](http://localhost:5173/?scene=episode&shot=10) |
+| 17 | 07a | Team arrives | Placeholder | [Open shot 11](http://localhost:5173/?scene=episode&shot=11) |
+| 18 | 07b | Professor scans | Placeholder | [Open shot 12](http://localhost:5173/?scene=episode&shot=12) |
+| 19 | 07c | Attack stances | Placeholder | [Open shot 13](http://localhost:5173/?scene=episode&shot=13) |
+| 20 | 08a | Bandito charges | Placeholder | [Open shot 14](http://localhost:5173/?scene=episode&shot=14) |
+| 21 | 08b | Girl Frederick leaps | Placeholder | [Open shot 15](http://localhost:5173/?scene=episode&shot=15) |
+| 22 | 08c | Professor device | Placeholder | [Open shot 16](http://localhost:5173/?scene=episode&shot=16) |
+| 23 | 08d | Sock waiting | Placeholder | [Open shot 17](http://localhost:5173/?scene=episode&shot=17) |
+| 24 | 08e | Team shock | Placeholder | [Open shot 18](http://localhost:5173/?scene=episode&shot=18) |
+| 25 | 09a | Tortellini — wall | Placeholder | [Open shot 19](http://localhost:5173/?scene=episode&shot=19) |
+| 26 | 09b | Tortellini — paw | Placeholder | [Open shot 20](http://localhost:5173/?scene=episode&shot=20) |
+| 27 | 09c | Bandito admires | Placeholder | [Open shot 21](http://localhost:5173/?scene=episode&shot=21) |
+| 28 | 10a | Greatest threat | Placeholder | [Open shot 22](http://localhost:5173/?scene=episode&shot=22) |
+| 29 | 10b | Tortellini walks | Placeholder | [Open shot 23](http://localhost:5173/?scene=episode&shot=23) |
+| 30 | 10c | Squish | Placeholder | [Open shot 24](http://localhost:5173/?scene=episode&shot=24) |
+| 31 | 10d | Monster defeated | Placeholder | [Open shot 25](http://localhost:5173/?scene=episode&shot=25) |
+| 32 | 10e | Celebration | Placeholder | [Open shot 26](http://localhost:5173/?scene=episode&shot=26) |
+| 33 | 11a | Human view | Placeholder | [Open shot 27](http://localhost:5173/?scene=episode&shot=27) |
+| 34 | 11b | Human legs | Placeholder | [Open shot 28](http://localhost:5173/?scene=episode&shot=28) |
+| 35 | 11c | Sock picked up | Placeholder | [Open shot 29](http://localhost:5173/?scene=episode&shot=29) |
+| 36 | 12a | Heroic return | Placeholder | [Open shot 30](http://localhost:5173/?scene=episode&shot=30) |
+| 37 | 12b | Freeze frame | Placeholder | [Open shot 31](http://localhost:5173/?scene=episode&shot=31) |
+| 38 | 12c | Closing card | Placeholder | [Open shot 32](http://localhost:5173/?scene=episode&shot=32) |
 
 ---
 
@@ -107,5 +108,5 @@ Then mark **Final** in this file and in `story/episode-01-production.md`.
   ↓   White flash
 6     Bandito and Friends title
 7–10  Meet the Team + Episode card
-11–37 Story (patrol → sock → battle → human reveal → victory)
+11–38 Story (patrol → sock → battle → human reveal → victory)
 ```
