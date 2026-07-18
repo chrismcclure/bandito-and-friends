@@ -1,0 +1,34 @@
+---
+description: Bandito and Friends project identity, stack, and creative direction
+alwaysApply: true
+---
+
+# Project Overview
+
+**Bandito and Friends** is a code-driven series of short 8-bit animated stories. It is **not currently a game**.
+
+## Stack
+
+- **Vite** — build tooling
+- **Plain JavaScript** — no TypeScript unless explicitly requested
+- **PixiJS** — rendering
+
+Do **not** introduce React, Vue, Angular, Phaser, Three.js, Electron, or TypeScript unless explicitly requested.
+
+## Output Format
+
+Final output is intended for vertical **YouTube Shorts** and **TikTok** videos.
+
+The internal movie stage is exactly **270 × 480 pixels** (9:16 aspect ratio).
+
+## Visual & Story Style
+
+Inspired by classic NES-era intros and cutscenes (e.g. Mega Man, DuckTales).
+
+Stories should rely primarily on:
+
+- Pixel animation
+- Music and sound effects
+- Text cards
+- Visual reactions
+- Limited dialogue

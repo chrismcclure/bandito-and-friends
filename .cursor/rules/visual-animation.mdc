@@ -1,0 +1,32 @@
+---
+description: Movie canvas, scaling, and animation standards for PixiJS content
+alwaysApply: true
+---
+
+# Visual & Animation
+
+## Movie Canvas
+
+The internal PixiJS stage must remain exactly **270 × 480 pixels** unless explicitly changed.
+
+- Preserve the **9:16** aspect ratio.
+- Scale the presentation responsively **without stretching or distortion**.
+- Use **nearest-neighbor scaling** and disable smoothing where appropriate so pixel artwork remains crisp.
+
+## Coordinate System
+
+- Do **not** position animation content using browser-window dimensions.
+- Position movie content using the **internal stage coordinate system** (0–270 width, 0–480 height).
+- Keep **browser layout concerns** separate from **scene layout**.
+
+## Animation
+
+- Animations should be **deterministic** and **timeline-friendly**.
+- Use **elapsed time** rather than relying on frame counts whenever practical.
+- Do **not** tie animation speed to monitor refresh rate.
+- Favor simple, readable animation over unnecessary visual complexity.
+
+## Assets
+
+- Organize assets by **type** and **character**.
+- Scene-specific assets should **not** be imported throughout unrelated modules.

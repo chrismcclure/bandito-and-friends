@@ -1,0 +1,40 @@
+---
+description: Incremental development workflow and task completion standards
+alwaysApply: true
+---
+
+# Workflow
+
+## Approach
+
+- Work **incrementally**.
+- Each requested change should be **small**, **focused**, **reviewable**, and **independently committable**.
+- Before editing, inspect the relevant existing files and understand the current implementation.
+- Do not rewrite working code without a clear reason.
+- Keep the application **runnable** after every completed task.
+
+## Validation
+
+Run the appropriate validation commands after changes. At minimum, verify that the project builds successfully:
+
+```bash
+npm run build
+```
+
+Fix errors introduced by the current change before declaring the task complete.
+
+## Git & Dependencies
+
+- Do **not** commit changes unless explicitly asked.
+- Do **not** push changes unless explicitly asked.
+- Do **not** add dependencies unless they are necessary for the requested task.
+- Explain any new dependency before adding it when there is a reasonable dependency-free option.
+
+## Task Completion Summary
+
+At the end of each task, summarize:
+
+1. What changed
+2. Which files changed
+3. How the change was validated
+4. Anything the user should manually inspect

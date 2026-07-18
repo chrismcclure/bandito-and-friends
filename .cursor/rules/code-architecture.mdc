@@ -1,0 +1,32 @@
+---
+description: Modular code organization and architectural constraints
+alwaysApply: true
+---
+
+# Code Architecture
+
+Keep the code modular, readable, and easy to change. Every file should have **one clear responsibility**.
+
+## Structure
+
+- Prefer small composable functions and modules over large classes.
+- Do **not** create large files that mix application setup, browser layout, rendering, timing, audio, asset loading, and scene logic.
+- Keep **application bootstrapping** separate from **animation content**.
+- Keep **reusable engine code** separate from **scene-specific code**.
+- As the project grows, organize **characters**, **backgrounds**, **audio**, **scenes**, and **timing data** separately.
+
+## Practices
+
+- Do not hardcode asset paths repeatedly throughout unrelated files.
+- Avoid hidden global state.
+- Do not create abstractions before they are needed.
+- Do not create generic systems for hypothetical future requirements.
+- Reuse existing patterns before introducing new patterns.
+- Preserve existing behavior unless the current task explicitly requests a behavior change.
+- Do not perform unrelated refactors during a focused task.
+
+## When to Split Files
+
+If a file becomes difficult to understand or has multiple responsibilities, split it thoughtfully.
+
+Do **not** split files merely to satisfy an arbitrary line count.
