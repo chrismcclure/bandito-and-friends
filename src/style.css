@@ -28,3 +28,7 @@ body {
   image-rendering: pixelated;
   image-rendering: crisp-edges;
 }
+
+.movie-frame.awaiting-start {
+  cursor: pointer;
+}

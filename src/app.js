@@ -1,6 +1,8 @@
-import { Application } from 'pixi.js';
+import { Application, Assets } from 'pixi.js';
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from './config.js';
 import { createIntroScene } from './scenes/IntroScene.js';
+import { createThreatBoardPreviewScene } from './scenes/ThreatBoardPreviewScene.js';
+import { getDevSceneId } from './dev/sceneParam.js';
 
 const FRAME_BORDER = 1;
 
@@ -16,7 +18,9 @@ function fitCanvasToWindow(canvas) {
   canvas.style.height = `${Math.floor(CANVAS_HEIGHT * scale)}px`;
 }
 
-export async function createApp(container) {
+async function createStage(container) {
+  await Assets.init();
+
   const app = new Application();
 
   await app.init({
@@ -26,6 +30,7 @@ export async function createApp(container) {
     antialias: false,
     resolution: 1,
     autoDensity: false,
+    roundPixels: true,
   });
 
   const canvas = app.canvas;
@@ -36,17 +41,63 @@ export async function createApp(container) {
   frame.appendChild(canvas);
   container.appendChild(frame);
 
+  fitCanvasToWindow(canvas);
+  window.addEventListener('resize', () => fitCanvasToWindow(canvas));
+
+  return { app, frame, canvas };
+}
+
+async function runIntro(app, frame) {
   const introScene = await createIntroScene();
   app.stage.addChild(introScene.container);
 
   let elapsed = 0;
+
+  introScene.setStartHandler(() => {
+    elapsed = 0;
+  });
+
+  const beginIntro = () => {
+    if (introScene.isStarted()) {
+      return;
+    }
+
+    frame.classList.remove('awaiting-start');
+    introScene.start();
+  };
+
+  frame.classList.add('awaiting-start');
+  frame.addEventListener('pointerdown', beginIntro);
+
   app.ticker.add((ticker) => {
+    if (!introScene.isStarted()) {
+      introScene.update(0);
+      return;
+    }
+
     elapsed += ticker.deltaMS / 1000;
     introScene.update(elapsed);
   });
+}
 
-  fitCanvasToWindow(canvas);
-  window.addEventListener('resize', () => fitCanvasToWindow(canvas));
+async function runThreatBoardPreview(app) {
+  const previewScene = createThreatBoardPreviewScene();
+  app.stage.addChild(previewScene.container);
 
+  app.ticker.add(() => {
+    previewScene.update();
+  });
+}
+
+export async function createApp(container) {
+  const { app, frame } = await createStage(container);
+  const devScene = getDevSceneId();
+
+  if (devScene === 'threat-board') {
+    await runThreatBoardPreview(app);
+    return app;
+  }
+
+  await runIntro(app, frame);
   return app;
 }
