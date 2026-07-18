@@ -47,8 +47,12 @@ src/
   style.css                        Page layout and movie frame styling
   props/ThreatBoard.js             Reusable Threat Board visual component
   props/threatBoardModel.js        Threat Board data shape and status colors
-  data/episode-01-threat-board.js  Episode 1 peaceful assessment data
-  scenes/                          Intro and preview scenes
+  data/episode-01-shots.js         Episode 1 shot list (timing, camera, dialogue)
+  data/episode-01-threat-board.js Episode 1 peaceful assessment data
+  episode/EpisodePlayer.js        Reusable data-driven episode player
+  episode/camera.js               Camera interpolation helpers
+  dev/EpisodeDevControls.js       Development shot review controls
+  scenes/                          Intro, crawl, and preview scenes
   dev/sceneParam.js                Development scene query parameter helper
 ```
 
@@ -76,9 +80,16 @@ Open:
 
 ```
 http://localhost:5173/?scene=threat-board
+http://localhost:5173/?scene=opening
+http://localhost:5173/?scene=crawl
+http://localhost:5173/?scene=episode
 ```
 
-The default intro remains available at `http://localhost:5173/` with no query parameter.
+The default route at `http://localhost:5173/` plays the full Episode 1 sequence (visual series opening → title → Meet the Team → story).
+
+See `story/episode-01-production.md` and `art/canon/series-opening.md` for shot lists.
+
+**Clickable production runbook:** [`story/order-of-operations.md`](story/order-of-operations.md) — open in the editor middle panel to jump to any shot.
 
 ### Future episodes
 

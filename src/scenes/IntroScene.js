@@ -9,6 +9,7 @@ import {
   Rectangle,
 } from 'pixi.js';
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../config.js';
+import { EPISODE_01_INTRO_TIMING } from '../data/episode-01-shots.js';
 import { createIntroAudio } from './IntroAudio.js';
 import { createIntroMusic } from '../audio/IntroMusic.js';
 
@@ -391,6 +392,7 @@ export async function createIntroScene() {
 
   let started = false;
   let skipTextCards = false;
+  let episodeIntroMode = false;
   let introComplete = false;
   let onStart = null;
   let onComplete = null;
@@ -595,6 +597,31 @@ export async function createIntroScene() {
     let loopTime;
     let loopIndex = 0;
 
+    if (episodeIntroMode) {
+      loopTime = INTRO_TIMING.TITLE_START + elapsedSeconds;
+
+      if (elapsedSeconds >= EPISODE_01_INTRO_TIMING.TITLE_HOLD) {
+        finishIntro(loopTime);
+        introComplete = true;
+        introMusic.stop();
+        onComplete?.();
+        return;
+      }
+
+      updateCard1(-1);
+      updateCard2(-1);
+      updateCard3(-1);
+      updateTitleArtwork(loopTime);
+      updateEpisodeTitles(-1);
+      updateFlashOverlay(loopTime);
+
+      if (started) {
+        introAudio.update(loopTime, 0);
+      }
+
+      return;
+    }
+
     if (skipTextCards) {
       loopTime = INTRO_TIMING.TITLE_START + elapsedSeconds;
 
@@ -642,6 +669,19 @@ export async function createIntroScene() {
     introAudio.unlock();
   }
 
+  function startEpisodeTitle() {
+    if (started) {
+      return;
+    }
+
+    started = true;
+    skipTextCards = true;
+    episodeIntroMode = true;
+    introAudio.resetTriggers();
+    introMusic.restart();
+    startOverlay.visible = false;
+  }
+
   function startFromTitle() {
     if (started) {
       return;
@@ -676,6 +716,7 @@ export async function createIntroScene() {
     setCompleteHandler,
     start,
     startFromTitle,
+    startEpisodeTitle,
     unlockAudio,
   };
 }

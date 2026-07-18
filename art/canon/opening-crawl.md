@@ -1,6 +1,8 @@
 # Opening Crawl — Canonical Production Asset
 
-Reusable opening sequence that plays **before every episode**, immediately before the existing title screen.
+Reusable opening sequence that plays **before every episode**.
+
+> **Note:** Default playback now uses the **visual series opening** (`art/canon/series-opening.md`). This scroll crawl remains available as a prototype at `?scene=crawl`.
 
 ---
 

@@ -11,6 +11,7 @@ body {
 }
 
 #app {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -19,6 +20,7 @@ body {
 }
 
 .movie-frame {
+  position: relative;
   border: 1px solid #555;
   line-height: 0;
 }
@@ -31,4 +33,61 @@ body {
 
 .movie-frame.awaiting-start {
   cursor: pointer;
+}
+
+.episode-dev-controls {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 20;
+  width: min(360px, calc(100vw - 24px));
+  padding: 12px;
+  border: 1px solid #555;
+  background: rgba(10, 10, 20, 0.92);
+  color: #f0f0f0;
+  font: 12px/1.4 monospace;
+}
+
+.episode-dev-controls--hidden {
+  display: none;
+}
+
+.episode-dev-controls__title {
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #f8e898;
+}
+
+.episode-dev-controls__status {
+  margin-bottom: 8px;
+  color: #d0d0d0;
+}
+
+.episode-dev-controls__select {
+  width: 100%;
+  margin-bottom: 8px;
+  padding: 4px;
+  background: #111;
+  color: #fff;
+  border: 1px solid #555;
+  font: 12px monospace;
+}
+
+.episode-dev-controls__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.episode-dev-controls__buttons button {
+  padding: 4px 8px;
+  border: 1px solid #666;
+  background: #222;
+  color: #fff;
+  font: 11px monospace;
+  cursor: pointer;
+}
+
+.episode-dev-controls__buttons button:hover {
+  background: #333;
 }
