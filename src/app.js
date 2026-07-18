@@ -11,8 +11,24 @@ import { getDevSceneId, getDevShotIndex } from './dev/sceneParam.js';
 const FRAME_BORDER = 1;
 
 function fitCanvasToWindow(canvas) {
-  const availableWidth = window.innerWidth - FRAME_BORDER * 2;
-  const availableHeight = window.innerHeight - FRAME_BORDER * 2;
+  const workspace = canvas.closest('.dev-workspace');
+  const sidebar = workspace?.querySelector(
+    '.episode-dev-controls:not(.episode-dev-controls--hidden)',
+  );
+
+  let availableWidth = window.innerWidth - FRAME_BORDER * 2;
+  let availableHeight = window.innerHeight - FRAME_BORDER * 2;
+
+  if (sidebar) {
+    const stacked = window.matchMedia('(max-width: 720px)').matches;
+
+    if (stacked) {
+      availableHeight -= sidebar.offsetHeight + 16;
+    } else {
+      availableWidth -= sidebar.offsetWidth + 16;
+    }
+  }
+
   const scale = Math.min(
     availableWidth / CANVAS_WIDTH,
     availableHeight / CANVAS_HEIGHT,
@@ -52,8 +68,19 @@ async function createStage(container) {
 }
 
 function attachEpisodeDevControls(frame, player) {
-  const { panel } = createEpisodeDevControls(player);
-  frame.appendChild(panel);
+  const canvas = frame.querySelector('canvas');
+  const refit = () => fitCanvasToWindow(canvas);
+
+  const { panel } = createEpisodeDevControls(player, { onHide: refit });
+
+  const workspace = document.createElement('div');
+  workspace.className = 'dev-workspace';
+
+  const parent = frame.parentElement;
+  parent.replaceChild(workspace, frame);
+  workspace.append(frame, panel);
+
+  refit();
 }
 
 async function runOpeningCrawlOnly(app, frame) {

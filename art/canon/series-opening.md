@@ -25,7 +25,7 @@ The legacy Zelda-style crawl is **preserved** — preview at `?scene=crawl`.
 |------|----------|---------|--------|
 | 01 | 2s | An ordinary living room... | **Final** — `finals/shot-01-ordinary-living-room.png` |
 | 02 | 2s | ...to humans. | **Final** — split transform v2 (human side, pan) |
-| 03 | 2s | To four brave cats... | **Final** — `finals/shot-03-cat-view-meow-city.png` |
+| 03 | 2s | But to four brave cats... | **Final** — `finals/shot-03-cat-view-meow-city.png` |
 | 04 | 2s | This is Meow City. | **Final** — `finals/shot-04-meow-city-establishing.png` |
 | 05 | 3s | And every day... / ...they stand watch. | **Final** — `finals/shot-05-rooftop-watch.png` → white flash |
 | — | 2.5s | — | Bandito and Friends title |
@@ -33,7 +33,7 @@ The legacy Zelda-style crawl is **preserved** — preview at `?scene=crawl`.
 
 **Opening runtime:** ~11 seconds before title flash.
 
-**Opening music:** ~13s one-shot NES-style cue (wonder → resolve). Plays during shots 01–05, fades out when the title appears, then hands off to the existing intro title theme in `IntroMusic.js`.
+**Opening music:** ~15s layered one-shot cue (arpeggio + bass pulse + melody → resolve). Plays during shots 01–05, fades out when the title appears, then hands off to the existing intro title theme in `IntroMusic.js`.
 
 ---
 

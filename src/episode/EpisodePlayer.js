@@ -18,10 +18,17 @@ import {
   findShotIndexAtTime,
   getEpisodeOneTotalDuration,
 } from '../data/episode-01-shots.js';
+import { EPISODE_CARD_CUE_CONFIG } from '../audio/episodeCardCueScore.js';
 
-const CAPTION_MARGIN = 16;
-const CAPTION_BOTTOM = 56;
 const LABEL_TOP = 72;
+
+/** Mobile-first on-screen slide text — matches episode title card scale unless a shot overrides. */
+const SLIDE_TEXT_DEFAULTS = {
+  fontSize: 22,
+  strokeWidth: 4,
+  wordWrapWidth: CANVAS_WIDTH - 20,
+  bottomOffset: 64,
+};
 
 function configurePixelArtTexture(texture) {
   texture.source.scaleMode = 'nearest';
@@ -38,17 +45,17 @@ function createCaptionText(content) {
     style: new TextStyle({
       fill: 0xffffff,
       fontFamily: 'monospace',
-      fontSize: 10,
+      fontSize: SLIDE_TEXT_DEFAULTS.fontSize,
       align: 'center',
       wordWrap: true,
-      wordWrapWidth: CANVAS_WIDTH - CAPTION_MARGIN * 2,
-      stroke: { color: 0x000000, width: 3 },
+      wordWrapWidth: SLIDE_TEXT_DEFAULTS.wordWrapWidth,
+      stroke: { color: 0x000000, width: SLIDE_TEXT_DEFAULTS.strokeWidth },
       dropShadow: {
-        alpha: 0.8,
+        alpha: 0.85,
         angle: Math.PI / 2,
         blur: 0,
         color: 0x000000,
-        distance: 1,
+        distance: 2,
       },
     }),
   });
@@ -56,7 +63,7 @@ function createCaptionText(content) {
   text.anchor.set(0.5, 1);
   text.roundPixels = true;
   text.x = CANVAS_WIDTH / 2;
-  text.y = CANVAS_HEIGHT - CAPTION_BOTTOM;
+  text.y = CANVAS_HEIGHT - SLIDE_TEXT_DEFAULTS.bottomOffset;
   return text;
 }
 
@@ -116,9 +123,9 @@ function createComicText(content) {
     style: new TextStyle({
       fill: 0xfff066,
       fontFamily: 'monospace',
-      fontSize: 22,
+      fontSize: SLIDE_TEXT_DEFAULTS.fontSize,
       align: 'center',
-      stroke: { color: 0x000000, width: 4 },
+      stroke: { color: 0x000000, width: SLIDE_TEXT_DEFAULTS.strokeWidth },
     }),
   });
 
@@ -127,6 +134,13 @@ function createComicText(content) {
   text.x = CANVAS_WIDTH / 2;
   text.y = CANVAS_HEIGHT / 2 - 20;
   return text;
+}
+
+function createTitleCardBackground() {
+  const background = new Graphics();
+  background.rect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT).fill(0x000000);
+  background.visible = false;
+  return background;
 }
 
 function createSpeedLines() {
@@ -169,6 +183,8 @@ export async function createEpisodePlayer({
   imageSprite.y = CANVAS_HEIGHT / 2;
   imageSprite.visible = false;
 
+  const titleCardBackground = createTitleCardBackground();
+
   let baseCoverScale = 1;
 
   const speedLines = createSpeedLines();
@@ -185,7 +201,7 @@ export async function createEpisodePlayer({
   const comicText = createComicText('');
   comicText.visible = false;
 
-  imageLayer.addChild(imageSprite, speedLines);
+  imageLayer.addChild(titleCardBackground, imageSprite, speedLines);
   overlayLayer.addChild(captionText, labelText, subtitleText, comicText);
   stageRoot.addChild(imageLayer, overlayLayer);
   container.addChild(stageRoot, fadeOverlay, flashOverlay);
@@ -295,6 +311,15 @@ export async function createEpisodePlayer({
     captionText.visible = Boolean(caption);
     captionText.text = caption;
 
+    if (caption) {
+      captionText.style.fontSize =
+        shot.captionFontSize ?? SLIDE_TEXT_DEFAULTS.fontSize;
+      captionText.style.stroke.width =
+        shot.captionStrokeWidth ?? SLIDE_TEXT_DEFAULTS.strokeWidth;
+      captionText.style.wordWrapWidth =
+        shot.captionWordWrapWidth ?? SLIDE_TEXT_DEFAULTS.wordWrapWidth;
+    }
+
     const showLabels = Boolean(shot.label || shot.subtitle);
     labelText.visible = Boolean(shot.label);
     subtitleText.visible = Boolean(shot.subtitle);
@@ -326,7 +351,11 @@ export async function createEpisodePlayer({
 
     speedLines.visible = shot.visualEffect === 'speed-lines';
 
-    if (shot.assetPath && textures.has(shot.assetPath)) {
+    const isTitleCard =
+      shot.type === 'episode-card' || shot.type === 'closing-card';
+    titleCardBackground.visible = isTitleCard;
+
+    if (!isTitleCard && shot.assetPath && textures.has(shot.assetPath)) {
       const texture = textures.get(shot.assetPath);
       if (imageSprite.texture !== texture) {
         imageSprite.texture = texture;
@@ -347,6 +376,39 @@ export async function createEpisodePlayer({
 
     renderTextOverlays(shot, localTime);
     updateFlashOverlay(shot, localTime);
+    updateScreenFade(shot, localTime, previousShot);
+  }
+
+  function updateScreenFade(shot, localTime, previousShot) {
+    const isEpisodeCard = shot.type === 'episode-card';
+
+    if (isEpisodeCard) {
+      const { blackHold, fadeIn } = EPISODE_CARD_CUE_CONFIG;
+      const revealStart = blackHold;
+      const revealEnd = blackHold + fadeIn;
+
+      if (localTime < revealStart) {
+        fadeOverlay.alpha = 1;
+        titleCardBackground.alpha = 0;
+        labelText.alpha = 0;
+        subtitleText.alpha = 0;
+      } else if (localTime < revealEnd) {
+        const t = (localTime - revealStart) / fadeIn;
+        fadeOverlay.alpha = 1 - t;
+        titleCardBackground.alpha = t;
+        labelText.alpha = t;
+        subtitleText.alpha = t;
+      } else {
+        fadeOverlay.alpha = 0;
+        titleCardBackground.alpha = 1;
+        labelText.alpha = 1;
+        subtitleText.alpha = 1;
+      }
+      return;
+    }
+
+    labelText.alpha = 1;
+    subtitleText.alpha = 1;
 
     if (shot.transitionIn === 'fade' && localTime < 0.35) {
       fadeOverlay.alpha = 1 - localTime / 0.35;
@@ -365,7 +427,7 @@ export async function createEpisodePlayer({
     lastSfxShotIndex = index;
 
     if (shot.type === 'episode-card') {
-      episodeAudio.playEpisodeCardWhoosh();
+      episodeAudio.playEpisodeCardCue();
     }
   }
 

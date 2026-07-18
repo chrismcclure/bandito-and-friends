@@ -1,4 +1,4 @@
-import { buildSeriesOpeningMusicScore } from './seriesOpeningMusicScore.js';
+import { buildEpisodeCardCueScore } from './episodeCardCueScore.js';
 
 const PITCH_OFFSETS = { C: -9, D: -7, E: -5, F: -4, G: -2, A: 0, B: 2 };
 
@@ -16,13 +16,12 @@ function pitchToFrequency(pitch) {
   return 440 * 2 ** ((midi - 69) / 12);
 }
 
-export function createSeriesOpeningMusic(score = buildSeriesOpeningMusicScore()) {
+export function createEpisodeCardCue(score = buildEpisodeCardCueScore()) {
   let audioContext = null;
   let masterGain = null;
   let channelGains = {};
   let noiseBuffer = null;
-  let fadeTimer = null;
-  let isPlaying = false;
+  let unlocked = false;
 
   function ensureContext() {
     if (!audioContext) {
@@ -48,7 +47,7 @@ export function createSeriesOpeningMusic(score = buildSeriesOpeningMusicScore())
       return noiseBuffer;
     }
 
-    const sampleCount = ctx.sampleRate * 0.2;
+    const sampleCount = ctx.sampleRate * 0.5;
     noiseBuffer = ctx.createBuffer(1, sampleCount, ctx.sampleRate);
     const data = noiseBuffer.getChannelData(0);
 
@@ -70,132 +69,105 @@ export function createSeriesOpeningMusic(score = buildSeriesOpeningMusicScore())
     oscillator.type = channelSettings.type ?? 'square';
     oscillator.frequency.setValueAtTime(frequency, startTime);
 
-    const attack = envelope.attack ?? 0.015;
+    const attack = envelope.attack ?? 0.012;
+    const sustain = envelope.sustain ?? 0.62;
     const peak = envelope.peak ?? 0.85;
-    const sustain = envelope.sustain ?? 0.68;
 
     gain.gain.setValueAtTime(0.0001, startTime);
-    gain.gain.exponentialRampToValueAtTime(Math.max(peak, 0.0002), startTime + attack);
+    gain.gain.exponentialRampToValueAtTime(peak, startTime + attack);
     gain.gain.setValueAtTime(peak * sustain, startTime + duration * 0.55);
     gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
 
     oscillator.connect(gain);
     gain.connect(destination);
     oscillator.start(startTime);
-    oscillator.stop(startTime + duration + 0.02);
+    oscillator.stop(startTime + duration + 0.03);
   }
 
-  function getChannelEnvelope(channel) {
-    switch (channel) {
-      case 'arpeggio':
-        return { attack: 0.008, peak: 0.78, sustain: 0.58 };
-      case 'harmony':
-        return { attack: 0.025, peak: 0.75, sustain: 0.6 };
-      case 'bass':
-        return { attack: 0.035, peak: 0.88, sustain: 0.58 };
-      case 'melody':
-        return { attack: 0.012, peak: 0.9, sustain: 0.68 };
-      default:
-        return {};
-    }
-  }
-
-  function scheduleDrum(startTime, duration, kind) {
+  function scheduleWhoosh(startTime, duration) {
     const ctx = ensureContext();
-    const destination = channelGains.texture ?? channelGains.drum;
+    const destination = channelGains.whoosh;
     const source = ctx.createBufferSource();
     const filter = ctx.createBiquadFilter();
     const gain = ctx.createGain();
 
     source.buffer = getNoiseBuffer();
-    filter.type = 'highpass';
-    filter.frequency.value =
-      kind === 'snare' ? 1800 : kind === 'tick' ? 7200 : 6500;
+    filter.type = 'bandpass';
+    filter.Q.value = 0.85;
+    filter.frequency.setValueAtTime(2800, startTime);
+    filter.frequency.exponentialRampToValueAtTime(620, startTime + duration * 0.85);
 
-    const peak = kind === 'snare' ? 0.85 : kind === 'tick' ? 0.42 : 0.45;
     gain.gain.setValueAtTime(0.0001, startTime);
-    gain.gain.exponentialRampToValueAtTime(peak, startTime + 0.002);
+    gain.gain.exponentialRampToValueAtTime(0.75, startTime + 0.06);
+    gain.gain.exponentialRampToValueAtTime(0.18, startTime + duration * 0.55);
     gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
 
     source.connect(filter);
     filter.connect(gain);
     gain.connect(destination);
     source.start(startTime);
-    source.stop(startTime + duration + 0.02);
+    source.stop(startTime + duration + 0.03);
   }
 
-  function scheduleNotes(startTime) {
-    for (const note of score.notes) {
-      const when = startTime + note.start;
+  function scheduleCue(startTime) {
+    scheduleWhoosh(startTime + score.whoosh.start, score.whoosh.duration);
 
-      if (note.channel === 'texture' || note.channel === 'drum') {
-        scheduleDrum(when, note.duration, note.kind);
-        continue;
-      }
+    for (const note of score.notes) {
+      const envelope =
+        note.channel === 'shimmer'
+          ? { attack: 0.004, sustain: 0.35, peak: 0.55 }
+          : note.channel === 'harmony'
+            ? { attack: 0.02, sustain: 0.5, peak: 0.65 }
+            : { attack: 0.014, sustain: 0.58, peak: 0.8 };
 
       scheduleTone(
         note.channel,
-        when,
+        startTime + note.start,
         note.duration,
         pitchToFrequency(note.pitch),
-        getChannelEnvelope(note.channel),
+        envelope,
       );
     }
   }
 
-  function clearFadeTimer() {
-    if (fadeTimer) {
-      clearTimeout(fadeTimer);
-      fadeTimer = null;
+  async function unlock() {
+    const ctx = ensureContext();
+    unlocked = true;
+
+    if (ctx.state === 'suspended') {
+      await ctx.resume();
     }
   }
 
   async function play() {
+    if (!unlocked) {
+      return;
+    }
+
     const ctx = ensureContext();
 
     if (ctx.state === 'suspended') {
       await ctx.resume();
     }
 
-    clearFadeTimer();
-    isPlaying = true;
-    masterGain.gain.cancelScheduledValues(ctx.currentTime);
-    masterGain.gain.setValueAtTime(score.config.volume, ctx.currentTime);
-
-    scheduleNotes(ctx.currentTime + 0.05);
-  }
-
-  function fadeOut(duration = 0.75) {
-    if (!audioContext || !masterGain || !isPlaying) {
-      return;
-    }
-
-    clearFadeTimer();
-    const now = audioContext.currentTime;
-    const currentVolume = masterGain.gain.value;
-
-    masterGain.gain.cancelScheduledValues(now);
-    masterGain.gain.setValueAtTime(Math.max(currentVolume, 0.0001), now);
-    masterGain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
-
-    fadeTimer = setTimeout(() => {
-      isPlaying = false;
-      fadeTimer = null;
-    }, duration * 1000 + 50);
+    scheduleCue(ctx.currentTime + 0.02);
   }
 
   function stop() {
-    clearFadeTimer();
-    isPlaying = false;
-
     if (audioContext) {
       audioContext.close().catch(() => {});
       audioContext = null;
       masterGain = null;
       channelGains = {};
       noiseBuffer = null;
+      unlocked = false;
     }
   }
 
-  return { play, fadeOut, stop };
+  return {
+    unlock,
+    play,
+    stop,
+    getConfig: () => score.config,
+  };
 }

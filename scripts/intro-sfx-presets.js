@@ -160,21 +160,4 @@ export const INTRO_SFX_PRESETS = [
       sound_vol: 0.18,
     }),
   },
-  {
-    filename: 'episode-card-whoosh.wav',
-    purpose:
-      'Classic NES "Press Start" swoosh when the Episode 1 title card appears.',
-    params: preset({
-      wave_type: 3,
-      p_base_freq: 0.82,
-      p_freq_ramp: -0.58,
-      p_env_sustain: 0.06,
-      p_env_decay: 0.34,
-      p_env_punch: 0.22,
-      p_lpf_freq: 0.78,
-      p_lpf_ramp: -0.28,
-      p_hpf_freq: 0.12,
-      sound_vol: 0.38,
-    }),
-  },
 ];

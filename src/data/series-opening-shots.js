@@ -62,7 +62,7 @@ export const SERIES_OPENING_SHOTS = [
     cameraScaleEnd: 1.06,
     cameraPositionStart: { x: 0, y: 0 },
     cameraPositionEnd: { x: 0, y: 0 },
-    dialogue: 'To four brave cats...',
+    dialogue: 'But to four brave cats...',
     musicCue: 'opening-transform',
     visualEffect: 'none',
     status: 'final',

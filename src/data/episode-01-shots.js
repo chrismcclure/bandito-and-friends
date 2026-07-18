@@ -28,6 +28,9 @@ export const EPISODE_01_FINALS_BASE = '/images/episodes/episode-01/finals';
  * @property {{ x: number, y: number }} cameraPositionStart
  * @property {{ x: number, y: number }} cameraPositionEnd
  * @property {string} [dialogue]
+ * @property {number} [captionFontSize] Override default slide caption size (22px).
+ * @property {number} [captionStrokeWidth] Override default caption stroke width.
+ * @property {number} [captionWordWrapWidth] Override default caption wrap width.
  * @property {string} [onScreenText]
  * @property {string} [subtitle]
  * @property {string} [label]
@@ -48,14 +51,14 @@ export const EPISODE_01_SHOTS = [
     duration: 2,
     transitionIn: 'cut',
     transitionOut: 'cut',
-    cameraMovement: 'push-in',
+    cameraMovement: 'pan-down',
     cameraScaleStart: 1,
-    cameraScaleEnd: 1.08,
-    cameraPositionStart: { x: 0, y: 0 },
-    cameraPositionEnd: { x: 0, y: 0 },
+    cameraScaleEnd: 1.02,
+    cameraPositionStart: { x: 0, y: 4 },
+    cameraPositionEnd: { x: 0, y: 28 },
     musicCue: 'intro-theme',
     visualEffect: 'none',
-    notes: 'Meet the Team — titles baked into artwork',
+    notes: 'Meet the Team — titles baked into artwork; pan down keeps title in frame',
     status: 'final',
   },
   {
@@ -116,9 +119,8 @@ export const EPISODE_01_SHOTS = [
     id: '04-episode-card',
     title: 'Episode Title Card',
     type: 'episode-card',
-    assetPath: `${EPISODE_01_ASSET_BASE}/shot-04-episode-card.svg`,
-    duration: 2,
-    transitionIn: 'cut',
+    duration: 2.5,
+    transitionIn: 'fade',
     transitionOut: 'cut',
     cameraMovement: 'static',
     cameraScaleStart: 1,
@@ -129,7 +131,8 @@ export const EPISODE_01_SHOTS = [
     subtitle: 'THE SOCK MONSTER',
     musicCue: 'intro-theme',
     visualEffect: 'none',
-    status: 'placeholder',
+    status: 'final',
+    notes: 'Text-only title card — no background art asset',
   },
   {
     id: '05a-bandito-patrol',

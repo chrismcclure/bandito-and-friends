@@ -20,7 +20,7 @@ Config: `src/data/series-opening-shots.js` · Preview mode: `?scene=opening`
 |---|------|---------|--------|---------|
 | 1 | Ordinary living room | An ordinary living room... | Final | [Open shot 0](http://localhost:5173/?scene=opening&shot=0) |
 | 2 | Human / transform | ...to humans. | Final | [Open shot 1](http://localhost:5173/?scene=opening&shot=1) |
-| 3 | Meow City room | To four brave cats... | Final | [Open shot 2](http://localhost:5173/?scene=opening&shot=2) |
+| 3 | Meow City room | But to four brave cats... | Final | [Open shot 2](http://localhost:5173/?scene=opening&shot=2) |
 | 4 | Meow City establishing | This is Meow City. | Final | [Open shot 3](http://localhost:5173/?scene=opening&shot=3) |
 | 5 | Rooftop watch | And every day... / ...they stand watch. | Final | [Open shot 4](http://localhost:5173/?scene=opening&shot=4) |
 
