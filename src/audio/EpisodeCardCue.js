@@ -1,4 +1,5 @@
 import { buildEpisodeCardCueScore } from './episodeCardCueScore.js';
+import { installMasterTap } from '../dev/audioMonitor.js';
 
 const PITCH_OFFSETS = { C: -9, D: -7, E: -5, F: -4, G: -2, A: 0, B: 2 };
 
@@ -28,7 +29,7 @@ export function createEpisodeCardCue(score = buildEpisodeCardCueScore()) {
       audioContext = new AudioContext();
       masterGain = audioContext.createGain();
       masterGain.gain.value = score.config.volume;
-      masterGain.connect(audioContext.destination);
+      installMasterTap(audioContext, masterGain);
 
       for (const [channel, settings] of Object.entries(score.config.channels)) {
         const gain = audioContext.createGain();

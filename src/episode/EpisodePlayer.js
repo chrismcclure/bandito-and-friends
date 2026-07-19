@@ -509,22 +509,33 @@ export async function createEpisodePlayer({
   }
 
   function jumpToShot(index, { loop = false } = {}) {
+    seekShotTime(index, 0, { loop });
+  }
+
+  function seekShotTime(index, localTime = 0, { loop = false } = {}) {
     if (index < 0 || index >= shots.length) {
       return;
     }
 
     manualShotIndex = index;
     loopCurrentShot = loop;
-    elapsed = 0;
+    elapsed = localTime;
     paused = false;
     complete = false;
     frozen = false;
     started = true;
 
     const shot = shots[index];
+    const clampedTime = clamp(localTime, 0, shot.duration);
+    const shouldTriggerEpisodeCard =
+      shot.type === 'episode-card' && lastSfxShotIndex !== index;
+
     lastSfxShotIndex = index - 1;
-    renderShot(shot, 0, index > 0 ? shots[index - 1] : null);
-    triggerShotSfx(shot, index, 0);
+    renderShot(shot, clampedTime, index > 0 ? shots[index - 1] : null);
+
+    if (shouldTriggerEpisodeCard) {
+      triggerShotSfx(shot, index, clampedTime);
+    }
   }
 
   function resumeTimeline() {
@@ -607,6 +618,7 @@ export async function createEpisodePlayer({
     resume,
     restart,
     jumpToShot,
+    seekShotTime,
     resumeTimeline,
     nextShot,
     previousShot,

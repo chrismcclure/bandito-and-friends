@@ -46,6 +46,14 @@ export async function createTitleMenuScene() {
   let phase = 'idle';
   let phaseElapsed = 0;
   let onHandoffStart = null;
+  let suppressHandoff = false;
+
+  const PHASE_SEQUENCE = [
+    { phase: 'start-hold', image: 'START_SELECTED' },
+    { phase: 'run-away-hold', image: 'RUN_AWAY_SELECTED' },
+    { phase: 'final-start-hold', image: 'START_SELECTED' },
+    { phase: 'start-freeze', image: 'START_SELECTED' },
+  ];
 
   async function loadTextures() {
     const entries = Object.entries(TITLE_MENU_IMAGES);
@@ -79,6 +87,12 @@ export async function createTitleMenuScene() {
   }
 
   function beginStartSequence() {
+    if (suppressHandoff) {
+      phase = 'start-freeze';
+      phaseElapsed = TITLE_MENU_TIMING.START_PRESS_FREEZE;
+      return;
+    }
+
     phase = 'confirming';
     phaseElapsed = 0;
 
@@ -120,8 +134,8 @@ export async function createTitleMenuScene() {
     }
   }
 
-  function getPhaseDuration() {
-    switch (phase) {
+  function getPhaseDurationFor(phaseName = phase) {
+    switch (phaseName) {
       case 'start-hold':
         return TITLE_MENU_TIMING.START_SELECTED_HOLD;
       case 'run-away-hold':
@@ -133,6 +147,53 @@ export async function createTitleMenuScene() {
       default:
         return 0;
     }
+  }
+
+  function getPhaseDuration() {
+    return getPhaseDurationFor(phase);
+  }
+
+  function getPhaseIndex() {
+    return PHASE_SEQUENCE.findIndex((entry) => entry.phase === phase);
+  }
+
+  function getTimelineElapsed() {
+    const phaseIndex = getPhaseIndex();
+    if (phaseIndex < 0) {
+      return 0;
+    }
+
+    let elapsed = 0;
+    for (let i = 0; i < phaseIndex; i += 1) {
+      elapsed += getPhaseDurationFor(PHASE_SEQUENCE[i].phase);
+    }
+
+    return elapsed + phaseElapsed;
+  }
+
+  function reset() {
+    started = false;
+    complete = false;
+    phase = 'idle';
+    phaseElapsed = 0;
+    showImage('START_SELECTED');
+  }
+
+  function seekToPhaseIndex(phaseIndex, localTime = 0) {
+    const entry = PHASE_SEQUENCE[phaseIndex];
+    if (!entry) {
+      return;
+    }
+
+    started = true;
+    complete = false;
+    phase = entry.phase;
+    phaseElapsed = localTime;
+    showImage(entry.image);
+  }
+
+  function setSuppressHandoff(value) {
+    suppressHandoff = value;
   }
 
   function start() {
@@ -173,5 +234,10 @@ export async function createTitleMenuScene() {
     setHandoffHandler(handler) {
       onHandoffStart = handler;
     },
+    seekToPhaseIndex,
+    setSuppressHandoff,
+    getPhaseIndex,
+    getTimelineElapsed,
+    reset,
   };
 }

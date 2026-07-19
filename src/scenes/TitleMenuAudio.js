@@ -1,4 +1,5 @@
 import { TITLE_MENU_TIMING } from '../data/title-menu-timing.js';
+import { installMediaTap } from '../dev/audioMonitor.js';
 
 /** Per-sound volume levels for the NES title menu. */
 export const TITLE_MENU_AUDIO_VOLUMES = {
@@ -28,6 +29,7 @@ export function createTitleMenuAudio() {
               'canplaythrough',
               () => {
                 audios[soundId] = audio;
+                installMediaTap(audio);
                 resolve();
               },
               { once: true },

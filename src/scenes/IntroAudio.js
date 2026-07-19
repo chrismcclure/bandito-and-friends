@@ -1,4 +1,6 @@
 /** Per-sound volume levels. Adjust these to balance the intro mix. */
+import { installMediaTap } from '../dev/audioMonitor.js';
+
 export const INTRO_AUDIO_VOLUMES = {
   introText01: 0.45,
   introText02: 0.45,
@@ -61,6 +63,7 @@ export function createIntroAudio(timing, motion) {
               'canplaythrough',
               () => {
                 audios[soundId] = audio;
+                installMediaTap(audio);
                 resolve();
               },
               { once: true },

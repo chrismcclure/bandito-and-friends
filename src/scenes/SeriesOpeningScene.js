@@ -19,6 +19,9 @@ export async function createSeriesOpeningScene() {
     startMusic() {
       music.play();
     },
+    fadeOutMusic(duration = 0.75) {
+      music.fadeOut(duration);
+    },
     pause: player.pause,
     resume: player.resume,
     restart() {
@@ -27,6 +30,7 @@ export async function createSeriesOpeningScene() {
       music.play();
     },
     jumpToShot: player.jumpToShot,
+    seekShotTime: player.seekShotTime,
     nextShot: player.nextShot,
     previousShot: player.previousShot,
     isComplete: player.isComplete,

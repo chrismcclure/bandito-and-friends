@@ -394,6 +394,7 @@ export async function createIntroScene() {
   let skipTextCards = false;
   let episodeIntroMode = false;
   let introComplete = false;
+  let suppressComplete = false;
   let onStart = null;
   let onComplete = null;
 
@@ -603,8 +604,9 @@ export async function createIntroScene() {
       if (elapsedSeconds >= EPISODE_01_INTRO_TIMING.TITLE_HOLD) {
         finishIntro(loopTime);
         introComplete = true;
-        introMusic.stop();
-        onComplete?.();
+        if (!suppressComplete) {
+          onComplete?.();
+        }
         return;
       }
 
@@ -669,14 +671,37 @@ export async function createIntroScene() {
     introAudio.unlock();
   }
 
-  function startEpisodeTitle() {
-    if (started) {
-      return;
-    }
+  function seekEpisodeTitleHold(localTime = 0) {
+    episodeIntroMode = true;
+    skipTextCards = true;
+    started = true;
+    introComplete = false;
+    container.visible = true;
+    startOverlay.visible = false;
 
+    const loopTime = INTRO_TIMING.TITLE_START + localTime;
+    updateCard1(-1);
+    updateCard2(-1);
+    updateCard3(-1);
+    updateTitleArtwork(loopTime);
+    updateEpisodeTitles(-1);
+    updateFlashOverlay(loopTime);
+    introAudio.update(loopTime, 0);
+  }
+
+  function ensureIntroMusic() {
+    introMusic.restart();
+  }
+
+  function setSuppressComplete(value) {
+    suppressComplete = value;
+  }
+
+  function startEpisodeTitle() {
     started = true;
     skipTextCards = true;
     episodeIntroMode = true;
+    introComplete = false;
     introAudio.resetTriggers();
     introMusic.restart();
     startOverlay.visible = false;
@@ -721,6 +746,9 @@ export async function createIntroScene() {
     start,
     startFromTitle,
     startEpisodeTitle,
+    seekEpisodeTitleHold,
+    setSuppressComplete,
+    ensureIntroMusic,
     stopIntroMusic,
     unlockAudio,
   };

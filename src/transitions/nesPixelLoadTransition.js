@@ -163,10 +163,60 @@ export function createNesPixelLoadTransition() {
     return false;
   }
 
+  function seekToTime(time) {
+    const totalDuration = FLASH_DURATION + BLOCK_HOLD_DURATION + DISSOLVE_DURATION;
+    const clampedTime = Math.max(0, Math.min(time, totalDuration));
+
+    if (blocks.length === 0) {
+      const grid = buildDissolveBlocks(BLOCK_SIZE, DISSOLVE_STEPS);
+      blocks = grid.blocks;
+    }
+
+    musicStarted =
+      clampedTime >=
+      FLASH_DURATION +
+        BLOCK_HOLD_DURATION +
+        DISSOLVE_DURATION * NES_PIXEL_LOAD_TIMING.MUSIC_REVEAL_THRESHOLD;
+
+    container.visible = clampedTime < totalDuration;
+    elapsed = clampedTime;
+
+    if (clampedTime < FLASH_DURATION) {
+      phase = 'flash';
+      flashOverlay.visible = true;
+      flashOverlay.alpha = 1;
+      blocksGraphics.clear();
+      return;
+    }
+
+    flashOverlay.visible = false;
+
+    if (clampedTime < FLASH_DURATION + BLOCK_HOLD_DURATION) {
+      phase = 'hold';
+      drawBlocks(-1);
+      return;
+    }
+
+    phase = 'dissolve';
+    const dissolveElapsed = clampedTime - FLASH_DURATION - BLOCK_HOLD_DURATION;
+    const linearT = Math.min(1, dissolveElapsed / DISSOLVE_DURATION);
+    const removeThroughStep = Math.min(
+      DISSOLVE_STEPS,
+      Math.floor(linearT * DISSOLVE_STEPS),
+    );
+    drawBlocks(removeThroughStep);
+  }
+
+  function getTotalDuration() {
+    return FLASH_DURATION + BLOCK_HOLD_DURATION + DISSOLVE_DURATION;
+  }
+
   return {
     container,
     start,
     update,
+    seekToTime,
+    getTotalDuration,
     isActive: () => phase !== 'idle',
     setMusicStartHandler(handler) {
       onMusicStart = handler;

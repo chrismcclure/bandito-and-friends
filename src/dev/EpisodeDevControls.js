@@ -1,12 +1,15 @@
 /** Development controls for reviewing Episode 1 shots. */
 
-export function createEpisodeDevControls(player, { onHide } = {}) {
+import { setActiveAudioLabel } from './audioMonitor.js';
+import { createAudioMeterPanel } from './AudioMeterPanel.js';
+
+export function createEpisodeDevControls(player, { onHide, title = 'Show Dev Controls' } = {}) {
   const panel = document.createElement('div');
   panel.className = 'episode-dev-controls';
 
-  const title = document.createElement('div');
-  title.className = 'episode-dev-controls__title';
-  title.textContent = 'Episode 1 Dev Controls';
+  const titleEl = document.createElement('div');
+  titleEl.className = 'episode-dev-controls__title';
+  titleEl.textContent = title;
 
   const status = document.createElement('div');
   status.className = 'episode-dev-controls__status';
@@ -25,6 +28,8 @@ export function createEpisodeDevControls(player, { onHide } = {}) {
   const buttonRow = document.createElement('div');
   buttonRow.className = 'episode-dev-controls__buttons';
 
+  const meter = createAudioMeterPanel();
+
   function makeButton(label, handler) {
     const button = document.createElement('button');
     button.type = 'button';
@@ -42,7 +47,10 @@ export function createEpisodeDevControls(player, { onHide } = {}) {
       }
     }),
     makeButton('Pause', () => player.pause()),
-    makeButton('Restart', () => player.restart()),
+    makeButton('Restart', () => {
+      player.restart();
+      meter.reset();
+    }),
     makeButton('Prev', () => player.previousShot()),
     makeButton('Next', () => player.nextShot()),
     makeButton('Loop Shot', () => {
@@ -64,26 +72,57 @@ export function createEpisodeDevControls(player, { onHide } = {}) {
     updateStatus();
   });
 
+  function updateAudioLabel(shot) {
+    if (shot.type === 'episode-card') {
+      setActiveAudioLabel('episode-card-cue');
+      return;
+    }
+
+    if (shot.musicCue) {
+      setActiveAudioLabel(shot.musicCue);
+      return;
+    }
+
+    setActiveAudioLabel('Silent');
+  }
+
   function updateStatus() {
     const info = player.getCurrentShotInfo();
     const shot = info.shot;
-    status.innerHTML = [
+    updateAudioLabel(shot);
+
+    const detailLines = [
       `<strong>${info.index + 1}/${player.getShots().length}</strong> ${shot.title}`,
+      shot.section ? `Section: ${shot.section}` : '',
       `Time ${info.episodeTime.toFixed(1)}s / ${info.totalDuration.toFixed(1)}s`,
-      `Shot ${info.localTime.toFixed(1)}s / ${shot.duration.toFixed(1)}s`,
-      shot.dialogue ? `Dialogue: "${shot.dialogue}"` : '',
-      shot.onScreenText ? `On-screen: ${shot.onScreenText}` : '',
-      `Asset: ${shot.assetPath ?? 'text-only'}`,
-      `Status: ${shot.status ?? 'unknown'}`,
-    ]
-      .filter(Boolean)
-      .join('<br>');
+      `Beat ${info.localTime.toFixed(1)}s / ${shot.duration.toFixed(1)}s`,
+    ];
+
+    if (shot.dialogue) {
+      detailLines.push(`Dialogue: "${shot.dialogue}"`);
+    }
+
+    if (shot.onScreenText) {
+      detailLines.push(`On-screen: ${shot.onScreenText}`);
+    }
+
+    if (shot.assetPath) {
+      detailLines.push(`Asset: ${shot.assetPath}`);
+    }
+
+    if (shot.status) {
+      detailLines.push(`Status: ${shot.status}`);
+    }
+
+    status.innerHTML = detailLines.filter(Boolean).join('<br>');
     shotSelect.value = String(info.index);
   }
 
   player.setShotChangeHandler(updateStatus);
   updateStatus();
 
-  panel.append(title, status, shotSelect, buttonRow);
-  return { panel, updateStatus };
+  meter.start();
+
+  panel.append(titleEl, status, shotSelect, buttonRow, meter.element);
+  return { panel, updateStatus, meter };
 }

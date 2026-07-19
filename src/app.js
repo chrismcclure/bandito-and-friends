@@ -7,6 +7,7 @@ import { createTitleMenuScene } from './scenes/TitleMenuScene.js';
 import { createThreatBoardPreviewScene } from './scenes/ThreatBoardPreviewScene.js';
 import { createEpisodePlayer } from './episode/EpisodePlayer.js';
 import { createEpisodeDevControls } from './dev/EpisodeDevControls.js';
+import { createFullSequencePlayer } from './dev/createFullSequencePlayer.js';
 import { getDevSceneId, getDevShotIndex } from './dev/sceneParam.js';
 import { createNesPixelLoadTransition } from './transitions/nesPixelLoadTransition.js';
 
@@ -69,11 +70,11 @@ async function createStage(container) {
   return { app, frame, canvas };
 }
 
-function attachEpisodeDevControls(frame, player) {
+function attachEpisodeDevControls(frame, player, options = {}) {
   const canvas = frame.querySelector('canvas');
   const refit = () => fitCanvasToWindow(canvas);
 
-  const { panel } = createEpisodeDevControls(player, { onHide: refit });
+  const { panel } = createEpisodeDevControls(player, { onHide: refit, ...options });
 
   const workspace = document.createElement('div');
   workspace.className = 'dev-workspace';
@@ -178,7 +179,9 @@ async function runEpisodeOnly(app, frame) {
   const previewShotIndex = getDevShotIndex();
   episodePlayer.container.visible = Boolean(previewShotIndex !== null);
   app.stage.addChild(episodePlayer.container);
-  attachEpisodeDevControls(frame, episodePlayer);
+  attachEpisodeDevControls(frame, episodePlayer, {
+    title: 'Episode 1 Dev Controls',
+  });
 
   let phase = previewShotIndex !== null ? 'episode' : 'idle';
 
@@ -263,13 +266,7 @@ async function runOpeningSequence(app, frame) {
   const seriesOpening = await createSeriesOpeningScene();
   const introScene = await createIntroScene();
   const episodePlayer = await createEpisodePlayer();
-
-  introScene.container.visible = false;
-  episodePlayer.container.visible = false;
-  seriesOpening.container.visible = false;
-  titleMenu.container.visible = false;
   const pixelLoad = createNesPixelLoadTransition();
-  pixelLoad.container.visible = false;
 
   app.stage.addChild(
     introScene.container,
@@ -278,58 +275,39 @@ async function runOpeningSequence(app, frame) {
     titleMenu.container,
     pixelLoad.container,
   );
-  attachEpisodeDevControls(frame, episodePlayer);
 
-  let phase = 'idle';
-  let introElapsed = 0;
-
-  pixelLoad.setMusicStartHandler(() => {
-    seriesOpening.startMusic();
+  const fullPlayer = createFullSequencePlayer({
+    titleMenu,
+    pixelLoad,
+    seriesOpening,
+    introScene,
+    episodePlayer,
   });
 
-  titleMenu.setHandoffHandler(() => {
-    phase = 'opening';
-    titleMenu.container.visible = false;
-    seriesOpening.container.visible = true;
-    seriesOpening.start({ deferMusic: true });
-    pixelLoad.start();
+  attachEpisodeDevControls(frame, fullPlayer, {
+    title: 'Full Show Dev Controls',
   });
 
-  seriesOpening.setCompleteHandler(() => {
-    phase = 'title';
-    introElapsed = 0;
-    seriesOpening.container.visible = false;
-    introScene.container.visible = true;
-    introScene.startEpisodeTitle();
-  });
-
-  introScene.setCompleteHandler(() => {
-    phase = 'episode';
-    introElapsed = 0;
-    introScene.container.visible = false;
-    episodePlayer.container.visible = true;
-    episodePlayer.start();
-  });
-
-  episodePlayer.setShotChangeHandler(({ index }) => {
-    if (index === 4) {
-      introScene.stopIntroMusic();
-    }
-  });
+  const previewBeatIndex = getDevShotIndex();
+  let awaitingStart = previewBeatIndex === null;
 
   const begin = () => {
-    if (phase !== 'idle') {
+    if (!awaitingStart) {
       return;
     }
 
-    phase = 'title-menu';
+    awaitingStart = false;
     frame.classList.remove('awaiting-start');
-    introScene.unlockAudio();
-    episodePlayer.unlockAudio();
-    titleMenu.unlockAudio();
-    titleMenu.container.visible = true;
-    titleMenu.start();
+    fullPlayer.unlockAudio();
+    fullPlayer.start();
   };
+
+  if (previewBeatIndex !== null) {
+    awaitingStart = false;
+    frame.classList.remove('awaiting-start');
+    fullPlayer.unlockAudio();
+    fullPlayer.jumpToShot(previewBeatIndex, { loop: true });
+  }
 
   frame.classList.add('awaiting-start');
   frame.addEventListener('pointerdown', begin);
@@ -337,41 +315,12 @@ async function runOpeningSequence(app, frame) {
   app.ticker.add((ticker) => {
     const delta = ticker.deltaMS / 1000;
 
-    if (phase === 'idle') {
-      titleMenu.update(0);
-      seriesOpening.update(0);
-      introScene.update(0);
-      episodePlayer.update(0);
+    if (awaitingStart) {
+      fullPlayer.update(0);
       return;
     }
 
-    if (phase === 'title-menu') {
-      titleMenu.update(delta);
-      return;
-    }
-
-    if (phase === 'opening') {
-      seriesOpening.update(delta);
-
-      if (pixelLoad.isActive()) {
-        pixelLoad.update(delta);
-      }
-      return;
-    }
-
-    if (phase === 'title') {
-      introElapsed += delta;
-      introScene.update(introElapsed);
-
-      if (introScene.isComplete()) {
-        phase = 'episode';
-      }
-      return;
-    }
-
-    if (phase === 'episode') {
-      episodePlayer.update(delta);
-    }
+    fullPlayer.update(delta);
   });
 }
 
