@@ -707,6 +707,10 @@ export async function createIntroScene() {
     onStart?.();
   }
 
+  function stopIntroMusic() {
+    introMusic.stop();
+  }
+
   return {
     container,
     update,
@@ -717,6 +721,7 @@ export async function createIntroScene() {
     start,
     startFromTitle,
     startEpisodeTitle,
+    stopIntroMusic,
     unlockAudio,
   };
 }

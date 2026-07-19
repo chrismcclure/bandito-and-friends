@@ -204,7 +204,7 @@ Status key: `[ ]` placeholder · `[x]` final art approved
 | `victory` | 10d–10e, 12a–12c |
 | `reality-shift` | 11a–11c |
 
-Existing intro music plays during the main title only. Story music is labeled for future implementation.
+Existing intro music plays during the main title and Meet the Team, ending at the episode card. Story music is labeled for future implementation.
 
 ---
 

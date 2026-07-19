@@ -5,6 +5,15 @@ export const EPISODE_01_INTRO_TIMING = {
   TITLE_HOLD: 2.5,
 };
 
+/** Intro theme should cover title hold + Meet the Team (shots 03a–03d). */
+export function getIntroThemeDuration(shots = EPISODE_01_SHOTS) {
+  const meetTheTeamDuration = shots
+    .slice(0, 4)
+    .reduce((total, shot) => total + shot.duration, 0);
+
+  return EPISODE_01_INTRO_TIMING.TITLE_HOLD + meetTheTeamDuration;
+}
+
 /** Base path for Episode 1 placeholder and final shot assets. */
 export const EPISODE_01_ASSET_BASE = '/images/episodes/episode-01/placeholders';
 export const EPISODE_01_FINALS_BASE = '/images/episodes/episode-01/finals';

@@ -311,6 +311,12 @@ async function runOpeningSequence(app, frame) {
     episodePlayer.start();
   });
 
+  episodePlayer.setShotChangeHandler(({ index }) => {
+    if (index === 4) {
+      introScene.stopIntroMusic();
+    }
+  });
+
   const begin = () => {
     if (phase !== 'idle') {
       return;

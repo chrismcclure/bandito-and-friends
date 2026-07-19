@@ -6,11 +6,13 @@
  * Times are expressed in beats; they are converted to seconds at playback.
  */
 
+import { getIntroThemeDuration } from '../data/episode-01-shots.js';
+
 export const INTRO_MUSIC_CONFIG = {
   /** Target tempo. 145–165 BPM recommended. */
   bpm: 160,
-  /** Total loop length in seconds. Keep near 10–12 for a seamless intro loop. */
-  loopDuration: 12,
+  /** One-shot length — title hold + Meet the Team, ending at the episode card. */
+  loopDuration: getIntroThemeDuration(),
   /** Master music volume. SFX remain independent. */
   volume: 0.35,
   channels: {
@@ -66,6 +68,13 @@ export const MELODY1_PATTERN = [
   { beat: 23, pitch: 'A4', beats: 1 },
   { beat: 24.5, pitch: 'E4', beats: 0.5 },
   { beat: 25, pitch: 'A4', beats: 1.5 },
+
+  // 12–12.5s: resolve into episode card handoff
+  { beat: 28, pitch: 'C5', beats: 0.75 },
+  { beat: 29, pitch: 'A4', beats: 0.75 },
+  { beat: 30, pitch: 'G4', beats: 0.5 },
+  { beat: 30.5, pitch: 'E4', beats: 0.5 },
+  { beat: 31, pitch: 'A4', beats: 1.5 },
 ];
 
 /** Secondary square-wave harmony / countermelody. */
@@ -84,6 +93,11 @@ export const MELODY2_PATTERN = [
   { beat: 20, pitch: 'E4', beats: 1 },
   { beat: 21.5, pitch: 'C4', beats: 0.75 },
   { beat: 22.5, pitch: 'A3', beats: 1.25 },
+
+  // 12–12.5s: trailing harmony into episode card
+  { beat: 28, pitch: 'E4', beats: 1 },
+  { beat: 30, pitch: 'C4', beats: 1.25 },
+  { beat: 31.5, pitch: 'A3', beats: 1.5 },
 ];
 
 /** Triangle-wave bass line. */
@@ -132,6 +146,12 @@ export const BASS_PATTERN = [
   { beat: 24, pitch: 'A2', beats: 1 },
   { beat: 25, pitch: 'E2', beats: 1 },
   { beat: 26, pitch: 'A2', beats: 2 },
+
+  // 12–12.5s: final root hold for episode card transition
+  { beat: 28, pitch: 'A2', beats: 1 },
+  { beat: 29, pitch: 'E2', beats: 1 },
+  { beat: 30, pitch: 'A2', beats: 1 },
+  { beat: 31, pitch: 'A2', beats: 1.5 },
 ];
 
 /**
@@ -187,6 +207,8 @@ export const DRUM_PATTERN = [
   { beat: 30, kind: 'snare' },
   { beat: 31, kind: 'hat' },
   { beat: 31.5, kind: 'hat' },
+  { beat: 32, kind: 'snare' },
+  { beat: 33, kind: 'hat' },
 ];
 
 function beatPatternToNotes(pattern, channel, config) {
