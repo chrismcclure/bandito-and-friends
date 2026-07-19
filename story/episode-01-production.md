@@ -134,26 +134,27 @@ Status key: `[ ]` placeholder · `[x]` final art approved
 |--------|----|------|----------|----------|
 | [x] | 05c | `shot-05c-bandito-finds-sock.png` | 2.5s | Is it a regular sock or could it possibly be... |
 | [x] | 06a | `shot-06a-sock-reveal.png` | 3.0s | Sir Sockington... the sock monster. |
-| [ ] | 06b | `shot-06b-bandito-shocked.svg` | 1.5s | This is no ordinary object... |
-| [ ] | 06c | `shot-06c-bandito-assemble.svg` | 1.5s | Bandito Team, assemble! |
+| [x] | 06c | `shot-06c-bandito-assemble.png` | 1.5s | Bandito Team, assemble! |
+| [x] | 06d | `shot-06d-team-hears-call.png` | 2.0s | — |
 
 ### Scene 7 — Team Arrival
 
 | Status | ID | File | Duration | Dialogue |
 |--------|----|------|----------|----------|
-| [ ] | 07a | `shot-07a-team-arrives.svg` | 2.0s | — |
-| [ ] | 07b | `shot-07b-professor-scans.svg` | 2.0s | My instruments have never detected anything like this. |
-| [ ] | 07c | `shot-07c-attack-stances.svg` | 1.5s | — |
+| [x] | 07a | `shot-07a-team-arrives.png` | 2.0s | — |
+| [x] | 07b | `shot-07b-professor-scans.png` | 2.0s | My instruments have never detected anything like this. |
+| [x] | 07c | `shot-07c-attack-stances.png` | 1.5s | — |
 
 ### Scene 8 — The Battle
 
 | Status | ID | File | Duration | Dialogue / FX |
 |--------|----|------|----------|---------------|
-| [ ] | 08a | `shot-08a-bandito-charge.svg` | 1.0s | Speed lines |
-| [ ] | 08b | `shot-08b-girl-frederick-leap.svg` | 1.0s | — |
-| [ ] | 08c | `shot-08c-professor-device.svg` | 1.0s | Flash in |
-| [ ] | 08d | `shot-08d-sock-waiting.svg` | 1.0s | Slow zoom |
-| [ ] | 08e | `shot-08e-team-shock.svg` | 1.5s | It's waiting for us to make the first mistake. |
+| [x] | 08b | `shot-08b-girl-frederick-leap.png` | 1.0s | — |
+| [x] | 08c | `shot-08c-sock-monster-knockback.png` | 1.0s | — |
+| [x] | 08d | `shot-08d-professor-device.png` | 1.0s | Flash in |
+| [x] | 08e | `shot-08e-sock-monster-deflect.png` | 1.0s | — |
+| [ ] | 08f | `shot-08f-sock-waiting.svg` | 1.0s | Slow zoom |
+| [ ] | 08g | `shot-08g-team-shock.svg` | 1.5s | It's waiting for us to make the first mistake. |
 
 ### Scene 9 — Tortellini Running Gag
 
@@ -197,9 +198,9 @@ Status key: `[ ]` placeholder · `[x]` final art approved
 |-----|-------|
 | `intro-theme` | Meet the Team, episode card |
 | `adventure-calm` | 05a–05c |
-| `tension-rise` | 06a–06c |
+| `tension-rise` | 06a–06d |
 | `battle-prep` | 07a–07c |
-| `battle-montage` | 08a–09c |
+| `battle-montage` | 08b–09c |
 | `battle-peak` | 10a–10c |
 | `victory` | 10d–10e, 12a–12c |
 | `reality-shift` | 11a–11c |

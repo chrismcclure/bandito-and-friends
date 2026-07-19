@@ -3,7 +3,7 @@ import { installMediaTap } from '../dev/audioMonitor.js';
 
 /** Per-sound volume levels for the NES title menu. */
 export const TITLE_MENU_AUDIO_VOLUMES = {
-  menuCursor: 0.525,
+  menuCursor: 0.6825,
   startSelected: 0.725,
 };
 
