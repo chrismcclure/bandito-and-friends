@@ -51,7 +51,7 @@ export function getShakeOffset(time, intensity = 4) {
  * @param {number} duration
  * @param {object} [options]
  * @param {number} [options.slideAmount] Fraction of stage width (0–1) for a limited center slide.
- * @param {'left' | 'center'} [options.slideAlign] Start alignment for left-to-right / right-to-left pans.
+ * @param {'left' | 'center' | 'right'} [options.slideAlign] Start alignment for left-to-right / right-to-left pans.
  * @param {number} [options.slideCropStart] Fraction of image width cropped off-screen on the left at start.
  * @param {number} [options.slideCropEnd] Fraction of image width allowed off-screen on the right at end.
  * @param {number} [options.slideDuration] Seconds over which the pan completes (defaults to shot duration).
@@ -91,6 +91,16 @@ export function computeImageSlideX(
     return lerp(startX, clampedEndX, progress);
   }
 
+  if (direction === 'right-to-left' && slideAlign === 'right') {
+    const cropEnd = slideCropEnd ?? 0;
+    const cropStart = slideCropStart ?? 0;
+    const startX = CANVAS_WIDTH - displayWidth / 2 + cropEnd * displayWidth;
+    const fullEndX = displayWidth / 2;
+    const endX = displayWidth / 2 - cropStart * displayWidth;
+    const clampedEndX = Math.min(fullEndX, Math.max(startX, endX));
+    return lerp(startX, clampedEndX, progress);
+  }
+
   const overflow = displayWidth - CANVAS_WIDTH;
 
   if (overflow <= 0) {
@@ -105,6 +115,27 @@ export function computeImageSlideX(
   }
 
   return lerp(startX, endX, progress);
+}
+
+/**
+ * Stage-pixel offset from center so a normalized image point sits on the stage center.
+ * @param {number} textureWidth
+ * @param {number} textureHeight
+ * @param {number} displayScale
+ * @param {number} [focalX] 0–1 across the image (0.5 = horizontal center).
+ * @param {number} [focalY] 0–1 down the image (0.3 = top 30%).
+ */
+export function computeFocalFitOffset(
+  textureWidth,
+  textureHeight,
+  displayScale,
+  focalX = 0.5,
+  focalY = 0.5,
+) {
+  return {
+    x: -(focalX - 0.5) * textureWidth * displayScale,
+    y: -(focalY - 0.5) * textureHeight * displayScale,
+  };
 }
 
 /**

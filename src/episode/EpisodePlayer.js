@@ -16,8 +16,10 @@ import {
 } from '../config.js';
 import {
   clamp,
+  computeFocalFitOffset,
   computeImageSlideX,
   computeStaticImageCropX,
+  easeInOutQuad,
   getShakeOffset,
   interpolateCamera,
   lerp,
@@ -44,11 +46,54 @@ function resolveFitZoom(shot, localTime) {
   const baseZoom = shot.imageFitZoom ?? BALANCED_FIT_ZOOM;
 
   if (shot.imageFitZoomStart != null && shot.imageFitZoomEnd != null) {
-    const progress = clamp(localTime / shot.duration, 0, 1);
+    const progress = easeInOutQuad(clamp(localTime / shot.duration, 0, 1));
     return lerp(shot.imageFitZoomStart, shot.imageFitZoomEnd, progress);
   }
 
   return baseZoom;
+}
+
+function resolveFitOffsets(shot, localTime, texture, displayScale, fitMode) {
+  if (fitMode !== 'balanced') {
+    return { x: 0, y: 0 };
+  }
+
+  const startOffsetX = shot.imageFitOffsetX ?? BALANCED_FIT_OFFSET_X;
+  const startOffsetY = shot.imageFitOffsetY ?? BALANCED_FIT_OFFSET_Y;
+
+  if (shot.imageFitFocalX == null && shot.imageFitFocalY == null) {
+    return { x: startOffsetX, y: startOffsetY };
+  }
+
+  const focalX = shot.imageFitFocalX ?? 0.5;
+  const focalY = shot.imageFitFocalY ?? 0.5;
+  const progress = easeInOutQuad(clamp(localTime / shot.duration, 0, 1));
+  const focalOffset = computeFocalFitOffset(
+    texture.width,
+    texture.height,
+    displayScale,
+    focalX,
+    focalY,
+  );
+
+  return {
+    x: lerp(startOffsetX, focalOffset.x, progress),
+    y: lerp(startOffsetY, focalOffset.y, progress),
+  };
+}
+
+/** Rotation as a fraction of a quarter-turn (0.2 ≈ 18°). Negative = tilt left. */
+function resolveFitRotation(shot, localTime) {
+  if (shot.imageFitRotateStart == null) {
+    return 0;
+  }
+
+  const end = shot.imageFitRotateEnd ?? 0;
+  const duration = shot.imageFitRotateDuration ?? shot.duration;
+  const progress = clamp(localTime / duration, 0, 1);
+  const quarterTurn = Math.PI / 2;
+
+  return lerp(shot.imageFitRotateStart * quarterTurn, end * quarterTurn, progress);
 }
 
 function configurePixelArtTexture(texture) {
@@ -430,14 +475,6 @@ export async function createEpisodePlayer({
       const heightCoverage =
         shot.imageFitCoverage ?? BALANCED_FIT_HEIGHT_COVERAGE;
       const fitZoom = resolveFitZoom(shot, localTime);
-      const fitOffsetX =
-        fitMode === 'balanced'
-          ? (shot.imageFitOffsetX ?? BALANCED_FIT_OFFSET_X)
-          : 0;
-      const fitOffsetY =
-        fitMode === 'balanced'
-          ? (shot.imageFitOffsetY ?? BALANCED_FIT_OFFSET_Y)
-          : 0;
 
       if (imageSprite.texture !== texture) {
         imageSprite.texture = texture;
@@ -454,6 +491,13 @@ export async function createEpisodePlayer({
           ? Math.min(camera.scale, 1)
           : camera.scale;
       const displayScale = baseImageScale * cameraScale;
+      const { x: fitOffsetX, y: fitOffsetY } = resolveFitOffsets(
+        shot,
+        localTime,
+        texture,
+        displayScale,
+        fitMode,
+      );
       applyTextureScaleMode(texture, displayScale, fitMode);
 
       imageSprite.visible = true;
@@ -496,8 +540,11 @@ export async function createEpisodePlayer({
         imageSprite.y =
           CANVAS_HEIGHT / 2 + camera.y + shake.y + fitOffsetY;
       }
+
+      imageSprite.rotation = resolveFitRotation(shot, localTime);
     } else {
       imageSprite.visible = false;
+      imageSprite.rotation = 0;
     }
 
     renderTextOverlays(shot, localTime);
