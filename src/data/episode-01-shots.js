@@ -45,12 +45,14 @@ export const EPISODE_01_FINALS_BASE = '/images/episodes/episode-01/finals';
  * @property {{ x: number, y: number }} cameraPositionStart
  * @property {{ x: number, y: number }} cameraPositionEnd
  * @property {string} [dialogue]
+ * @property {string} [dialogueTop] Caption shown near the top of the stage (pairs with dialogue).
  * @property {string} [secondaryDialogue]
  * @property {number} [secondaryDialogueAt] Seconds into the shot when secondary dialogue replaces primary.
  * @property {number} [captionFontSize] Override default slide caption size (22px).
  * @property {number} [captionStrokeWidth] Override default caption stroke width.
  * @property {number} [captionWordWrapWidth] Override default caption wrap width.
  * @property {number} [captionBottomOffset] Distance from bottom of stage to caption baseline.
+ * @property {number} [captionTopOffset] Distance from top of stage to top caption baseline.
  * @property {boolean} [captionItalic] Render dialogue caption in italics (e.g. sound effects).
  * @property {string} [onScreenText]
  * @property {string} [subtitle]
@@ -766,7 +768,7 @@ const EPISODE_01_SHOTS_RAW = [
     title: 'Credits',
     type: 'image',
     assetPath: `${EPISODE_01_FINALS_BASE}/shot-12c-credits.png`,
-    duration: 2.5,
+    duration: 3,
     transitionIn: 'fade',
     transitionOut: 'fade',
     cameraMovement: 'static',
@@ -774,6 +776,7 @@ const EPISODE_01_SHOTS_RAW = [
     cameraScaleEnd: 1,
     cameraPositionStart: { x: 0, y: 0 },
     cameraPositionEnd: { x: 0, y: 0 },
+    dialogue: 'Created by Audrey and Chris McClure.',
     musicCue: 'victory',
     visualEffect: 'none',
     status: 'final',
@@ -784,7 +787,7 @@ const EPISODE_01_SHOTS_RAW = [
     title: 'Tools We Used',
     type: 'image',
     assetPath: `${EPISODE_01_FINALS_BASE}/shot-12d-tools-used.png`,
-    duration: 2.5,
+    duration: 3,
     transitionIn: 'fade',
     transitionOut: 'fade',
     cameraMovement: 'static',
@@ -792,6 +795,8 @@ const EPISODE_01_SHOTS_RAW = [
     cameraScaleEnd: 1,
     cameraPositionStart: { x: 0, y: 0 },
     cameraPositionEnd: { x: 0, y: 0 },
+    dialogueTop: 'Here are the tools we used to create this.',
+    dialogue: 'Link below if you want more information.',
     musicCue: 'victory',
     visualEffect: 'none',
     status: 'final',
@@ -810,7 +815,8 @@ const EPISODE_01_SHOTS_RAW = [
     cameraScaleEnd: 1.06,
     cameraPositionStart: { x: 0, y: 0 },
     cameraPositionEnd: { x: 0, y: 0 },
-    dialogue: 'Hey, thanks for watching. If you want more, let us know.',
+    dialogueTop: 'Thanks for watching.',
+    dialogue: 'If you want more videos like this, let us know.',
     musicCue: 'victory',
     visualEffect: 'none',
     freezeAtEnd: true,

@@ -40,6 +40,7 @@ const SLIDE_TEXT_DEFAULTS = {
   strokeWidth: 4,
   wordWrapWidth: CANVAS_WIDTH - 20,
   bottomOffset: 64,
+  topOffset: 64,
 };
 
 function resolveFitZoom(shot, localTime) {
@@ -165,6 +166,34 @@ function createCaptionText(content) {
   text.roundPixels = true;
   text.x = CANVAS_WIDTH / 2;
   text.y = CANVAS_HEIGHT - SLIDE_TEXT_DEFAULTS.bottomOffset;
+  return text;
+}
+
+function createTopCaptionText(content) {
+  const text = new Text({
+    text: content,
+    style: new TextStyle({
+      fill: 0xffffff,
+      fontFamily: 'monospace',
+      fontSize: SLIDE_TEXT_DEFAULTS.fontSize,
+      align: 'center',
+      wordWrap: true,
+      wordWrapWidth: SLIDE_TEXT_DEFAULTS.wordWrapWidth,
+      stroke: { color: 0x000000, width: SLIDE_TEXT_DEFAULTS.strokeWidth },
+      dropShadow: {
+        alpha: 0.85,
+        angle: Math.PI / 2,
+        blur: 0,
+        color: 0x000000,
+        distance: 2,
+      },
+    }),
+  });
+
+  text.anchor.set(0.5, 0);
+  text.roundPixels = true;
+  text.x = CANVAS_WIDTH / 2;
+  text.y = SLIDE_TEXT_DEFAULTS.topOffset;
   return text;
 }
 
@@ -294,6 +323,9 @@ export async function createEpisodePlayer({
   const captionText = createCaptionText('');
   captionText.visible = false;
 
+  const captionTopText = createTopCaptionText('');
+  captionTopText.visible = false;
+
   const labelText = createLabelText('');
   labelText.visible = false;
 
@@ -305,7 +337,7 @@ export async function createEpisodePlayer({
   comicText.visible = false;
 
   imageLayer.addChild(titleCardBackground, imageSprite, speedLines);
-  overlayLayer.addChild(captionText, labelText, subtitleText, comicText);
+  overlayLayer.addChild(captionText, captionTopText, labelText, subtitleText, comicText);
   stageRoot.addChild(imageLayer, overlayLayer);
   container.addChild(stageRoot, fadeOverlay, flashOverlay);
 
@@ -432,6 +464,22 @@ export async function createEpisodePlayer({
       captionText.y =
         CANVAS_HEIGHT -
         (shot.captionBottomOffset ?? SLIDE_TEXT_DEFAULTS.bottomOffset);
+    }
+
+    const topCaption = shot.dialogueTop ?? '';
+    captionTopText.visible = Boolean(topCaption);
+    captionTopText.text = topCaption;
+
+    if (topCaption) {
+      captionTopText.style.fontSize =
+        shot.captionFontSize ?? SLIDE_TEXT_DEFAULTS.fontSize;
+      captionTopText.style.fontStyle = shot.captionItalic ? 'italic' : 'normal';
+      captionTopText.style.stroke.width =
+        shot.captionStrokeWidth ?? SLIDE_TEXT_DEFAULTS.strokeWidth;
+      captionTopText.style.wordWrapWidth =
+        shot.captionWordWrapWidth ?? SLIDE_TEXT_DEFAULTS.wordWrapWidth;
+      captionTopText.y =
+        shot.captionTopOffset ?? SLIDE_TEXT_DEFAULTS.topOffset;
     }
 
     const showLabels = Boolean(shot.label || shot.subtitle);
