@@ -8,7 +8,7 @@ import { createThreatBoardPreviewScene } from './scenes/ThreatBoardPreviewScene.
 import { createEpisodePlayer } from './episode/EpisodePlayer.js';
 import { createEpisodeDevControls } from './dev/EpisodeDevControls.js';
 import { getDevSceneId, getDevShotIndex } from './dev/sceneParam.js';
-import { createNesHandoffTransition } from './transitions/nesHandoffTransition.js';
+import { createNesPixelLoadTransition } from './transitions/nesPixelLoadTransition.js';
 
 const FRAME_BORDER = 1;
 
@@ -268,27 +268,31 @@ async function runOpeningSequence(app, frame) {
   episodePlayer.container.visible = false;
   seriesOpening.container.visible = false;
   titleMenu.container.visible = false;
+  const pixelLoad = createNesPixelLoadTransition();
+  pixelLoad.container.visible = false;
+
   app.stage.addChild(
     introScene.container,
     episodePlayer.container,
     seriesOpening.container,
     titleMenu.container,
+    pixelLoad.container,
   );
   attachEpisodeDevControls(frame, episodePlayer);
 
   let phase = 'idle';
   let introElapsed = 0;
 
-  const handoff = createNesHandoffTransition({
-    incoming: seriesOpening.container,
-    outgoing: titleMenu.container,
+  pixelLoad.setMusicStartHandler(() => {
+    seriesOpening.startMusic();
   });
 
   titleMenu.setHandoffHandler(() => {
     phase = 'opening';
+    titleMenu.container.visible = false;
     seriesOpening.container.visible = true;
-    seriesOpening.start();
-    handoff.start();
+    seriesOpening.start({ deferMusic: true });
+    pixelLoad.start();
   });
 
   seriesOpening.setCompleteHandler(() => {
@@ -342,14 +346,9 @@ async function runOpeningSequence(app, frame) {
 
     if (phase === 'opening') {
       seriesOpening.update(delta);
-      titleMenu.update(delta);
 
-      if (handoff.isActive()) {
-        if (handoff.update(delta)) {
-          titleMenu.container.visible = false;
-        }
-      } else if (titleMenu.isComplete()) {
-        titleMenu.container.visible = false;
+      if (pixelLoad.isActive()) {
+        pixelLoad.update(delta);
       }
       return;
     }

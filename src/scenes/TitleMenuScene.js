@@ -1,4 +1,4 @@
-import { Assets, Container, Graphics, Sprite } from 'pixi.js';
+import { Assets, Container, Sprite } from 'pixi.js';
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../config.js';
 import {
   TITLE_MENU_IMAGES,
@@ -23,7 +23,7 @@ function computeContainScale(texture) {
   );
 }
 
-/** NES-style title menu — cursor blips between two menu images, then Start + flash. */
+/** NES-style title menu — cursor blips between two menu images, then Start handoff. */
 export async function createTitleMenuScene() {
   const container = new Container();
   const stageRoot = new Container();
@@ -33,12 +33,7 @@ export async function createTitleMenuScene() {
   imageSprite.y = CANVAS_HEIGHT / 2;
   imageSprite.roundPixels = true;
 
-  const flashOverlay = new Graphics();
-  flashOverlay.rect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT).fill(0xffffff);
-  flashOverlay.alpha = 0;
-  flashOverlay.visible = false;
-
-  container.addChild(stageRoot, flashOverlay);
+  container.addChild(stageRoot);
   stageRoot.addChild(imageSprite);
 
   const audio = createTitleMenuAudio();
@@ -50,7 +45,6 @@ export async function createTitleMenuScene() {
   let complete = false;
   let phase = 'idle';
   let phaseElapsed = 0;
-  let flashElapsed = 0;
   let onHandoffStart = null;
 
   async function loadTextures() {
@@ -84,22 +78,16 @@ export async function createTitleMenuScene() {
     imageSprite.visible = true;
   }
 
-  function setFlashAlpha(alpha) {
-    flashOverlay.alpha = alpha;
-    flashOverlay.visible = alpha > 0;
-  }
+  function beginStartSequence() {
+    phase = 'confirming';
+    phaseElapsed = 0;
 
-  function finish() {
-    complete = true;
-    started = false;
-    setFlashAlpha(0);
-  }
-
-  function beginFlash() {
-    phase = 'flashing';
-    flashElapsed = 0;
-    setFlashAlpha(1);
-    onHandoffStart?.();
+    audio.playStartSelected({
+      onPeak: () => {
+        complete = true;
+        onHandoffStart?.();
+      },
+    });
   }
 
   function advancePhase() {
@@ -119,9 +107,12 @@ export async function createTitleMenuScene() {
         break;
 
       case 'final-start-hold':
-        phase = 'confirming';
+        phase = 'start-freeze';
         phaseElapsed = 0;
-        audio.playStartSelected(beginFlash);
+        break;
+
+      case 'start-freeze':
+        beginStartSequence();
         break;
 
       default:
@@ -137,6 +128,8 @@ export async function createTitleMenuScene() {
         return TITLE_MENU_TIMING.RUN_AWAY_SELECTED_HOLD;
       case 'final-start-hold':
         return TITLE_MENU_TIMING.FINAL_START_SELECTED_HOLD;
+      case 'start-freeze':
+        return TITLE_MENU_TIMING.START_PRESS_FREEZE;
       default:
         return 0;
     }
@@ -147,8 +140,6 @@ export async function createTitleMenuScene() {
     complete = false;
     phase = 'start-hold';
     phaseElapsed = 0;
-    flashElapsed = 0;
-    setFlashAlpha(0);
     showImage('START_SELECTED');
   }
 
@@ -156,16 +147,6 @@ export async function createTitleMenuScene() {
     if (!started || complete) {
       if (!started) {
         showImage('START_SELECTED');
-      }
-      return;
-    }
-
-    if (phase === 'flashing') {
-      flashElapsed += deltaSeconds;
-
-      if (flashElapsed >= TITLE_MENU_TIMING.WHITE_FLASH_DURATION) {
-        setFlashAlpha(0);
-        finish();
       }
       return;
     }

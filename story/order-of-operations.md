@@ -26,7 +26,10 @@ Config: `src/data/title-menu-timing.js` · Preview mode: `?scene=title-menu`
 | 1 | PRESS START selected | 1.05s | — |
 | 2 | Run Away selected | 0.525s | Cursor blip (on switch) |
 | 3 | PRESS START selected | 0.75s | Cursor blip (on switch) |
-| 4 | White flash → living room | ~3 frames + 0.55s slide | Start confirmation, then NES handoff |
+| 4 | Start press freeze | 0.125s | — |
+| 5 | Start confirmation → white flash | peak at ~0.1s | Start confirmation |
+| 6 | Pixel-block hold | 0.5s | — |
+| 7 | Pixel-block load reveal | ~0.8s | Intro music at ~70% reveal |
 
 [▶ Preview title menu only](http://localhost:5173/?scene=title-menu)
 

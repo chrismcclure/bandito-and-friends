@@ -10,8 +10,13 @@ export async function createSeriesOpeningScene() {
   return {
     container: player.container,
     update: player.update,
-    start() {
+    start({ deferMusic = false } = {}) {
       player.start();
+      if (!deferMusic) {
+        music.play();
+      }
+    },
+    startMusic() {
       music.play();
     },
     pause: player.pause,

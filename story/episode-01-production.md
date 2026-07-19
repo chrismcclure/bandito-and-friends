@@ -22,7 +22,7 @@ Complete shot list, placeholder assets, and replacement workflow for the ~60 sec
 
 1. **Series opening** — visual transform ordinary house → Meow City (~11s) — `src/data/series-opening-shots.js`
 2. **Main title** — existing title artwork, 2.5s hold (white flash in)
-3. **Meet the Team** — shots `03a`–`03d` (8s)
+3. **Meet the Team** — shots `03a`–`03d` (10s)
 4. **Episode card** — shot `04` (2s)
 5. **Story** — shots `05a`–`12c` (41s)
 6. **Freeze / closing** — final shots hold on frame
@@ -110,10 +110,10 @@ Status key: `[ ]` placeholder · `[x]` final art approved
 
 | Status | ID | File | Duration | Camera | Labels |
 |--------|----|------|----------|--------|--------|
-| [x] | 03a | `finals/shot-03a-bandito-leader.png` | 2.0s | Push in | BANDITO / THE LEADER |
-| [x] | 03b | `finals/shot-03b-professor-brains.png` | 2.0s | Pan right | PROFESSOR SPAGHETTIO / THE BRAINS |
-| [x] | 03c | `finals/shot-03c-girl-frederick-muscle.png` | 2.0s | Push in | Titles in artwork |
-| [x] | 03d | `finals/shot-03d-tortellini-wild-card.png` | 2.0s | Slow zoom | Titles in artwork |
+| [x] | 03a | `finals/shot-03a-bandito-leader.png` | 2.5s | Push in | BANDITO / THE LEADER |
+| [x] | 03b | `finals/shot-03b-professor-brains.png` | 2.5s | Pan right | PROFESSOR SPAGHETTIO / THE BRAINS |
+| [x] | 03c | `finals/shot-03c-girl-frederick-muscle.png` | 2.5s | Push in | Titles in artwork |
+| [x] | 03d | `finals/shot-03d-tortellini-wild-card.png` | 2.5s | Slow zoom | Titles in artwork |
 
 ### Episode Card
 

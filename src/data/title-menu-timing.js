@@ -12,11 +12,13 @@ export const TITLE_MENU_TIMING = {
   START_SELECTED_HOLD: 1.05,
   /** Image 2 hold before second cursor blip (seconds). */
   RUN_AWAY_SELECTED_HOLD: 0.525,
-  /** Final Image 1 hold before Start confirmation (seconds). */
+  /** Final Image 1 hold before Start press freeze (seconds). */
   FINAL_START_SELECTED_HOLD: 0.75,
-  /** White flash after Start sound — ~2–3 frames at 60fps. */
-  WHITE_FLASH_DURATION: 0.045,
+  /** Freeze after Start is pressed — cartridge acknowledging the input. */
+  START_PRESS_FREEZE: 0.125,
+  /** Delay from Start sound start to its peak hit (white flash moment). */
+  START_SOUND_PEAK_DELAY: 0.1,
 };
 
-/** Re-export handoff timing for docs and scene wiring. */
-export { NES_HANDOFF_TIMING } from '../transitions/nesHandoffTransition.js';
+/** Re-export pixel-load transition timing for docs and scene wiring. */
+export { NES_PIXEL_LOAD_TIMING } from '../transitions/nesPixelLoadTransition.js';

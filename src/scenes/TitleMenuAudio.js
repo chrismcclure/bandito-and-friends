@@ -1,3 +1,5 @@
+import { TITLE_MENU_TIMING } from '../data/title-menu-timing.js';
+
 /** Per-sound volume levels for the NES title menu. */
 export const TITLE_MENU_AUDIO_VOLUMES = {
   menuCursor: 0.42,
@@ -62,13 +64,16 @@ export function createTitleMenuAudio() {
     }
   }
 
-  function play(soundId, onEnded) {
+  function play(soundId, { onPeak, onEnded } = {}) {
     if (!unlocked) {
+      onPeak?.();
+      onEnded?.();
       return;
     }
 
     const audio = audios[soundId];
     if (!audio) {
+      onPeak?.();
       onEnded?.();
       return;
     }
@@ -83,8 +88,20 @@ export function createTitleMenuAudio() {
       };
     }
 
+    let peakTimer = null;
+    if (onPeak) {
+      peakTimer = window.setTimeout(() => {
+        peakTimer = null;
+        onPeak();
+      }, TITLE_MENU_TIMING.START_SOUND_PEAK_DELAY * 1000);
+    }
+
     audio.play().catch((error) => {
       console.warn(`[TitleMenuAudio] Could not play ${soundId}:`, error);
+      if (peakTimer) {
+        window.clearTimeout(peakTimer);
+      }
+      onPeak?.();
       onEnded?.();
     });
   }
@@ -93,8 +110,8 @@ export function createTitleMenuAudio() {
     play('menuCursor');
   }
 
-  function playStartSelected(onEnded) {
-    play('startSelected', onEnded);
+  function playStartSelected({ onPeak, onEnded } = {}) {
+    play('startSelected', { onPeak, onEnded });
   }
 
   return {
