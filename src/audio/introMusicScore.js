@@ -14,7 +14,7 @@ export const INTRO_MUSIC_CONFIG = {
   /** One-shot length — title hold + Meet the Team, ending at the episode card. */
   loopDuration: getIntroThemeDuration(),
   /** Master music volume. SFX remain independent. */
-  volume: 0.35,
+  volume: 0.546875,
   channels: {
     melody1: { type: 'square', volume: 0.14 },
     melody2: { type: 'square', volume: 0.09 },

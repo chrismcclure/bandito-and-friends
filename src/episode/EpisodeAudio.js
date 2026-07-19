@@ -12,8 +12,8 @@ export function createEpisodeAudio() {
     episodeCardCue.unlock();
   }
 
-  function playEpisodeCardCue() {
-    episodeCardCue.play();
+  function playEpisodeCardCue(shotTime = 0) {
+    episodeCardCue.play({ shotTime });
   }
 
   function stop() {

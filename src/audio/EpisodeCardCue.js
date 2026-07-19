@@ -84,50 +84,93 @@ export function createEpisodeCardCue(score = buildEpisodeCardCueScore()) {
     oscillator.stop(startTime + duration + 0.03);
   }
 
-  function scheduleWhoosh(startTime, duration) {
+  function scheduleBeep(startTime, duration, pitch) {
+    scheduleTone(
+      'beep',
+      startTime,
+      duration,
+      pitchToFrequency(pitch),
+      { attack: 0.002, sustain: 0.12, peak: 0.95 },
+    );
+  }
+
+  function scheduleChargeUp(startTime) {
     const ctx = ensureContext();
-    const destination = channelGains.whoosh;
-    const source = ctx.createBufferSource();
-    const filter = ctx.createBiquadFilter();
+    const { duration, pitchStart, pitchEnd } = score.charge;
+    const destination = channelGains.charge;
+
+    const oscillator = ctx.createOscillator();
     const gain = ctx.createGain();
 
-    source.buffer = getNoiseBuffer();
-    filter.type = 'bandpass';
-    filter.Q.value = 0.85;
-    filter.frequency.setValueAtTime(2800, startTime);
-    filter.frequency.exponentialRampToValueAtTime(620, startTime + duration * 0.85);
+    oscillator.type = 'square';
+    oscillator.frequency.setValueAtTime(pitchToFrequency(pitchStart), startTime);
+    oscillator.frequency.exponentialRampToValueAtTime(
+      pitchToFrequency(pitchEnd),
+      startTime + duration,
+    );
 
     gain.gain.setValueAtTime(0.0001, startTime);
-    gain.gain.exponentialRampToValueAtTime(0.75, startTime + 0.06);
-    gain.gain.exponentialRampToValueAtTime(0.18, startTime + duration * 0.55);
+    gain.gain.exponentialRampToValueAtTime(0.85, startTime + 0.004);
     gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
 
-    source.connect(filter);
-    filter.connect(gain);
+    oscillator.connect(gain);
     gain.connect(destination);
-    source.start(startTime);
-    source.stop(startTime + duration + 0.03);
+    oscillator.start(startTime);
+    oscillator.stop(startTime + duration + 0.03);
+  }
+
+  function scheduleExplosion(startTime) {
+    const ctx = ensureContext();
+    const { noiseDuration, bassPitch, bassDuration, stabPitch, stabDuration } =
+      score.explosion;
+
+    const noiseSource = ctx.createBufferSource();
+    const noiseGain = ctx.createGain();
+
+    noiseSource.buffer = getNoiseBuffer();
+
+    noiseGain.gain.setValueAtTime(0.0001, startTime);
+    noiseGain.gain.exponentialRampToValueAtTime(1, startTime + 0.004);
+    noiseGain.gain.exponentialRampToValueAtTime(0.0001, startTime + noiseDuration);
+
+    noiseSource.connect(noiseGain);
+    noiseGain.connect(channelGains.noise);
+    noiseSource.start(startTime);
+    noiseSource.stop(startTime + noiseDuration + 0.03);
+
+    const bassOsc = ctx.createOscillator();
+    const bassGain = ctx.createGain();
+    const bassFreq = pitchToFrequency(bassPitch);
+
+    bassOsc.type = 'triangle';
+    bassOsc.frequency.setValueAtTime(bassFreq * 1.5, startTime);
+    bassOsc.frequency.exponentialRampToValueAtTime(bassFreq * 0.5, startTime + bassDuration);
+
+    bassGain.gain.setValueAtTime(0.0001, startTime);
+    bassGain.gain.exponentialRampToValueAtTime(1, startTime + 0.006);
+    bassGain.gain.exponentialRampToValueAtTime(0.0001, startTime + bassDuration);
+
+    bassOsc.connect(bassGain);
+    bassGain.connect(channelGains.bass);
+    bassOsc.start(startTime);
+    bassOsc.stop(startTime + bassDuration + 0.03);
+
+    scheduleTone(
+      'stab',
+      startTime,
+      stabDuration,
+      pitchToFrequency(stabPitch),
+      { attack: 0.002, sustain: 0.2, peak: 0.95 },
+    );
   }
 
   function scheduleCue(startTime) {
-    scheduleWhoosh(startTime + score.whoosh.start, score.whoosh.duration);
-
-    for (const note of score.notes) {
-      const envelope =
-        note.channel === 'shimmer'
-          ? { attack: 0.004, sustain: 0.35, peak: 0.55 }
-          : note.channel === 'harmony'
-            ? { attack: 0.02, sustain: 0.5, peak: 0.65 }
-            : { attack: 0.014, sustain: 0.58, peak: 0.8 };
-
-      scheduleTone(
-        note.channel,
-        startTime + note.start,
-        note.duration,
-        pitchToFrequency(note.pitch),
-        envelope,
-      );
+    for (const beep of score.beeps) {
+      scheduleBeep(startTime + beep.start, beep.duration, beep.pitch);
     }
+
+    scheduleChargeUp(startTime + score.charge.start);
+    scheduleExplosion(startTime + score.explosion.start);
   }
 
   async function unlock() {
@@ -139,7 +182,7 @@ export function createEpisodeCardCue(score = buildEpisodeCardCueScore()) {
     }
   }
 
-  async function play() {
+  async function play({ shotTime = 0 } = {}) {
     if (!unlocked) {
       return;
     }
@@ -150,7 +193,7 @@ export function createEpisodeCardCue(score = buildEpisodeCardCueScore()) {
       await ctx.resume();
     }
 
-    scheduleCue(ctx.currentTime + 0.02);
+    scheduleCue(ctx.currentTime - shotTime);
   }
 
   function stop() {
@@ -169,5 +212,6 @@ export function createEpisodeCardCue(score = buildEpisodeCardCueScore()) {
     play,
     stop,
     getConfig: () => score.config,
+    getImpactTime: () => score.explosion.start,
   };
 }

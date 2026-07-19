@@ -2,8 +2,8 @@ import { TITLE_MENU_TIMING } from '../data/title-menu-timing.js';
 
 /** Per-sound volume levels for the NES title menu. */
 export const TITLE_MENU_AUDIO_VOLUMES = {
-  menuCursor: 0.42,
-  startSelected: 0.58,
+  menuCursor: 0.525,
+  startSelected: 0.725,
 };
 
 const SOUND_FILES = {

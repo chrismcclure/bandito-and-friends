@@ -419,7 +419,7 @@ export async function createEpisodePlayer({
     }
   }
 
-  function triggerShotSfx(shot, index) {
+  function triggerShotSfx(shot, index, localTime) {
     if (index === lastSfxShotIndex) {
       return;
     }
@@ -427,7 +427,7 @@ export async function createEpisodePlayer({
     lastSfxShotIndex = index;
 
     if (shot.type === 'episode-card') {
-      episodeAudio.playEpisodeCardCue();
+      episodeAudio.playEpisodeCardCue(localTime);
     }
   }
 
@@ -463,7 +463,7 @@ export async function createEpisodePlayer({
       onShotChange({ index, shot, localTime, elapsed: getEpisodeTime() });
     }
 
-    triggerShotSfx(shot, index);
+    triggerShotSfx(shot, index, localTime);
 
     if (shot.freezeAtEnd && localTime >= shot.duration - 0.001) {
       frozen = true;
@@ -524,7 +524,7 @@ export async function createEpisodePlayer({
     const shot = shots[index];
     lastSfxShotIndex = index - 1;
     renderShot(shot, 0, index > 0 ? shots[index - 1] : null);
-    triggerShotSfx(shot, index);
+    triggerShotSfx(shot, index, 0);
   }
 
   function resumeTimeline() {

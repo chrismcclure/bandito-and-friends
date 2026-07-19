@@ -7,7 +7,7 @@
 export const SERIES_OPENING_MUSIC_CONFIG = {
   bpm: 88,
   duration: 15,
-  volume: 0.48,
+  volume: 0.6,
   channels: {
     melody: { type: 'triangle', volume: 0.17 },
     arpeggio: { type: 'triangle', volume: 0.12 },

@@ -1,57 +1,61 @@
 /**
- * Recurring Episode Title Card sound cue (~2s).
- * Silence → airy whoosh → three descending square notes → soft shimmer.
- * Original composition for the Bandito and Friends series identity.
+ * Episode Title Card sound cue — classic NES stage intro (Mega Man–inspired).
+ *
+ * Four ascending beeps → charge-up → impact. Text appears with the first beep.
+ * ~150 ms silence after impact before story music should begin.
  */
 
+export const EPISODE_CARD_IMPACT_AT = 0.58;
+
+/** Four ascending menu beeps — gaps tighten before the final note. */
+export const EPISODE_CARD_BEEPS = [
+  { start: 0.08, pitch: 'G4', duration: 0.055 },
+  { start: 0.22, pitch: 'C5', duration: 0.055 },
+  { start: 0.35, pitch: 'E5', duration: 0.055 },
+  { start: 0.46, pitch: 'G5', duration: 0.055 },
+];
+
 export const EPISODE_CARD_CUE_CONFIG = {
-  duration: 2,
-  volume: 0.3,
-  blackHold: 0.25,
-  fadeIn: 0.35,
+  duration: 1.05,
+  volume: 0.525,
+  /** Text appears with the first beep; impact punctuates at impactAt. */
+  blackHold: EPISODE_CARD_BEEPS[0].start,
+  fadeIn: 0,
+  /** Gap after impact before eerie story music enters. */
+  postImpactSilence: 0.15,
   channels: {
-    melody: { type: 'square', volume: 0.11 },
-    harmony: { type: 'triangle', volume: 0.055 },
-    shimmer: { type: 'square', volume: 0.035 },
-    whoosh: { volume: 0.09 },
+    beep: { type: 'square', volume: 0.26 },
+    charge: { type: 'square', volume: 0.22 },
+    stab: { type: 'square', volume: 0.3 },
+    bass: { type: 'triangle', volume: 0.34 },
+    noise: { volume: 0.28 },
   },
 };
 
-/** Three gentle descending square-wave notes after the whoosh. */
-export const EPISODE_CARD_MELODY = [
-  { start: 0.58, pitch: 'E5', duration: 0.3 },
-  { start: 0.96, pitch: 'C5', duration: 0.26 },
-  { start: 1.3, pitch: 'A4', duration: 0.24 },
-];
+/** Short electronic charge-up immediately before the impact. */
+export const EPISODE_CARD_CHARGE = {
+  start: 0.53,
+  duration: 0.05,
+  pitchStart: 'A5',
+  pitchEnd: 'D6',
+};
 
-/** Soft triangle support beneath each melody note. */
-export const EPISODE_CARD_HARMONY = [
-  { start: 0.58, pitch: 'E4', duration: 0.34 },
-  { start: 0.96, pitch: 'C4', duration: 0.3 },
-  { start: 1.3, pitch: 'A3', duration: 0.28 },
-];
-
-/** Tiny digital sparkle trailing off after the third note. */
-export const EPISODE_CARD_SHIMMER = [
-  { start: 1.58, pitch: 'E6', duration: 0.07 },
-  { start: 1.68, pitch: 'C6', duration: 0.07 },
-  { start: 1.76, pitch: 'G5', duration: 0.09 },
-  { start: 1.84, pitch: 'E5', duration: 0.16 },
-];
-
-export const EPISODE_CARD_WHOOSH = {
-  start: 0.25,
-  duration: 0.42,
+/** NES impact — noise burst + triangle bass slam + bright square stab. */
+export const EPISODE_CARD_EXPLOSION = {
+  start: EPISODE_CARD_IMPACT_AT,
+  noiseDuration: 0.3,
+  bassPitch: 'E2',
+  bassDuration: 0.28,
+  stabPitch: 'G5',
+  stabDuration: 0.1,
 };
 
 export function buildEpisodeCardCueScore() {
   return {
     config: EPISODE_CARD_CUE_CONFIG,
-    whoosh: EPISODE_CARD_WHOOSH,
-    notes: [
-      ...EPISODE_CARD_MELODY.map((note) => ({ ...note, channel: 'melody' })),
-      ...EPISODE_CARD_HARMONY.map((note) => ({ ...note, channel: 'harmony' })),
-      ...EPISODE_CARD_SHIMMER.map((note) => ({ ...note, channel: 'shimmer' })),
-    ],
+    beeps: EPISODE_CARD_BEEPS,
+    charge: EPISODE_CARD_CHARGE,
+    explosion: EPISODE_CARD_EXPLOSION,
+    notes: EPISODE_CARD_BEEPS.map((note) => ({ ...note, channel: 'beep' })),
   };
 }
