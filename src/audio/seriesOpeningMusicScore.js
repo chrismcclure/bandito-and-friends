@@ -9,7 +9,7 @@ export const SERIES_OPENING_MUSIC_CONFIG = {
   duration: 15,
   volume: 0.48,
   channels: {
-    melody: { type: 'square', volume: 0.15 },
+    melody: { type: 'triangle', volume: 0.17 },
     arpeggio: { type: 'triangle', volume: 0.12 },
     harmony: { type: 'triangle', volume: 0.11 },
     bass: { type: 'triangle', volume: 0.24 },
@@ -17,24 +17,37 @@ export const SERIES_OPENING_MUSIC_CONFIG = {
   },
 };
 
-/** Main melody — enters ~3s; breathes but never leaves long silence. */
+/** Sparse lead — short, curious phrases over the bass and arpeggio bed. */
 export const SERIES_OPENING_MELODY = [
-  // 3–7s: world transforming
-  { beat: 4.5, pitch: 'E4', beats: 1.4 },
-  { beat: 6, pitch: 'G4', beats: 1.1 },
-  { beat: 7.25, pitch: 'A4', beats: 1.5 },
-  { beat: 8.75, pitch: 'C5', beats: 1.2 },
+  // 1.5–6.5s: ordinary house — something feels quietly wrong
+  { beat: 2.5, pitch: 'E4', beats: 0.4 },
+  { beat: 3.25, pitch: 'D4', beats: 0.35 },
+  { beat: 4.1, pitch: 'C4', beats: 0.5 },
+  { beat: 5.1, pitch: 'E4', beats: 0.3 },
+  { beat: 5.85, pitch: 'F4', beats: 0.45 },
 
-  // 7–11s: Meow City — more hopeful
-  { beat: 10.25, pitch: 'E5', beats: 0.85 },
-  { beat: 11.1, pitch: 'G5', beats: 0.85 },
-  { beat: 11.95, pitch: 'E5', beats: 1.1 },
-  { beat: 13.1, pitch: 'C5', beats: 1 },
-  { beat: 14.15, pitch: 'D5', beats: 1 },
+  // 6.5–10s: transform — uneasy curiosity, not heroic
+  { beat: 6.75, pitch: 'G4', beats: 0.35 },
+  { beat: 7.5, pitch: 'A4', beats: 0.3 },
+  { beat: 8.25, pitch: 'B4', beats: 0.4 },
+  { beat: 9, pitch: 'A4', beats: 0.35 },
+  { beat: 9.75, pitch: 'G4', beats: 0.45 },
+  { beat: 10.5, pitch: 'E4', beats: 0.55 },
 
-  // 11–15s: resolve into title handoff
-  { beat: 16, pitch: 'E5', beats: 2.2 },
-  { beat: 18, pitch: 'G5', beats: 3.5 },
+  // 10–14s: Meow City — wonder with a shadow
+  { beat: 11.5, pitch: 'C5', beats: 0.3 },
+  { beat: 12.15, pitch: 'B4', beats: 0.3 },
+  { beat: 12.85, pitch: 'A4', beats: 0.35 },
+  { beat: 13.55, pitch: 'G4', beats: 0.4 },
+  { beat: 14.35, pitch: 'E4', beats: 0.45 },
+  { beat: 15.1, pitch: 'D4', beats: 0.5 },
+
+  // 14–18s: rooftop watch — hushed resolve
+  { beat: 16, pitch: 'A4', beats: 0.55 },
+  { beat: 17, pitch: 'C5', beats: 0.4 },
+  { beat: 17.8, pitch: 'E5', beats: 0.45 },
+  { beat: 18.75, pitch: 'D5', beats: 0.55 },
+  { beat: 19.75, pitch: 'A4', beats: 1.1 },
 ];
 
 /** Long triangle pads — shift brighter as Meow City appears. */

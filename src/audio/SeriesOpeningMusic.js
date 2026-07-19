@@ -94,7 +94,7 @@ export function createSeriesOpeningMusic(score = buildSeriesOpeningMusicScore())
       case 'bass':
         return { attack: 0.035, peak: 0.88, sustain: 0.58 };
       case 'melody':
-        return { attack: 0.012, peak: 0.9, sustain: 0.68 };
+        return { attack: 0.02, peak: 0.78, sustain: 0.38 };
       default:
         return {};
     }
