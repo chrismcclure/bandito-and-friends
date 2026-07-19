@@ -1,5 +1,12 @@
 /** Episode 1 intro timing — used after series opening title flash. */
 
+import {
+  BALANCED_FIT_HEIGHT_COVERAGE,
+  BALANCED_FIT_OFFSET_X,
+  BALANCED_FIT_OFFSET_Y,
+  BALANCED_FIT_ZOOM,
+} from '../config.js';
+
 export const EPISODE_01_INTRO_TIMING = {
   /** Main title hold after crawl fade (seconds). */
   TITLE_HOLD: 2.5,
@@ -42,6 +49,8 @@ export const EPISODE_01_FINALS_BASE = '/images/episodes/episode-01/finals';
  * @property {number} [captionFontSize] Override default slide caption size (22px).
  * @property {number} [captionStrokeWidth] Override default caption stroke width.
  * @property {number} [captionWordWrapWidth] Override default caption wrap width.
+ * @property {number} [captionBottomOffset] Distance from bottom of stage to caption baseline.
+ * @property {boolean} [captionItalic] Render dialogue caption in italics (e.g. sound effects).
  * @property {string} [onScreenText]
  * @property {string} [subtitle]
  * @property {string} [label]
@@ -50,14 +59,52 @@ export const EPISODE_01_FINALS_BASE = '/images/episodes/episode-01/finals';
  * @property {boolean} [freezeAtEnd]
  * @property {string} [notes]
  * @property {'placeholder' | 'final'} [status]
- * @property {'cover' | 'contain'} [imageFit] Defaults to cover. Use contain for wide landscape finals.
+ * @property {'cover' | 'contain' | 'balanced'} [imageFit] Defaults to cover.
+ * @property {number} [imageFitCoverage] Balanced mode height fill (0–1). Defaults to config.
+ * @property {number} [imageFitZoom] Balanced mode zoom multiplier. Defaults to config.
+ * @property {number} [imageFitZoomStart] Animate zoom from this value over the shot (with imageFitZoomEnd).
+ * @property {number} [imageFitZoomEnd] Animate zoom to this value over the shot (with imageFitZoomStart).
+ * @property {number} [imageFitOffsetX] Balanced mode horizontal nudge in stage pixels.
+ * @property {number} [imageFitOffsetY] Balanced mode vertical nudge in stage pixels.
+ * @property {'left-to-right' | 'right-to-left' | 'left' | 'right'} [imageFitSlide] Pan across a wide balanced-fit image over the shot duration, or a limited slide when imageFitSlideAmount is set.
+ * @property {number} [imageFitSlideAmount] Fraction of stage width (0–1) for a limited slide with directions left or right.
+ * @property {'left' | 'center'} [imageFitSlideAlign] Start alignment for left-to-right pans. Use left to pin the image’s left edge to the stage.
+ * @property {number} [imageFitSlideCropStart] Fraction of image width cropped off-screen on the left at the start of a left-aligned pan.
+ * @property {number} [imageFitSlideCropEnd] Fraction of image width allowed off-screen on the right at the end of a left-aligned pan.
+ * @property {number} [imageFitSlideDuration] Seconds over which the image pan completes (defaults to shot duration).
+ * @property {number} [flashAt] Seconds into the shot when a white flash peaks (overrides transitionIn flash timing).
  */
 
 /**
- * Full-sequence beat #21 ("Bandito Team, assemble!") and onward use wide landscape
- * finals that should letterbox inside the 9:16 stage instead of cropping.
+ * Default framing for wide landscape finals on the 9:16 stage.
+ * Applied to assemble and shots from order-of-operations #22 onward.
+ * Override any field on an individual shot to tweak it.
  */
-export const EPISODE_01_CONTAIN_FIT_FROM_SHOT_INDEX = 9;
+export const EPISODE_01_LANDSCAPE_FIT = {
+  imageFit: 'balanced',
+  imageFitCoverage: BALANCED_FIT_HEIGHT_COVERAGE,
+  imageFitZoom: BALANCED_FIT_ZOOM,
+  imageFitOffsetX: BALANCED_FIT_OFFSET_X,
+  imageFitOffsetY: BALANCED_FIT_OFFSET_Y,
+};
+
+/** Episode shot index for 06c — Bandito Team, assemble! (order-of-operations #15). */
+export const EPISODE_01_ASSEMBLE_SHOT_INDEX = 9;
+
+/**
+ * First episode shot index for order-of-operations #22 (08d — Professor device).
+ * Shots at and after this index receive EPISODE_01_LANDSCAPE_FIT unless overridden.
+ */
+export const EPISODE_01_LANDSCAPE_FIT_FROM_SHOT_INDEX = 16;
+
+/** Shots between assemble and #22 still use balanced fit via global config defaults. */
+export const EPISODE_01_BALANCED_FIT_FROM_SHOT_INDEX = 10;
+
+/** First story beat after the episode card (05a — patrol). */
+export const EPISODE_01_STORY_START_SHOT_INDEX = 5;
+
+/** Default caption distance from the bottom of the stage for story dialogue. */
+export const EPISODE_01_CAPTION_BOTTOM_OFFSET = 17;
 
 /** @type {EpisodeShot[]} */
 const EPISODE_01_SHOTS_RAW = [
@@ -254,7 +301,7 @@ const EPISODE_01_SHOTS_RAW = [
     title: 'Team Hears the Call',
     type: 'image',
     assetPath: `${EPISODE_01_FINALS_BASE}/shot-06d-team-hears-call.png`,
-    duration: 2,
+    duration: 3,
     transitionIn: 'cut',
     transitionOut: 'cut',
     cameraMovement: 'static',
@@ -262,6 +309,13 @@ const EPISODE_01_SHOTS_RAW = [
     cameraScaleEnd: 1,
     cameraPositionStart: { x: 0, y: 0 },
     cameraPositionEnd: { x: 0, y: 0 },
+    imageFit: 'balanced',
+    imageFitCoverage: BALANCED_FIT_HEIGHT_COVERAGE,
+    imageFitZoom: BALANCED_FIT_ZOOM,
+    imageFitOffsetX: 0,
+    imageFitOffsetY: BALANCED_FIT_OFFSET_Y,
+    imageFitSlide: 'right-to-left',
+    dialogue: 'The team hears the call.',
     musicCue: 'tension-rise',
     visualEffect: 'none',
     status: 'final',
@@ -273,14 +327,23 @@ const EPISODE_01_SHOTS_RAW = [
     title: 'Team Arrival',
     type: 'image',
     assetPath: `${EPISODE_01_FINALS_BASE}/shot-07a-team-arrives.png`,
-    duration: 2,
+    duration: 3,
     transitionIn: 'cut',
     transitionOut: 'cut',
-    cameraMovement: 'pan-right',
+    cameraMovement: 'static',
     cameraScaleStart: 1,
-    cameraScaleEnd: 1.06,
-    cameraPositionStart: { x: -30, y: 0 },
-    cameraPositionEnd: { x: 10, y: 0 },
+    cameraScaleEnd: 1,
+    cameraPositionStart: { x: 0, y: 0 },
+    cameraPositionEnd: { x: 0, y: 0 },
+    imageFit: 'balanced',
+    imageFitCoverage: BALANCED_FIT_HEIGHT_COVERAGE,
+    imageFitZoom: 0.85,
+    imageFitOffsetX: 0,
+    imageFitOffsetY: BALANCED_FIT_OFFSET_Y,
+    imageFitSlide: 'left-to-right',
+    imageFitSlideAlign: 'left',
+    imageFitSlideCropStart: 0.1,
+    dialogue: 'The team assembles, ready to fight.',
     musicCue: 'battle-prep',
     visualEffect: 'none',
     status: 'final',
@@ -291,14 +354,19 @@ const EPISODE_01_SHOTS_RAW = [
     title: 'Professor Scans Sock',
     type: 'image',
     assetPath: `${EPISODE_01_FINALS_BASE}/shot-07b-professor-scans.png`,
-    duration: 2,
+    duration: 2.5,
     transitionIn: 'cut',
     transitionOut: 'cut',
-    cameraMovement: 'push-in',
+    cameraMovement: 'static',
     cameraScaleStart: 1,
-    cameraScaleEnd: 1.1,
+    cameraScaleEnd: 1,
     cameraPositionStart: { x: 0, y: 0 },
     cameraPositionEnd: { x: 0, y: 0 },
+    imageFit: 'balanced',
+    imageFitCoverage: BALANCED_FIT_HEIGHT_COVERAGE,
+    imageFitZoom: 0.70,
+    imageFitOffsetX: 0,
+    imageFitOffsetY: BALANCED_FIT_OFFSET_Y,
     dialogue: 'My instruments have never detected anything like this.',
     musicCue: 'battle-prep',
     visualEffect: 'none',
@@ -310,14 +378,23 @@ const EPISODE_01_SHOTS_RAW = [
     title: 'Attack Stances',
     type: 'image',
     assetPath: `${EPISODE_01_FINALS_BASE}/shot-07c-attack-stances.png`,
-    duration: 1.5,
+    duration: 2.5,
     transitionIn: 'cut',
     transitionOut: 'cut',
     cameraMovement: 'static',
-    cameraScaleStart: 1.04,
-    cameraScaleEnd: 1.04,
+    cameraScaleStart: 1,
+    cameraScaleEnd: 1,
     cameraPositionStart: { x: 0, y: 0 },
     cameraPositionEnd: { x: 0, y: 0 },
+    imageFit: 'balanced',
+    imageFitCoverage: BALANCED_FIT_HEIGHT_COVERAGE,
+    imageFitZoom: 0.63,
+    imageFitOffsetX: 0,
+    imageFitOffsetY: 0,
+    imageFitSlide: 'left-to-right',
+    imageFitSlideAlign: 'left',
+    imageFitSlideCropEnd: 0.05,
+    dialogue: 'Bandito and friends are ready to attack.',
     musicCue: 'battle-prep',
     visualEffect: 'none',
     status: 'final',
@@ -328,14 +405,22 @@ const EPISODE_01_SHOTS_RAW = [
     title: 'Girl Frederick Leaps',
     type: 'image',
     assetPath: `${EPISODE_01_FINALS_BASE}/shot-08b-girl-frederick-leap.png`,
-    duration: 1,
+    duration: 2.5,
     transitionIn: 'cut',
     transitionOut: 'cut',
-    cameraMovement: 'pan-up',
-    cameraScaleStart: 1.05,
-    cameraScaleEnd: 1.05,
-    cameraPositionStart: { x: 0, y: 24 },
-    cameraPositionEnd: { x: 0, y: -24 },
+    cameraMovement: 'static',
+    cameraScaleStart: 1,
+    cameraScaleEnd: 1,
+    cameraPositionStart: { x: 0, y: 0 },
+    cameraPositionEnd: { x: 0, y: 0 },
+    imageFit: 'balanced',
+    imageFitCoverage: BALANCED_FIT_HEIGHT_COVERAGE,
+    imageFitZoomStart: 0.76,
+    imageFitZoomEnd: 0.70,
+    imageFitOffsetX: 0,
+    imageFitOffsetY: 0,
+    dialogue:
+      'Girl Frederick attacks with her razor-sharp bicycle kicks.',
     musicCue: 'battle-montage',
     visualEffect: 'none',
     status: 'final',
@@ -346,14 +431,23 @@ const EPISODE_01_SHOTS_RAW = [
     title: 'Sock Monster Knockback',
     type: 'image',
     assetPath: `${EPISODE_01_FINALS_BASE}/shot-08c-sock-monster-knockback.png`,
-    duration: 1,
+    duration: 2,
     transitionIn: 'cut',
     transitionOut: 'cut',
-    cameraMovement: 'pan-left',
-    cameraScaleStart: 1.05,
-    cameraScaleEnd: 1.05,
-    cameraPositionStart: { x: 10, y: 0 },
-    cameraPositionEnd: { x: -16, y: 0 },
+    cameraMovement: 'static',
+    cameraScaleStart: 1,
+    cameraScaleEnd: 1,
+    cameraPositionStart: { x: 0, y: 0 },
+    cameraPositionEnd: { x: 0, y: 0 },
+    imageFit: 'balanced',
+    imageFitCoverage: BALANCED_FIT_HEIGHT_COVERAGE,
+    imageFitZoom: BALANCED_FIT_ZOOM,
+    imageFitOffsetX: 0,
+    imageFitOffsetY: BALANCED_FIT_OFFSET_Y,
+    imageFitSlide: 'left-to-right',
+    imageFitSlideAlign: 'left',
+    imageFitSlideCropEnd: 0.15,
+    dialogue: 'The sock monster deflects the kicks.',
     musicCue: 'battle-montage',
     visualEffect: 'shake',
     status: 'final',
@@ -364,14 +458,21 @@ const EPISODE_01_SHOTS_RAW = [
     title: 'Professor Device',
     type: 'image',
     assetPath: `${EPISODE_01_FINALS_BASE}/shot-08d-professor-device.png`,
-    duration: 1,
-    transitionIn: 'flash',
+    duration: 2.5,
+    transitionIn: 'cut',
     transitionOut: 'cut',
     cameraMovement: 'static',
-    cameraScaleStart: 1.08,
-    cameraScaleEnd: 1.08,
+    cameraScaleStart: 1,
+    cameraScaleEnd: 1,
     cameraPositionStart: { x: 0, y: 0 },
     cameraPositionEnd: { x: 0, y: 0 },
+    imageFitZoom: BALANCED_FIT_ZOOM * 0.85,
+    imageFitSlide: 'left-to-right',
+    imageFitSlideAlign: 'left',
+    imageFitSlideCropEnd: 0.1,
+    imageFitSlideDuration: 1.875,
+    flashAt: 1.875,
+    dialogue: 'Professor shoots his ray gun 9000 at the sock monster.',
     musicCue: 'battle-montage',
     visualEffect: 'none',
     status: 'final',
@@ -382,14 +483,18 @@ const EPISODE_01_SHOTS_RAW = [
     title: 'Sock Monster Deflect',
     type: 'image',
     assetPath: `${EPISODE_01_FINALS_BASE}/shot-08e-sock-monster-deflect.png`,
-    duration: 1,
+    duration: 1.5,
     transitionIn: 'cut',
     transitionOut: 'cut',
     cameraMovement: 'static',
-    cameraScaleStart: 1.06,
-    cameraScaleEnd: 1.06,
+    cameraScaleStart: 1,
+    cameraScaleEnd: 1,
     cameraPositionStart: { x: 0, y: 0 },
     cameraPositionEnd: { x: 0, y: 0 },
+    imageFitSlide: 'left-to-right',
+    imageFitSlideAlign: 'left',
+    imageFitSlideCropEnd: 0.15,
+    dialogue: 'The sock monster deflected the laser blasts.',
     musicCue: 'battle-montage',
     visualEffect: 'shake',
     status: 'final',
@@ -400,15 +505,16 @@ const EPISODE_01_SHOTS_RAW = [
     title: 'Team Shock',
     type: 'image',
     assetPath: `${EPISODE_01_FINALS_BASE}/shot-08g-team-shock.png`,
-    duration: 1.5,
+    duration: 2,
     transitionIn: 'cut',
     transitionOut: 'cut',
     cameraMovement: 'static',
-    cameraScaleStart: 1.06,
-    cameraScaleEnd: 1.06,
+    cameraScaleStart: 1,
+    cameraScaleEnd: 1,
     cameraPositionStart: { x: 0, y: 0 },
     cameraPositionEnd: { x: 0, y: 0 },
-    dialogue: "It's waiting for us to make the first mistake.",
+    imageFitZoom: BALANCED_FIT_ZOOM * 0.92,
+    dialogue: "Sir Sockington is too powerful!",
     musicCue: 'battle-montage',
     visualEffect: 'none',
     status: 'final',
@@ -419,7 +525,7 @@ const EPISODE_01_SHOTS_RAW = [
     title: 'Tortellini Has a Plan',
     type: 'image',
     assetPath: `${EPISODE_01_FINALS_BASE}/shot-09a-tortellini-has-a-plan.png`,
-    duration: 1,
+    duration: 2.1,
     transitionIn: 'cut',
     transitionOut: 'cut',
     cameraMovement: 'static',
@@ -427,6 +533,9 @@ const EPISODE_01_SHOTS_RAW = [
     cameraScaleEnd: 1,
     cameraPositionStart: { x: 0, y: 0 },
     cameraPositionEnd: { x: 0, y: 0 },
+    imageFitZoom: BALANCED_FIT_ZOOM * 0.77,
+    imageFitSlideCropStart: 0.05,
+    dialogue: "Tortellini announces her daring plan.",
     musicCue: 'battle-montage',
     visualEffect: 'none',
     status: 'final',
@@ -437,7 +546,7 @@ const EPISODE_01_SHOTS_RAW = [
     title: 'Bandito — Plan Too Dangerous',
     type: 'image',
     assetPath: `${EPISODE_01_FINALS_BASE}/shot-09b-bandito-plan-too-dangerous.png`,
-    duration: 1,
+    duration: 2,
     transitionIn: 'cut',
     transitionOut: 'cut',
     cameraMovement: 'static',
@@ -445,7 +554,8 @@ const EPISODE_01_SHOTS_RAW = [
     cameraScaleEnd: 1.06,
     cameraPositionStart: { x: 0, y: 0 },
     cameraPositionEnd: { x: 0, y: 0 },
-    dialogue: 'That plan is too dangerous!',
+    imageFitZoom: BALANCED_FIT_ZOOM * 0.85,
+    dialogue: 'No! There is no coming back from that.',
     musicCue: 'battle-montage',
     visualEffect: 'none',
     status: 'final',
@@ -464,6 +574,9 @@ const EPISODE_01_SHOTS_RAW = [
     cameraScaleEnd: 1,
     cameraPositionStart: { x: 0, y: 0 },
     cameraPositionEnd: { x: 0, y: 0 },
+    imageFitZoom: BALANCED_FIT_ZOOM * 0.85,
+    dialogue: 'deep gurgling noises',
+    captionItalic: true,
     musicCue: 'battle-montage',
     visualEffect: 'none',
     status: 'final',
@@ -674,11 +787,32 @@ const EPISODE_01_SHOTS_RAW = [
   },
 ];
 
-export const EPISODE_01_SHOTS = EPISODE_01_SHOTS_RAW.map((shot, index) =>
-  index >= EPISODE_01_CONTAIN_FIT_FROM_SHOT_INDEX && shot.type === 'image'
-    ? { ...shot, imageFit: 'contain' }
-    : shot,
-);
+export const EPISODE_01_SHOTS = EPISODE_01_SHOTS_RAW.map((shot, index) => {
+  if (shot.type !== 'image') {
+    return shot;
+  }
+
+  let next = shot;
+
+  if (
+    index === EPISODE_01_ASSEMBLE_SHOT_INDEX ||
+    index >= EPISODE_01_LANDSCAPE_FIT_FROM_SHOT_INDEX
+  ) {
+    next = { ...EPISODE_01_LANDSCAPE_FIT, ...shot };
+  } else if (index >= EPISODE_01_BALANCED_FIT_FROM_SHOT_INDEX) {
+    next = { ...shot, imageFit: 'balanced' };
+  }
+
+  if (index >= EPISODE_01_STORY_START_SHOT_INDEX && next.dialogue) {
+    next = {
+      ...next,
+      captionBottomOffset:
+        next.captionBottomOffset ?? EPISODE_01_CAPTION_BOTTOM_OFFSET,
+    };
+  }
+
+  return next;
+});
 
 export function getEpisodeOneTotalDuration(shots = EPISODE_01_SHOTS) {
   return shots.reduce((total, shot) => total + shot.duration, 0);

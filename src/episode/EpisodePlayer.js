@@ -6,11 +6,21 @@ import {
   Text,
   TextStyle,
 } from 'pixi.js';
-import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../config.js';
+import {
+  CANVAS_WIDTH,
+  CANVAS_HEIGHT,
+  BALANCED_FIT_HEIGHT_COVERAGE,
+  BALANCED_FIT_ZOOM,
+  BALANCED_FIT_OFFSET_X,
+  BALANCED_FIT_OFFSET_Y,
+} from '../config.js';
 import {
   clamp,
+  computeImageSlideX,
+  computeStaticImageCropX,
   getShakeOffset,
   interpolateCamera,
+  lerp,
 } from './camera.js';
 import { createEpisodeAudio } from './EpisodeAudio.js';
 import {
@@ -30,13 +40,59 @@ const SLIDE_TEXT_DEFAULTS = {
   bottomOffset: 64,
 };
 
+function resolveFitZoom(shot, localTime) {
+  const baseZoom = shot.imageFitZoom ?? BALANCED_FIT_ZOOM;
+
+  if (shot.imageFitZoomStart != null && shot.imageFitZoomEnd != null) {
+    const progress = clamp(localTime / shot.duration, 0, 1);
+    return lerp(shot.imageFitZoomStart, shot.imageFitZoomEnd, progress);
+  }
+
+  return baseZoom;
+}
+
 function configurePixelArtTexture(texture) {
-  texture.source.scaleMode = 'nearest';
   texture.source.autoGenerateMipmaps = false;
+}
+
+function applyTextureScaleMode(texture, displayScale, fitMode = 'cover') {
+  // Keep pixel art sharp once the image is large enough on the internal stage.
+  const mode =
+    fitMode === 'balanced' || displayScale >= 0.4 ? 'nearest' : 'linear';
+  texture.source.scaleMode = mode;
 
   if (texture.source.style) {
-    texture.source.style.scaleMode = 'nearest';
+    texture.source.style.scaleMode = mode;
   }
+}
+
+function computeImageFitScale(
+  texture,
+  fitMode = 'cover',
+  heightCoverage = BALANCED_FIT_HEIGHT_COVERAGE,
+  fitZoom = BALANCED_FIT_ZOOM,
+) {
+  const scaleX = CANVAS_WIDTH / texture.width;
+  const scaleY = CANVAS_HEIGHT / texture.height;
+  const imageAspect = texture.width / texture.height;
+  const stageAspect = CANVAS_WIDTH / CANVAS_HEIGHT;
+  const coverScale = Math.max(scaleX, scaleY);
+
+  if (fitMode === 'contain') {
+    return Math.min(scaleX, scaleY);
+  }
+
+  if (fitMode === 'balanced') {
+    if (imageAspect > stageAspect) {
+      const targetScale =
+        ((CANVAS_HEIGHT * heightCoverage) / texture.height) * fitZoom;
+      return Math.min(targetScale, coverScale);
+    }
+
+    return coverScale;
+  }
+
+  return coverScale;
 }
 
 function createCaptionText(content) {
@@ -143,16 +199,7 @@ function createTitleCardBackground() {
   return background;
 }
 
-/** @typedef {'cover' | 'contain'} EpisodeImageFit */
-
-function computeImageFitScale(texture, fitMode = 'cover') {
-  const scaleX = CANVAS_WIDTH / texture.width;
-  const scaleY = CANVAS_HEIGHT / texture.height;
-
-  return fitMode === 'contain'
-    ? Math.min(scaleX, scaleY)
-    : Math.max(scaleX, scaleY);
-}
+/** @typedef {'cover' | 'contain' | 'balanced'} EpisodeImageFit */
 
 function createSpeedLines() {
   const lines = new Graphics();
@@ -295,9 +342,16 @@ export async function createEpisodePlayer({
 
   function updateFlashOverlay(shot, localTime) {
     let alpha = 0;
+    const flashDecay = 0.12;
 
-    if (shot.transitionIn === 'flash' && localTime < 0.12) {
-      alpha = 1 - localTime / 0.12;
+    if (shot.flashAt != null) {
+      const flashStart = shot.flashAt;
+
+      if (localTime >= flashStart && localTime < flashStart + flashDecay) {
+        alpha = 1 - (localTime - flashStart) / flashDecay;
+      }
+    } else if (shot.transitionIn === 'flash' && localTime < flashDecay) {
+      alpha = 1 - localTime / flashDecay;
     }
 
     flashOverlay.alpha = alpha;
@@ -325,10 +379,14 @@ export async function createEpisodePlayer({
     if (caption) {
       captionText.style.fontSize =
         shot.captionFontSize ?? SLIDE_TEXT_DEFAULTS.fontSize;
+      captionText.style.fontStyle = shot.captionItalic ? 'italic' : 'normal';
       captionText.style.stroke.width =
         shot.captionStrokeWidth ?? SLIDE_TEXT_DEFAULTS.strokeWidth;
       captionText.style.wordWrapWidth =
         shot.captionWordWrapWidth ?? SLIDE_TEXT_DEFAULTS.wordWrapWidth;
+      captionText.y =
+        CANVAS_HEIGHT -
+        (shot.captionBottomOffset ?? SLIDE_TEXT_DEFAULTS.bottomOffset);
     }
 
     const showLabels = Boolean(shot.label || shot.subtitle);
@@ -369,21 +427,75 @@ export async function createEpisodePlayer({
     if (!isTitleCard && shot.assetPath && textures.has(shot.assetPath)) {
       const texture = textures.get(shot.assetPath);
       const fitMode = shot.imageFit ?? 'cover';
+      const heightCoverage =
+        shot.imageFitCoverage ?? BALANCED_FIT_HEIGHT_COVERAGE;
+      const fitZoom = resolveFitZoom(shot, localTime);
+      const fitOffsetX =
+        fitMode === 'balanced'
+          ? (shot.imageFitOffsetX ?? BALANCED_FIT_OFFSET_X)
+          : 0;
+      const fitOffsetY =
+        fitMode === 'balanced'
+          ? (shot.imageFitOffsetY ?? BALANCED_FIT_OFFSET_Y)
+          : 0;
 
       if (imageSprite.texture !== texture) {
         imageSprite.texture = texture;
       }
 
-      baseImageScale = computeImageFitScale(texture, fitMode);
-
+      baseImageScale = computeImageFitScale(
+        texture,
+        fitMode,
+        heightCoverage,
+        fitZoom,
+      );
       const cameraScale =
-        fitMode === 'contain' ? Math.min(camera.scale, 1) : camera.scale;
+        fitMode === 'balanced' || fitMode === 'contain'
+          ? Math.min(camera.scale, 1)
+          : camera.scale;
+      const displayScale = baseImageScale * cameraScale;
+      applyTextureScaleMode(texture, displayScale, fitMode);
 
       imageSprite.visible = true;
       imageSprite.alpha = getTransitionAlpha(shot, localTime, previousShot);
-      imageSprite.scale.set(baseImageScale * cameraScale);
-      imageSprite.x = CANVAS_WIDTH / 2 + camera.x + shake.x;
-      imageSprite.y = CANVAS_HEIGHT / 2 + camera.y + shake.y;
+      imageSprite.scale.set(displayScale);
+
+      const displayWidth = texture.width * displayScale;
+      if (shot.imageFitSlide) {
+        imageSprite.x =
+          computeImageSlideX(
+            shot.imageFitSlide,
+            displayWidth,
+            localTime,
+            shot.duration,
+            {
+              slideAmount: shot.imageFitSlideAmount,
+              slideAlign: shot.imageFitSlideAlign,
+              slideCropStart: shot.imageFitSlideCropStart,
+              slideCropEnd: shot.imageFitSlideCropEnd,
+              slideDuration: shot.imageFitSlideDuration,
+            },
+          ) + shake.x;
+        imageSprite.y = CANVAS_HEIGHT / 2 + shake.y + fitOffsetY;
+      } else if (
+        (shot.imageFitSlideCropEnd != null && shot.imageFitSlideCropEnd > 0) ||
+        (shot.imageFitSlideCropStart != null && shot.imageFitSlideCropStart > 0)
+      ) {
+        imageSprite.x =
+          computeStaticImageCropX(displayWidth, {
+            cropStart: shot.imageFitSlideCropStart,
+            cropEnd: shot.imageFitSlideCropEnd,
+          }) +
+          shake.x +
+          fitOffsetX;
+        imageSprite.y =
+          CANVAS_HEIGHT / 2 + camera.y + shake.y + fitOffsetY;
+      } else {
+        imageSprite.x =
+          CANVAS_WIDTH / 2 + camera.x + shake.x + fitOffsetX;
+        imageSprite.y =
+          CANVAS_HEIGHT / 2 + camera.y + shake.y + fitOffsetY;
+      }
     } else {
       imageSprite.visible = false;
     }

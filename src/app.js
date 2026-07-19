@@ -36,9 +36,10 @@ function fitCanvasToWindow(canvas) {
     availableWidth / CANVAS_WIDTH,
     availableHeight / CANVAS_HEIGHT,
   );
+  const integerScale = Math.max(1, Math.floor(scale));
 
-  canvas.style.width = `${Math.floor(CANVAS_WIDTH * scale)}px`;
-  canvas.style.height = `${Math.floor(CANVAS_HEIGHT * scale)}px`;
+  canvas.style.width = `${CANVAS_WIDTH * integerScale}px`;
+  canvas.style.height = `${CANVAS_HEIGHT * integerScale}px`;
 }
 
 async function createStage(container) {

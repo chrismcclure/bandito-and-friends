@@ -135,15 +135,15 @@ Status key: `[ ]` placeholder · `[x]` final art approved
 | [x] | 05c | `shot-05c-bandito-finds-sock.png` | 2.5s | Is it a regular sock or could it possibly be... |
 | [x] | 06a | `shot-06a-sock-reveal.png` | 3.0s | Sir Sockington... the sock monster. |
 | [x] | 06c | `shot-06c-bandito-assemble.png` | 1.5s | Bandito Team, assemble! |
-| [x] | 06d | `shot-06d-team-hears-call.png` | 2.0s | — |
+| [x] | 06d | `shot-06d-team-hears-call.png` | 2.5s | The team hears the call. |
 
 ### Scene 7 — Team Arrival
 
 | Status | ID | File | Duration | Dialogue |
 |--------|----|------|----------|----------|
-| [x] | 07a | `shot-07a-team-arrives.png` | 2.0s | — |
+| [x] | 07a | `shot-07a-team-arrives.png` | 2.5s | The team assembles, ready to fight. |
 | [x] | 07b | `shot-07b-professor-scans.png` | 2.0s | My instruments have never detected anything like this. |
-| [x] | 07c | `shot-07c-attack-stances.png` | 1.5s | — |
+| [x] | 07c | `shot-07c-attack-stances.png` | 2.5s | Bandito and friends are ready to attack. |
 
 ### Scene 8 — The Battle
 
