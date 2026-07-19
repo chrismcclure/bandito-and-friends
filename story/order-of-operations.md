@@ -86,22 +86,20 @@ Config: `src/data/episode-01-shots.js` · Preview mode: `?scene=episode`
 | 21 | 08c | Sock monster knockback | Final | [Open shot 15](http://localhost:5173/?scene=episode&shot=15) |
 | 22 | 08d | Professor device | Final | [Open shot 16](http://localhost:5173/?scene=episode&shot=16) |
 | 23 | 08e | Sock monster deflect | Final | [Open shot 17](http://localhost:5173/?scene=episode&shot=17) |
-| 24 | 08f | Sock waiting | Placeholder | [Open shot 18](http://localhost:5173/?scene=episode&shot=18) |
-| 25 | 08g | Team shock | Placeholder | [Open shot 19](http://localhost:5173/?scene=episode&shot=19) |
-| 26 | 09a | Tortellini — wall | Placeholder | [Open shot 20](http://localhost:5173/?scene=episode&shot=20) |
-| 27 | 09b | Tortellini — paw | Placeholder | [Open shot 21](http://localhost:5173/?scene=episode&shot=21) |
-| 28 | 09c | Bandito admires | Placeholder | [Open shot 22](http://localhost:5173/?scene=episode&shot=22) |
-| 29 | 10a | Greatest threat | Placeholder | [Open shot 23](http://localhost:5173/?scene=episode&shot=23) |
-| 30 | 10b | Tortellini walks | Placeholder | [Open shot 24](http://localhost:5173/?scene=episode&shot=24) |
-| 31 | 10c | Squish | Placeholder | [Open shot 25](http://localhost:5173/?scene=episode&shot=25) |
-| 32 | 10d | Monster defeated | Placeholder | [Open shot 26](http://localhost:5173/?scene=episode&shot=26) |
-| 33 | 10e | Celebration | Placeholder | [Open shot 27](http://localhost:5173/?scene=episode&shot=27) |
-| 34 | 11a | Human view | Placeholder | [Open shot 28](http://localhost:5173/?scene=episode&shot=28) |
-| 35 | 11b | Human legs | Placeholder | [Open shot 29](http://localhost:5173/?scene=episode&shot=29) |
-| 36 | 11c | Sock picked up | Placeholder | [Open shot 30](http://localhost:5173/?scene=episode&shot=30) |
-| 37 | 12a | Heroic return | Placeholder | [Open shot 31](http://localhost:5173/?scene=episode&shot=31) |
-| 38 | 12b | Freeze frame | Placeholder | [Open shot 32](http://localhost:5173/?scene=episode&shot=32) |
-| 39 | 12c | Closing card | Placeholder | [Open shot 33](http://localhost:5173/?scene=episode&shot=33) |
+| 24 | 08g | Bandito shock | Final | [Open shot 18](http://localhost:5173/?scene=episode&shot=18) |
+| 25 | 09a | Tortellini has a plan | Final | [Open shot 19](http://localhost:5173/?scene=episode&shot=19) |
+| 26 | 09b | Bandito — plan too dangerous | Final | [Open shot 20](http://localhost:5173/?scene=episode&shot=20) |
+| 27 | 09c | Tortellini starts to fall | Final | [Open shot 21](http://localhost:5173/?scene=episode&shot=21) |
+| 28 | 10a | Giant shadow over sock monster | Final | [Open shot 22](http://localhost:5173/?scene=episode&shot=22) |
+| 29 | 10c | Squish | Final | [Open shot 23](http://localhost:5173/?scene=episode&shot=23) |
+| 30 | 10e | Celebration | Final | [Open shot 24](http://localhost:5173/?scene=episode&shot=24) |
+| 31 | 11a | Human view | Final | [Open shot 25](http://localhost:5173/?scene=episode&shot=25) |
+| 32 | 11b | Human over-the-shoulder | Final | [Open shot 26](http://localhost:5173/?scene=episode&shot=26) |
+| 33 | 12a | Heroic celebration | Final | [Open shot 27](http://localhost:5173/?scene=episode&shot=27) |
+| 34 | 12b | Celebration freeze frame | Final | [Open shot 28](http://localhost:5173/?scene=episode&shot=28) |
+| 35 | 12c | Credits | Final | [Open shot 29](http://localhost:5173/?scene=episode&shot=29) |
+| 36 | 12d | Tools we used | Final | [Open shot 30](http://localhost:5173/?scene=episode&shot=30) |
+| 37 | 12e | Thanks for watching | Final | [Open shot 31](http://localhost:5173/?scene=episode&shot=31) |
 
 ---
 
@@ -133,5 +131,5 @@ Then mark **Final** in this file and in `story/episode-01-production.md`.
   ↓   White flash
 6     Bandito and Friends title
 7–10  Meet the Team + Episode card
-11–39 Story (patrol → sock → battle → human reveal → victory)
+11–37 Story (patrol → sock → battle → human reveal → victory)
 ```

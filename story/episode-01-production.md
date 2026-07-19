@@ -153,42 +153,40 @@ Status key: `[ ]` placeholder · `[x]` final art approved
 | [x] | 08c | `shot-08c-sock-monster-knockback.png` | 1.0s | — |
 | [x] | 08d | `shot-08d-professor-device.png` | 1.0s | Flash in |
 | [x] | 08e | `shot-08e-sock-monster-deflect.png` | 1.0s | — |
-| [ ] | 08f | `shot-08f-sock-waiting.svg` | 1.0s | Slow zoom |
-| [ ] | 08g | `shot-08g-team-shock.svg` | 1.5s | It's waiting for us to make the first mistake. |
+| [x] | 08g | `shot-08g-team-shock.png` | 1.5s | It's waiting for us to make the first mistake. |
 
 ### Scene 9 — Tortellini Running Gag
 
 | Status | ID | File | Duration | Dialogue |
 |--------|----|------|----------|----------|
-| [ ] | 09a | `shot-09a-tortellini-wall.svg` | 1.0s | — |
-| [ ] | 09b | `shot-09b-tortellini-paw.svg` | 1.0s | — |
-| [ ] | 09c | `shot-09c-bandito-admires.svg` | 1.5s | Excellent thinking, Tortellini. |
+| [x] | 09a | `shot-09a-tortellini-has-a-plan.png` | 1.0s | — |
+| [x] | 09b | `shot-09b-bandito-plan-too-dangerous.png` | 1.0s | That plan is too dangerous! |
+| [x] | 09c | `shot-09c-tortellini-starts-to-fall.png` | 1.0s | — (no sound) |
 
 ### Scene 10 — Final Attack
 
 | Status | ID | File | Duration | Dialogue / FX |
 |--------|----|------|----------|---------------|
-| [ ] | 10a | `shot-10a-team-worried.svg` | 1.5s | We may be facing the greatest threat Meow City has ever known. |
-| [ ] | 10b | `shot-10b-tortellini-walks.svg` | 1.5s | — |
-| [ ] | 10c | `shot-10c-tortellini-squish.svg` | 1.0s | SQUISH + screen shake |
-| [ ] | 10d | `shot-10d-monster-defeated.svg` | 1.5s | The monster has been defeated! |
-| [ ] | 10e | `shot-10e-team-celebrates.svg` | 1.5s | — |
+| [x] | 10a | `shot-10a-giant-shadow-over-sock-monster.png` | 1.5s | — |
+| [x] | 10c | `shot-10c-tortellini-squish.png` | 1.0s | Screen shake |
+| [x] | 10e | `shot-10e-celebration.png` | 1.5s | — |
 
 ### Scene 11 — Human Reality
 
 | Status | ID | File | Duration | Dialogue |
 |--------|----|------|----------|----------|
-| [ ] | 11a | `shot-11a-human-room.svg` | 1.5s | — |
-| [ ] | 11b | `shot-11b-human-legs.svg` | 2.0s | Audrey, did you leave your sock in the living room again? |
-| [ ] | 11c | `shot-11c-human-picks-sock.svg` | 1.5s | — |
+| [x] | 11a | `shot-11a-human-view.png` | 1.5s | — |
+| [x] | 11b | `shot-11b-human-over-shoulder.png` | 2.0s | Audrey, did you leave your sock in the living room again? |
 
 ### Scene 12 — Heroic Ending
 
 | Status | ID | File | Duration | Dialogue / Notes |
 |--------|----|------|----------|-------------------|
-| [ ] | 12a | `shot-12a-heroic-return.svg` | 2.0s | Meow City is safe once again. |
-| [ ] | 12b | `shot-12b-freeze-frame.svg` | 2.0s | Freeze at end |
-| [ ] | 12c | `shot-12c-closing-card.svg` | 2.0s | BANDITO AND FRIENDS / MEOW CITY IS SAFE |
+| [x] | 12a | `shot-12a-heroic-celebration.png` | 2.0s | Meow City is safe once again. |
+| [x] | 12b | `shot-12b-celebration-freeze-frame.png` | 2.0s | Freeze at end |
+| [x] | 12c | `shot-12c-credits.png` | 2.5s | Chris & Audrey — creators |
+| [x] | 12d | `shot-12d-tools-used.png` | 2.5s | — |
+| [x] | 12e | `shot-12e-thanks-for-watching.png` | 3.0s | Hey, thanks for watching. If you want more, let us know. |
 
 ---
 
@@ -202,8 +200,8 @@ Status key: `[ ]` placeholder · `[x]` final art approved
 | `battle-prep` | 07a–07c |
 | `battle-montage` | 08b–09c |
 | `battle-peak` | 10a–10c |
-| `victory` | 10d–10e, 12a–12c |
-| `reality-shift` | 11a–11c |
+| `victory` | 10e, 12a–12e |
+| `reality-shift` | 11a–11b |
 
 Existing intro music plays during the main title and Meet the Team, ending at the episode card. Story music is labeled for future implementation.
 
