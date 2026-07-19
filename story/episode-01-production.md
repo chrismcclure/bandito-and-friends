@@ -177,6 +177,7 @@ Status key: `[ ]` placeholder · `[x]` final art approved
 |--------|----|------|----------|----------|
 | [x] | 11a | `shot-11a-human-view.png` | 1.5s | — |
 | [x] | 11b | `shot-11b-human-over-shoulder.png` | 2.0s | Audrey, did you leave your sock in the living room again? |
+| [x] | 11c | `shot-11c-human-grabs-sock.png` | 1.5s | — |
 
 ### Scene 12 — Heroic Ending
 
@@ -201,7 +202,7 @@ Status key: `[ ]` placeholder · `[x]` final art approved
 | `battle-montage` | 08b–09c |
 | `battle-peak` | 10a–10c |
 | `victory` | 10e, 12a–12e |
-| `reality-shift` | 11a–11b |
+| `reality-shift` | 11a–11c |
 
 Existing intro music plays during the main title and Meet the Team, ending at the episode card. Story music is labeled for future implementation.
 

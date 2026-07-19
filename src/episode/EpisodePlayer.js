@@ -143,6 +143,17 @@ function createTitleCardBackground() {
   return background;
 }
 
+/** @typedef {'cover' | 'contain'} EpisodeImageFit */
+
+function computeImageFitScale(texture, fitMode = 'cover') {
+  const scaleX = CANVAS_WIDTH / texture.width;
+  const scaleY = CANVAS_HEIGHT / texture.height;
+
+  return fitMode === 'contain'
+    ? Math.min(scaleX, scaleY)
+    : Math.max(scaleX, scaleY);
+}
+
 function createSpeedLines() {
   const lines = new Graphics();
   lines.visible = false;
@@ -185,7 +196,7 @@ export async function createEpisodePlayer({
 
   const titleCardBackground = createTitleCardBackground();
 
-  let baseCoverScale = 1;
+  let baseImageScale = 1;
 
   const speedLines = createSpeedLines();
   const captionText = createCaptionText('');
@@ -357,17 +368,20 @@ export async function createEpisodePlayer({
 
     if (!isTitleCard && shot.assetPath && textures.has(shot.assetPath)) {
       const texture = textures.get(shot.assetPath);
+      const fitMode = shot.imageFit ?? 'cover';
+
       if (imageSprite.texture !== texture) {
         imageSprite.texture = texture;
-        baseCoverScale = Math.max(
-          CANVAS_WIDTH / texture.width,
-          CANVAS_HEIGHT / texture.height,
-        );
       }
+
+      baseImageScale = computeImageFitScale(texture, fitMode);
+
+      const cameraScale =
+        fitMode === 'contain' ? Math.min(camera.scale, 1) : camera.scale;
 
       imageSprite.visible = true;
       imageSprite.alpha = getTransitionAlpha(shot, localTime, previousShot);
-      imageSprite.scale.set(baseCoverScale * camera.scale);
+      imageSprite.scale.set(baseImageScale * cameraScale);
       imageSprite.x = CANVAS_WIDTH / 2 + camera.x + shake.x;
       imageSprite.y = CANVAS_HEIGHT / 2 + camera.y + shake.y;
     } else {

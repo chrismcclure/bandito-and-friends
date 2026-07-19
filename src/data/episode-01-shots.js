@@ -50,10 +50,17 @@ export const EPISODE_01_FINALS_BASE = '/images/episodes/episode-01/finals';
  * @property {boolean} [freezeAtEnd]
  * @property {string} [notes]
  * @property {'placeholder' | 'final'} [status]
+ * @property {'cover' | 'contain'} [imageFit] Defaults to cover. Use contain for wide landscape finals.
  */
 
+/**
+ * Full-sequence beat #21 ("Bandito Team, assemble!") and onward use wide landscape
+ * finals that should letterbox inside the 9:16 stage instead of cropping.
+ */
+export const EPISODE_01_CONTAIN_FIT_FROM_SHOT_INDEX = 9;
+
 /** @type {EpisodeShot[]} */
-export const EPISODE_01_SHOTS = [
+const EPISODE_01_SHOTS_RAW = [
   {
     id: '03a-bandito-leader',
     title: 'Bandito — The Leader',
@@ -554,6 +561,24 @@ export const EPISODE_01_SHOTS = [
     notes: 'Human over-the-shoulder view of the four cats — Tortellini with stuffed sock',
   },
   {
+    id: '11c-human-grabs-sock',
+    title: 'Human Grabs the Sock',
+    type: 'image',
+    assetPath: `${EPISODE_01_FINALS_BASE}/shot-11c-human-grabs-sock.png`,
+    duration: 1.5,
+    transitionIn: 'cut',
+    transitionOut: 'cut',
+    cameraMovement: 'static',
+    cameraScaleStart: 1,
+    cameraScaleEnd: 1,
+    cameraPositionStart: { x: 0, y: 0 },
+    cameraPositionEnd: { x: 0, y: 0 },
+    musicCue: 'reality-shift',
+    visualEffect: 'none',
+    status: 'final',
+    notes: 'Human hand pulls the sock away from Tortellini — living room, four cats watching',
+  },
+  {
     id: '12a-heroic-celebration',
     title: 'Heroic Celebration',
     type: 'image',
@@ -648,6 +673,12 @@ export const EPISODE_01_SHOTS = [
     notes: 'Full group shot — Chris, Audrey, and the whole team in Meow City',
   },
 ];
+
+export const EPISODE_01_SHOTS = EPISODE_01_SHOTS_RAW.map((shot, index) =>
+  index >= EPISODE_01_CONTAIN_FIT_FROM_SHOT_INDEX && shot.type === 'image'
+    ? { ...shot, imageFit: 'contain' }
+    : shot,
+);
 
 export function getEpisodeOneTotalDuration(shots = EPISODE_01_SHOTS) {
   return shots.reduce((total, shot) => total + shot.duration, 0);

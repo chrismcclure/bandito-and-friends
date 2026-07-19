@@ -95,11 +95,12 @@ Config: `src/data/episode-01-shots.js` · Preview mode: `?scene=episode`
 | 30 | 10e | Celebration | Final | [Open shot 24](http://localhost:5173/?scene=episode&shot=24) |
 | 31 | 11a | Human view | Final | [Open shot 25](http://localhost:5173/?scene=episode&shot=25) |
 | 32 | 11b | Human over-the-shoulder | Final | [Open shot 26](http://localhost:5173/?scene=episode&shot=26) |
-| 33 | 12a | Heroic celebration | Final | [Open shot 27](http://localhost:5173/?scene=episode&shot=27) |
-| 34 | 12b | Celebration freeze frame | Final | [Open shot 28](http://localhost:5173/?scene=episode&shot=28) |
-| 35 | 12c | Credits | Final | [Open shot 29](http://localhost:5173/?scene=episode&shot=29) |
-| 36 | 12d | Tools we used | Final | [Open shot 30](http://localhost:5173/?scene=episode&shot=30) |
-| 37 | 12e | Thanks for watching | Final | [Open shot 31](http://localhost:5173/?scene=episode&shot=31) |
+| 33 | 11c | Human grabs the sock | Final | [Open shot 27](http://localhost:5173/?scene=episode&shot=27) |
+| 34 | 12a | Heroic celebration | Final | [Open shot 28](http://localhost:5173/?scene=episode&shot=28) |
+| 35 | 12b | Celebration freeze frame | Final | [Open shot 29](http://localhost:5173/?scene=episode&shot=29) |
+| 36 | 12c | Credits | Final | [Open shot 30](http://localhost:5173/?scene=episode&shot=30) |
+| 37 | 12d | Tools we used | Final | [Open shot 31](http://localhost:5173/?scene=episode&shot=31) |
+| 38 | 12e | Thanks for watching | Final | [Open shot 32](http://localhost:5173/?scene=episode&shot=32) |
 
 ---
 
@@ -131,5 +132,5 @@ Then mark **Final** in this file and in `story/episode-01-production.md`.
   ↓   White flash
 6     Bandito and Friends title
 7–10  Meet the Team + Episode card
-11–37 Story (patrol → sock → battle → human reveal → victory)
+11–38 Story (patrol → sock → battle → human reveal → victory)
 ```
