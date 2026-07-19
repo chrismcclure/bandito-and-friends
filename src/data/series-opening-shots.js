@@ -15,7 +15,7 @@ export const SERIES_OPENING_SHOTS = [
     assetPath: `${SERIES_OPENING_FINALS_BASE}/shot-01-ordinary-living-room.png`,
     finalAssetPath: `${SERIES_OPENING_FINALS_BASE}/shot-01-ordinary-living-room.png`,
     duration: 2,
-    transitionIn: 'fade',
+    transitionIn: 'cut',
     transitionOut: 'cut',
     cameraMovement: 'static',
     cameraScaleStart: 1,

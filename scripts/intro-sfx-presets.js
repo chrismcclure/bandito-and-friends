@@ -146,6 +146,40 @@ export const INTRO_SFX_PRESETS = [
     }),
   },
   {
+    filename: 'menu-cursor.wav',
+    purpose:
+      'NES title menu cursor movement. Short square-wave blip when the selection moves.',
+    params: preset({
+      wave_type: 0,
+      p_base_freq: 0.58,
+      p_freq_ramp: 0.06,
+      p_env_sustain: 0.035,
+      p_env_decay: 0.07,
+      p_env_punch: 0.22,
+      p_lpf_freq: 0.92,
+      p_hpf_freq: 0.1,
+      sound_vol: 0.24,
+    }),
+  },
+  {
+    filename: 'start-selected.wav',
+    purpose:
+      'NES Start confirmation. Stronger than cursor blip — the adventure officially begins.',
+    params: preset({
+      wave_type: 0,
+      p_base_freq: 0.32,
+      p_freq_ramp: 0.24,
+      p_arp_mod: 0.38,
+      p_arp_speed: 0.88,
+      p_env_sustain: 0.24,
+      p_env_decay: 0.42,
+      p_env_punch: 0.55,
+      p_lpf_freq: 0.72,
+      p_hpf_freq: 0,
+      sound_vol: 0.34,
+    }),
+  },
+  {
     filename: 'intro-end.wav',
     purpose: 'Small hopeful ending cue before cutting to black.',
     params: preset({

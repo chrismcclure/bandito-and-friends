@@ -15,4 +15,4 @@ export function getDevShotIndex() {
   return Number.isInteger(index) && index >= 0 ? index : null;
 }
 
-/** Supported scene values: opening, crawl, episode, threat-board */
+/** Supported scene values: title-menu, opening, crawl, episode, threat-board */

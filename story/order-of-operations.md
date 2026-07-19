@@ -12,6 +12,26 @@ Use **`?shot=N`** links to jump directly to a shot (0-based index). The shot loo
 
 ---
 
+## NES title menu
+
+Config: `src/data/title-menu-timing.js` · Preview mode: `?scene=title-menu`
+
+| Image | Asset | Status |
+|-------|-------|--------|
+| 1 — PRESS START selected | `public/images/title/title-menu-press-start-selected.png` | **Final** |
+| 2 — Run Away selected | `public/images/title/title-menu-run-away-selected.png` | **Final** |
+
+| Step | State | Duration | Audio |
+|------|-------|----------|-------|
+| 1 | PRESS START selected | 1.05s | — |
+| 2 | Run Away selected | 0.525s | Cursor blip (on switch) |
+| 3 | PRESS START selected | 0.75s | Cursor blip (on switch) |
+| 4 | White flash → living room | ~3 frames + 0.55s slide | Start confirmation, then NES handoff |
+
+[▶ Preview title menu only](http://localhost:5173/?scene=title-menu)
+
+---
+
 ## Series opening — ordinary house → Meow City
 
 Config: `src/data/series-opening-shots.js` · Preview mode: `?scene=opening`
@@ -104,6 +124,7 @@ Then mark **Final** in this file and in `story/episode-01-production.md`.
 ## Sequence at a glance
 
 ```
+0     NES title menu (cursor blips → Start → white flash)
 1–5   Series opening (house → transform → Meow City → establishing → watch)
   ↓   White flash
 6     Bandito and Friends title

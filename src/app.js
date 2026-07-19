@@ -3,10 +3,12 @@ import { CANVAS_WIDTH, CANVAS_HEIGHT } from './config.js';
 import { createIntroScene } from './scenes/IntroScene.js';
 import { createOpeningCrawlScene } from './scenes/OpeningCrawlScene.js';
 import { createSeriesOpeningScene } from './scenes/SeriesOpeningScene.js';
+import { createTitleMenuScene } from './scenes/TitleMenuScene.js';
 import { createThreatBoardPreviewScene } from './scenes/ThreatBoardPreviewScene.js';
 import { createEpisodePlayer } from './episode/EpisodePlayer.js';
 import { createEpisodeDevControls } from './dev/EpisodeDevControls.js';
 import { getDevSceneId, getDevShotIndex } from './dev/sceneParam.js';
+import { createNesHandoffTransition } from './transitions/nesHandoffTransition.js';
 
 const FRAME_BORDER = 1;
 
@@ -222,7 +224,42 @@ async function runEpisodeOnly(app, frame) {
   });
 }
 
+async function runTitleMenuOnly(app, frame) {
+  const titleMenu = await createTitleMenuScene();
+  titleMenu.container.visible = false;
+  app.stage.addChild(titleMenu.container);
+
+  let phase = 'idle';
+
+  const begin = () => {
+    if (phase !== 'idle') {
+      return;
+    }
+
+    phase = 'title-menu';
+    frame.classList.remove('awaiting-start');
+    titleMenu.container.visible = true;
+    titleMenu.unlockAudio();
+    titleMenu.start();
+  };
+
+  frame.classList.add('awaiting-start');
+  frame.addEventListener('pointerdown', begin);
+
+  app.ticker.add((ticker) => {
+    const delta = ticker.deltaMS / 1000;
+
+    if (phase === 'idle') {
+      titleMenu.update(0);
+      return;
+    }
+
+    titleMenu.update(delta);
+  });
+}
+
 async function runOpeningSequence(app, frame) {
+  const titleMenu = await createTitleMenuScene();
   const seriesOpening = await createSeriesOpeningScene();
   const introScene = await createIntroScene();
   const episodePlayer = await createEpisodePlayer();
@@ -230,15 +267,29 @@ async function runOpeningSequence(app, frame) {
   introScene.container.visible = false;
   episodePlayer.container.visible = false;
   seriesOpening.container.visible = false;
+  titleMenu.container.visible = false;
   app.stage.addChild(
     introScene.container,
     episodePlayer.container,
     seriesOpening.container,
+    titleMenu.container,
   );
   attachEpisodeDevControls(frame, episodePlayer);
 
   let phase = 'idle';
   let introElapsed = 0;
+
+  const handoff = createNesHandoffTransition({
+    incoming: seriesOpening.container,
+    outgoing: titleMenu.container,
+  });
+
+  titleMenu.setHandoffHandler(() => {
+    phase = 'opening';
+    seriesOpening.container.visible = true;
+    seriesOpening.start();
+    handoff.start();
+  });
 
   seriesOpening.setCompleteHandler(() => {
     phase = 'title';
@@ -261,12 +312,13 @@ async function runOpeningSequence(app, frame) {
       return;
     }
 
-    phase = 'opening';
+    phase = 'title-menu';
     frame.classList.remove('awaiting-start');
     introScene.unlockAudio();
     episodePlayer.unlockAudio();
-    seriesOpening.container.visible = true;
-    seriesOpening.start();
+    titleMenu.unlockAudio();
+    titleMenu.container.visible = true;
+    titleMenu.start();
   };
 
   frame.classList.add('awaiting-start');
@@ -276,14 +328,29 @@ async function runOpeningSequence(app, frame) {
     const delta = ticker.deltaMS / 1000;
 
     if (phase === 'idle') {
+      titleMenu.update(0);
       seriesOpening.update(0);
       introScene.update(0);
       episodePlayer.update(0);
       return;
     }
 
+    if (phase === 'title-menu') {
+      titleMenu.update(delta);
+      return;
+    }
+
     if (phase === 'opening') {
       seriesOpening.update(delta);
+      titleMenu.update(delta);
+
+      if (handoff.isActive()) {
+        if (handoff.update(delta)) {
+          titleMenu.container.visible = false;
+        }
+      } else if (titleMenu.isComplete()) {
+        titleMenu.container.visible = false;
+      }
       return;
     }
 
@@ -323,6 +390,11 @@ export async function createApp(container) {
 
   if (devScene === 'crawl') {
     await runOpeningCrawlOnly(app, frame);
+    return app;
+  }
+
+  if (devScene === 'title-menu') {
+    await runTitleMenuOnly(app, frame);
     return app;
   }
 
