@@ -126,7 +126,7 @@ export function createIntroMusic(score = buildIntroMusicScore()) {
     }
   }
 
-  function beginLoop(generation) {
+  function beginLoop(generation, loop = true) {
     if (!isPlaying || generation !== loopGeneration) {
       return;
     }
@@ -135,13 +135,17 @@ export function createIntroMusic(score = buildIntroMusicScore()) {
     scheduleNotes(loopStart);
     nextLoopAt = loopStart + score.config.loopDuration;
 
+    if (!loop) {
+      return;
+    }
+
     loopTimer = setTimeout(
-      () => beginLoop(generation),
+      () => beginLoop(generation, loop),
       score.config.loopDuration * 1000,
     );
   }
 
-  async function play() {
+  async function play({ startOffsetSec = 0, loop = true } = {}) {
     const ctx = ensureContext();
 
     if (ctx.state === 'suspended') {
@@ -157,8 +161,8 @@ export function createIntroMusic(score = buildIntroMusicScore()) {
       loopTimer = null;
     }
 
-    nextLoopAt = ctx.currentTime + 0.05;
-    beginLoop(generation);
+    nextLoopAt = ctx.currentTime + 0.05 - startOffsetSec;
+    beginLoop(generation, loop);
   }
 
   function stop() {

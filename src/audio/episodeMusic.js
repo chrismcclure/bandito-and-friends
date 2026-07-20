@@ -1,12 +1,17 @@
 import { createIntroMusic } from './IntroMusic.js';
 import { buildAdventureCalmMusicScore } from './adventureCalmMusicScore.js';
 import {
+  buildIntroMusicScore,
+} from './introMusicScore.js';
+import {
   createEpisodeMusicFileLoop,
   EPISODE_MUSIC_FILE_VOLUME,
 } from './episodeMusicFileLoop.js';
 
 const PROCEDURAL_CUES = {
   'adventure-calm': () => createIntroMusic(buildAdventureCalmMusicScore()),
+  /** Credits callback — same score as IntroScene, but not `intro-theme` (that label is IntroScene-only). */
+  'team-theme-credits': () => createIntroMusic(buildIntroMusicScore()),
 };
 
 const FILE_CUES = {
