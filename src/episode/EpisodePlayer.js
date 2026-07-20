@@ -369,6 +369,8 @@ export async function createEpisodePlayer({
   let loopCurrentShot = false;
   let manualShotIndex = null;
   let lastSfxShotIndex = -1;
+  let lastMusicCue = null;
+  const timedSfxTriggered = new Set();
   let onComplete = null;
   let onShotChange = null;
 
@@ -640,6 +642,17 @@ export async function createEpisodePlayer({
     }
   }
 
+  function syncShotMusic(shot) {
+    const cue = shot.musicCue ?? null;
+
+    if (cue === lastMusicCue) {
+      return;
+    }
+
+    lastMusicCue = cue;
+    episodeAudio.syncMusicCue(cue);
+  }
+
   function triggerShotSfx(shot, index, localTime) {
     if (index === lastSfxShotIndex) {
       return;
@@ -650,6 +663,26 @@ export async function createEpisodePlayer({
     if (shot.type === 'episode-card') {
       episodeAudio.playEpisodeCardCue(localTime);
     }
+  }
+
+  function syncShotTimedSfx(shot, index, localTime) {
+    if (!shot.sfx || shot.sfxAt == null) {
+      return;
+    }
+
+    const triggerKey = `${index}:${shot.sfx}`;
+
+    if (localTime < shot.sfxAt) {
+      timedSfxTriggered.delete(triggerKey);
+      return;
+    }
+
+    if (timedSfxTriggered.has(triggerKey)) {
+      return;
+    }
+
+    timedSfxTriggered.add(triggerKey);
+    episodeAudio.playShotSfx(shot.sfx);
   }
 
   function update(deltaSeconds) {
@@ -685,6 +718,8 @@ export async function createEpisodePlayer({
     }
 
     triggerShotSfx(shot, index, localTime);
+    syncShotTimedSfx(shot, index, localTime);
+    syncShotMusic(shot);
 
     if (shot.freezeAtEnd && localTime >= shot.duration - 0.001) {
       frozen = true;
@@ -726,6 +761,9 @@ export async function createEpisodePlayer({
     manualShotIndex = null;
     loopCurrentShot = false;
     lastSfxShotIndex = -1;
+    lastMusicCue = null;
+    timedSfxTriggered.clear();
+    episodeAudio.stop();
     fadeOverlay.alpha = 0;
   }
 
@@ -757,6 +795,10 @@ export async function createEpisodePlayer({
     if (shouldTriggerEpisodeCard) {
       triggerShotSfx(shot, index, clampedTime);
     }
+
+    syncShotTimedSfx(shot, index, clampedTime);
+    lastMusicCue = null;
+    syncShotMusic(shot);
   }
 
   function resumeTimeline() {
@@ -825,6 +867,9 @@ export async function createEpisodePlayer({
 
   function unlockAudio() {
     episodeAudio.unlock();
+    const { shot } = getCurrentShotInfo();
+    lastMusicCue = null;
+    syncShotMusic(shot);
   }
 
   if (shots.length > 0) {

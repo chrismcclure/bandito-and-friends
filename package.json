@@ -9,6 +9,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "generate:sfx": "node scripts/generate-sfx.js",
+    "generate:music": "node scripts/export-music-wav.js sockMonsterBattleMusicScore.js sock-monster-battle.wav",
     "generate:placeholders": "node scripts/generate-placeholders.js"
   },
   "devDependencies": {

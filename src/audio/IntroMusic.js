@@ -169,6 +169,15 @@ export function createIntroMusic(score = buildIntroMusicScore()) {
       clearTimeout(loopTimer);
       loopTimer = null;
     }
+
+    if (audioContext) {
+      masterGain?.gain.setValueAtTime(0, audioContext.currentTime);
+      audioContext.close().catch(() => {});
+      audioContext = null;
+      masterGain = null;
+      channelGains = {};
+      noiseBuffer = null;
+    }
   }
 
   function restart() {

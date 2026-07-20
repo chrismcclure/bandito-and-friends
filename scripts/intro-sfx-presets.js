@@ -34,6 +34,17 @@ function preset(params) {
   return { ...BASE, ...params };
 }
 
+/**
+ * Standard jsfxr output level for episode shot SFX.
+ * Pair with EPISODE_SHOT_SFX_VOLUME (0.725) at playback — avoids clipping without per-sound tuning.
+ */
+export const EPISODE_SFX_SOUND_VOL = 0.2;
+
+/** @param {Partial<typeof BASE & Record<string, number | boolean>>} params */
+function episodeSfxPreset(params) {
+  return preset({ sound_vol: EPISODE_SFX_SOUND_VOL, ...params });
+}
+
 export const INTRO_SFX_PRESETS = [
   {
     filename: 'intro-text-01.wav',
@@ -192,6 +203,45 @@ export const INTRO_SFX_PRESETS = [
       p_lpf_freq: 0.75,
       p_hpf_freq: 0,
       sound_vol: 0.18,
+    }),
+  },
+  {
+    filename: 'bandito-surprise-sting.wav',
+    purpose:
+      'Bandito notices the sock on patrol. SNES surprise sting — two quick ascending square blips and a brief held higher tone.',
+    params: episodeSfxPreset({
+      wave_type: 0,
+      p_base_freq: 0.4,
+      p_freq_ramp: 0.18,
+      p_arp_mod: 0.28,
+      p_arp_speed: 0.82,
+      p_env_sustain: 0.26,
+      p_env_decay: 0.38,
+      p_env_punch: 0.3,
+      p_lpf_freq: 0.84,
+      p_hpf_freq: 0.06,
+    }),
+  },
+  {
+    filename: 'sock-reveal-villain.wav',
+    purpose:
+      'Sir Sockington fully revealed. Three descending ominous square-wave notes with metallic shimmer and an impact sting.',
+    params: episodeSfxPreset({
+      wave_type: 0,
+      p_duty: 0.48,
+      p_base_freq: 0.34,
+      p_freq_ramp: -0.24,
+      p_arp_mod: -0.3,
+      p_arp_speed: 0.7,
+      p_pha_offset: 0.18,
+      p_pha_ramp: -0.22,
+      p_vib_strength: 0.07,
+      p_vib_speed: 0.88,
+      p_env_sustain: 0.36,
+      p_env_decay: 0.52,
+      p_env_punch: 0.44,
+      p_lpf_freq: 0.6,
+      p_hpf_freq: 0.08,
     }),
   },
 ];

@@ -57,6 +57,13 @@ export function installMediaTap(audioElement) {
   analysers.add(analyser);
 }
 
+/** Resume the shared HTML-media monitor context (requires a user gesture). */
+export async function resumeMediaMonitorContext() {
+  if (mediaContext?.state === 'suspended') {
+    await mediaContext.resume();
+  }
+}
+
 export function setActiveAudioLabel(label) {
   activeLabel = label || 'Silent';
 }
