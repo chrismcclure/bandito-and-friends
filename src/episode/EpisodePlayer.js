@@ -370,6 +370,7 @@ export async function createEpisodePlayer({
   let manualShotIndex = null;
   let lastSfxShotIndex = -1;
   let lastMusicCue = null;
+  let musicStoppedAtEnd = false;
   const timedSfxTriggered = new Set();
   let onComplete = null;
   let onShotChange = null;
@@ -508,9 +509,13 @@ export async function createEpisodePlayer({
 
   function renderShot(shot, localTime, previousShot) {
     const camera = interpolateCamera(shot, localTime);
+    const shakeIntensity = shot.shakeIntensity ?? 4;
     const shake =
       shot.visualEffect === 'shake'
-        ? getShakeOffset(localTime, 4 * (1 - localTime / shot.duration))
+        ? getShakeOffset(
+            localTime,
+            shakeIntensity * (1 - localTime / shot.duration),
+          )
         : { x: 0, y: 0 };
 
     speedLines.visible = shot.visualEffect === 'speed-lines';
@@ -642,6 +647,16 @@ export async function createEpisodePlayer({
     }
   }
 
+  function stopMusicAtEnd() {
+    if (musicStoppedAtEnd) {
+      return;
+    }
+
+    musicStoppedAtEnd = true;
+    lastMusicCue = null;
+    episodeAudio.syncMusicCue(null);
+  }
+
   function syncShotMusic(shot) {
     const cue = shot.musicCue ?? null;
 
@@ -697,6 +712,7 @@ export async function createEpisodePlayer({
         elapsed = totalDuration;
         complete = true;
         frozen = true;
+        stopMusicAtEnd();
         onComplete?.();
       }
     } else if (manualShotIndex !== null && loopCurrentShot) {
@@ -723,6 +739,10 @@ export async function createEpisodePlayer({
 
     if (shot.freezeAtEnd && localTime >= shot.duration - 0.001) {
       frozen = true;
+
+      if (index === shots.length - 1) {
+        stopMusicAtEnd();
+      }
     }
 
     renderShot(shot, localTime, previousShot);
@@ -762,6 +782,7 @@ export async function createEpisodePlayer({
     loopCurrentShot = false;
     lastSfxShotIndex = -1;
     lastMusicCue = null;
+    musicStoppedAtEnd = false;
     timedSfxTriggered.clear();
     episodeAudio.stop();
     fadeOverlay.alpha = 0;
