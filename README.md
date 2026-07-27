@@ -6,6 +6,19 @@ A JavaScript-based 8-bit animated short series inspired by classic NES games suc
 
 - [Node.js](https://nodejs.org/) (v18 or later recommended)
 - npm
+- [FFmpeg](https://ffmpeg.org/) (required for video export)
+
+### Install FFmpeg (macOS)
+
+```bash
+brew install ffmpeg
+```
+
+Verify the installation:
+
+```bash
+npm run export:check
+```
 
 ## Installation
 
@@ -22,6 +35,52 @@ npm run dev
 ```
 
 Open the URL shown in your terminal (typically `http://localhost:5173`).
+
+### Export Episode 1 video
+
+Episode 1 developer controls include an **Export Episode 1 MP4** button.
+
+1. Start the dev server: `npm run dev`
+2. Open `http://localhost:5173/?scene=episode`
+3. Click **Export Episode 1 MP4**
+4. Wait for progress updates (frame rendering, audio mix, encoding)
+5. Download the finished file when the export completes
+
+The final MP4 is saved at:
+
+```
+exports/episode-1/bandito-and-friends-episode-1.mp4
+```
+
+The export includes the complete show timeline: NES title menu, pixel-load transition, series opening, intro title hold, and all of Episode 1. Audio includes title-menu SFX, series opening music, intro theme (continuing through early episode shots), and all episode music/SFX.
+
+### Command-line export
+
+You can also export from the terminal (useful for automation or troubleshooting):
+
+```bash
+npm run export:episode1
+```
+
+Short 5-second test export:
+
+```bash
+npm run export:episode1:test
+```
+
+Profile a representative 10-second section:
+
+```bash
+npm run export:episode1:profile
+```
+
+Validate title menu through episode shot 10:
+
+```bash
+npm run export:episode1:opening-test
+```
+
+If FFmpeg is missing, `npm run export:check` prints setup instructions.
 
 ## Build
 

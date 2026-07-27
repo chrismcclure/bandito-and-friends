@@ -31,14 +31,15 @@ import {
   getEpisodeOneTotalDuration,
 } from '../data/episode-01-shots.js';
 import { EPISODE_CARD_CUE_CONFIG } from '../audio/episodeCardCueScore.js';
+import { resolveSubtitleBaselineY, resolveShortsSubtitleCenterX, resolveShortsSubtitleTopOffset, resolveShortsSubtitleWordWrapWidth } from './subtitleLayout.js';
 
 const LABEL_TOP = 72;
 
 /** Mobile-first on-screen slide text — matches episode title card scale unless a shot overrides. */
 const SLIDE_TEXT_DEFAULTS = {
-  fontSize: 22,
+  fontSize: 20,
   strokeWidth: 4,
-  wordWrapWidth: CANVAS_WIDTH - 20,
+  wordWrapWidth: resolveShortsSubtitleWordWrapWidth(),
   bottomOffset: 64,
   topOffset: 64,
 };
@@ -164,8 +165,8 @@ function createCaptionText(content) {
 
   text.anchor.set(0.5, 1);
   text.roundPixels = true;
-  text.x = CANVAS_WIDTH / 2;
-  text.y = CANVAS_HEIGHT - SLIDE_TEXT_DEFAULTS.bottomOffset;
+  text.x = resolveShortsSubtitleCenterX();
+  text.y = resolveSubtitleBaselineY(SLIDE_TEXT_DEFAULTS.bottomOffset);
   return text;
 }
 
@@ -192,7 +193,7 @@ function createTopCaptionText(content) {
 
   text.anchor.set(0.5, 0);
   text.roundPixels = true;
-  text.x = CANVAS_WIDTH / 2;
+  text.x = resolveShortsSubtitleCenterX();
   text.y = SLIDE_TEXT_DEFAULTS.topOffset;
   return text;
 }
@@ -438,51 +439,79 @@ export async function createEpisodePlayer({
     flashOverlay.visible = alpha > 0;
   }
 
-  function renderTextOverlays(shot, localTime = 0) {
-    let caption = '';
+  function resolveCaptionText(shot, localTime) {
+    if (shot.dialogueSections?.length) {
+      let text = shot.dialogueSections[0].text;
 
-    if (shot.dialogue) {
-      if (
-        shot.secondaryDialogue &&
-        shot.secondaryDialogueAt != null &&
-        localTime >= shot.secondaryDialogueAt
-      ) {
-        caption = shot.secondaryDialogue;
-      } else {
-        caption = shot.dialogue;
+      for (const section of shot.dialogueSections) {
+        if (localTime >= section.at) {
+          text = section.text;
+        }
       }
+
+      return text;
     }
 
-    captionText.visible = Boolean(caption);
-    captionText.text = caption;
-
-    if (caption) {
-      captionText.style.fontSize =
-        shot.captionFontSize ?? SLIDE_TEXT_DEFAULTS.fontSize;
-      captionText.style.fontStyle = shot.captionItalic ? 'italic' : 'normal';
-      captionText.style.stroke.width =
-        shot.captionStrokeWidth ?? SLIDE_TEXT_DEFAULTS.strokeWidth;
-      captionText.style.wordWrapWidth =
-        shot.captionWordWrapWidth ?? SLIDE_TEXT_DEFAULTS.wordWrapWidth;
-      captionText.y =
-        CANVAS_HEIGHT -
-        (shot.captionBottomOffset ?? SLIDE_TEXT_DEFAULTS.bottomOffset);
+    if (!shot.dialogue) {
+      return '';
     }
 
-    const topCaption = shot.dialogueTop ?? '';
-    captionTopText.visible = Boolean(topCaption);
-    captionTopText.text = topCaption;
+    if (
+      shot.secondaryDialogue &&
+      shot.secondaryDialogueAt != null &&
+      localTime >= shot.secondaryDialogueAt
+    ) {
+      return shot.secondaryDialogue;
+    }
 
-    if (topCaption) {
-      captionTopText.style.fontSize =
-        shot.captionFontSize ?? SLIDE_TEXT_DEFAULTS.fontSize;
-      captionTopText.style.fontStyle = shot.captionItalic ? 'italic' : 'normal';
-      captionTopText.style.stroke.width =
-        shot.captionStrokeWidth ?? SLIDE_TEXT_DEFAULTS.strokeWidth;
-      captionTopText.style.wordWrapWidth =
-        shot.captionWordWrapWidth ?? SLIDE_TEXT_DEFAULTS.wordWrapWidth;
-      captionTopText.y =
-        shot.captionTopOffset ?? SLIDE_TEXT_DEFAULTS.topOffset;
+    return shot.dialogue;
+  }
+
+  function applyCaptionTextStyle(text, shot) {
+    text.style.fontSize = shot.captionFontSize ?? SLIDE_TEXT_DEFAULTS.fontSize;
+    text.style.fontStyle = shot.captionItalic ? 'italic' : 'normal';
+    text.style.stroke.width =
+      shot.captionStrokeWidth ?? SLIDE_TEXT_DEFAULTS.strokeWidth;
+    text.style.wordWrapWidth =
+      shot.captionWordWrapWidth ?? resolveShortsSubtitleWordWrapWidth();
+  }
+
+  function renderTextOverlays(shot, localTime = 0) {
+    const caption = resolveCaptionText(shot, localTime);
+    const useTopCaption = shot.captionPosition === 'top';
+
+    if (useTopCaption) {
+      captionTopText.visible = Boolean(caption);
+      captionTopText.text = caption;
+
+      if (caption) {
+        applyCaptionTextStyle(captionTopText, shot);
+        captionTopText.y =
+          shot.captionTopOffset ?? resolveShortsSubtitleTopOffset();
+      }
+
+      captionText.visible = false;
+      captionText.text = '';
+    } else {
+      captionText.visible = Boolean(caption);
+      captionText.text = caption;
+
+      if (caption) {
+        applyCaptionTextStyle(captionText, shot);
+        captionText.y = resolveSubtitleBaselineY(
+          shot.captionBottomOffset ?? SLIDE_TEXT_DEFAULTS.bottomOffset,
+        );
+      }
+
+      const topCaption = shot.dialogueTop ?? '';
+      captionTopText.visible = Boolean(topCaption);
+      captionTopText.text = topCaption;
+
+      if (topCaption) {
+        applyCaptionTextStyle(captionTopText, shot);
+        captionTopText.y =
+          shot.captionTopOffset ?? SLIDE_TEXT_DEFAULTS.topOffset;
+      }
     }
 
     const showLabels = Boolean(shot.label || shot.subtitle);
@@ -792,6 +821,29 @@ export async function createEpisodePlayer({
     seekShotTime(index, 0, { loop });
   }
 
+  function seekToEpisodeTime(timeSeconds, { renderOnly = false } = {}) {
+    manualShotIndex = null;
+    loopCurrentShot = false;
+    elapsed = clamp(timeSeconds, 0, totalDuration);
+    started = true;
+    paused = true;
+    complete = timeSeconds >= totalDuration;
+    frozen = complete;
+
+    const { index, localTime } = findShotIndexAtTime(elapsed, shots);
+    const shot = shots[index];
+    const previousShot = index > 0 ? shots[index - 1] : null;
+
+    if (!renderOnly) {
+      triggerShotSfx(shot, index, localTime);
+      syncShotTimedSfx(shot, index, localTime);
+      lastMusicCue = null;
+      syncShotMusic(shot);
+    }
+
+    renderShot(shot, localTime, previousShot);
+  }
+
   function seekShotTime(index, localTime = 0, { loop = false } = {}) {
     if (index < 0 || index >= shots.length) {
       return;
@@ -906,6 +958,7 @@ export async function createEpisodePlayer({
     restart,
     jumpToShot,
     seekShotTime,
+    seekToEpisodeTime,
     resumeTimeline,
     nextShot,
     previousShot,

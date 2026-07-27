@@ -1,12 +1,11 @@
 import { createIntroMusic } from './IntroMusic.js';
 import { buildAdventureCalmMusicScore } from './adventureCalmMusicScore.js';
+import { buildIntroMusicScore } from './introMusicScore.js';
+import { createEpisodeMusicFileLoop } from './episodeMusicFileLoop.js';
 import {
-  buildIntroMusicScore,
-} from './introMusicScore.js';
-import {
-  createEpisodeMusicFileLoop,
-  EPISODE_MUSIC_FILE_VOLUME,
-} from './episodeMusicFileLoop.js';
+  EPISODE_MUSIC_FILE_CUES,
+  isSupportedEpisodeMusicCue,
+} from './episodeMusicCues.js';
 
 const PROCEDURAL_CUES = {
   'adventure-calm': () => createIntroMusic(buildAdventureCalmMusicScore()),
@@ -14,23 +13,15 @@ const PROCEDURAL_CUES = {
   'team-theme-credits': () => createIntroMusic(buildIntroMusicScore()),
 };
 
-const FILE_CUES = {
-  'sock-monster-battle': { src: '/audio/music/sock-monster-battle.wav' },
-  'living-room-reveal-1': { src: '/audio/music/living-room-reveal-1.wav' },
-  'heroes-victory-1': {
-    src: '/audio/music/heroes-victory-1.wav',
-    loop: false,
-  },
-};
-
 function isSupportedCue(cue) {
-  return Boolean(cue && (PROCEDURAL_CUES[cue] || FILE_CUES[cue]));
+  return isSupportedEpisodeMusicCue(cue);
 }
 
 function createPlayer(cue) {
-  if (FILE_CUES[cue]) {
-    const { src, loop = true } = FILE_CUES[cue];
-    return createEpisodeMusicFileLoop(src, EPISODE_MUSIC_FILE_VOLUME, { loop });
+  const fileCue = EPISODE_MUSIC_FILE_CUES[cue];
+  if (fileCue) {
+    const { src, loop = true, volume } = fileCue;
+    return createEpisodeMusicFileLoop(src, volume, { loop });
   }
 
   if (PROCEDURAL_CUES[cue]) {

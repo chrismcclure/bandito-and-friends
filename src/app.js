@@ -182,6 +182,7 @@ async function runEpisodeOnly(app, frame) {
   app.stage.addChild(episodePlayer.container);
   attachEpisodeDevControls(frame, episodePlayer, {
     title: 'Episode 1 Dev Controls',
+    enableExport: true,
   });
 
   let phase = previewShotIndex !== null ? 'episode' : 'idle';
@@ -269,14 +270,6 @@ async function runOpeningSequence(app, frame) {
   const episodePlayer = await createEpisodePlayer();
   const pixelLoad = createNesPixelLoadTransition();
 
-  app.stage.addChild(
-    introScene.container,
-    episodePlayer.container,
-    seriesOpening.container,
-    titleMenu.container,
-    pixelLoad.container,
-  );
-
   const fullPlayer = createFullSequencePlayer({
     titleMenu,
     pixelLoad,
@@ -284,6 +277,8 @@ async function runOpeningSequence(app, frame) {
     introScene,
     episodePlayer,
   });
+
+  app.stage.addChild(fullPlayer.getExportContainer());
 
   attachEpisodeDevControls(frame, fullPlayer, {
     title: 'Full Show Dev Controls',

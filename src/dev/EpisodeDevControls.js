@@ -2,8 +2,12 @@
 
 import { setActiveAudioLabel } from './audioMonitor.js';
 import { createAudioMeterPanel } from './AudioMeterPanel.js';
+import { createExportClient } from '../export/exportClient.js';
 
-export function createEpisodeDevControls(player, { onHide, title = 'Show Dev Controls' } = {}) {
+export function createEpisodeDevControls(
+  player,
+  { onHide, title = 'Show Dev Controls', enableExport = false } = {},
+) {
   const panel = document.createElement('div');
   panel.className = 'episode-dev-controls';
 
@@ -123,6 +127,88 @@ export function createEpisodeDevControls(player, { onHide, title = 'Show Dev Con
 
   meter.start();
 
-  panel.append(titleEl, status, shotSelect, buttonRow, meter.element);
+  const children = [titleEl, status, shotSelect, buttonRow, meter.element];
+
+  if (enableExport) {
+    const exportSection = document.createElement('div');
+    exportSection.className = 'episode-dev-controls__export';
+
+    const exportTitle = document.createElement('div');
+    exportTitle.className = 'episode-dev-controls__export-title';
+    exportTitle.textContent = 'Video Export';
+
+    const exportButton = document.createElement('button');
+    exportButton.type = 'button';
+    exportButton.textContent = 'Export Episode 1 MP4';
+    exportButton.className = 'episode-dev-controls__export-button';
+
+    const exportStatus = document.createElement('div');
+    exportStatus.className = 'episode-dev-controls__export-status';
+    exportStatus.textContent = 'Ready to export.';
+
+    const exportProgress = document.createElement('div');
+    exportProgress.className = 'episode-dev-controls__export-progress';
+    exportProgress.hidden = true;
+
+    const exportLink = document.createElement('a');
+    exportLink.className = 'episode-dev-controls__export-link';
+    exportLink.hidden = true;
+    exportLink.textContent = 'Download MP4';
+    exportLink.target = '_blank';
+    exportLink.rel = 'noopener';
+
+    const exportClient = createExportClient({
+      onStatusChange: (state) => {
+        exportButton.disabled = Boolean(state.exporting);
+
+        if (state.error) {
+          exportStatus.textContent = `Export failed: ${state.error}`;
+          exportProgress.hidden = true;
+          exportLink.hidden = true;
+          return;
+        }
+
+        if (state.exporting || state.phase) {
+          const frameDetail =
+            state.currentFrame && state.totalFrames
+              ? ` — frame ${state.currentFrame} of ${state.totalFrames}`
+              : '';
+          exportStatus.textContent = `${state.message || 'Exporting'}${frameDetail}`;
+          exportProgress.hidden = false;
+          exportProgress.textContent = state.percentLabel || '0%';
+        }
+
+        if (state.phase === 'complete') {
+          exportStatus.textContent = `Export complete: ${state.outputPath || 'bandito-and-friends-episode-1.mp4'}`;
+          exportProgress.textContent = '100%';
+          exportLink.href = state.downloadUrl || '/api/export/download/episode-1';
+          exportLink.hidden = false;
+        }
+      },
+    });
+
+    exportButton.addEventListener('click', async () => {
+      exportLink.hidden = true;
+      exportStatus.textContent = 'Checking export environment...';
+
+      try {
+        await exportClient.startExport();
+      } catch (error) {
+        exportStatus.textContent = `Export failed: ${error.message}`;
+        exportButton.disabled = false;
+      }
+    });
+
+    exportSection.append(
+      exportTitle,
+      exportButton,
+      exportStatus,
+      exportProgress,
+      exportLink,
+    );
+    children.push(exportSection);
+  }
+
+  panel.append(...children);
   return { panel, updateStatus, meter };
 }

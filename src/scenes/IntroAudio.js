@@ -12,7 +12,7 @@ export const INTRO_AUDIO_VOLUMES = {
   introEnd: 0.35,
 };
 
-const SOUND_FILES = {
+export const INTRO_SFX_FILES = {
   introText01: '/audio/sfx/intro-text-01.wav',
   introText02: '/audio/sfx/intro-text-02.wav',
   introText03: '/audio/sfx/intro-text-03.wav',
@@ -49,7 +49,7 @@ export function createIntroAudio(timing, motion) {
   let unlocked = false;
 
   async function preload() {
-    const entries = Object.entries(SOUND_FILES);
+    const entries = Object.entries(INTRO_SFX_FILES);
 
     await Promise.all(
       entries.map(

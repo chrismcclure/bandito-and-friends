@@ -183,3 +183,49 @@ body {
   font-size: 10px;
   line-height: 1.35;
 }
+
+.episode-dev-controls__export {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid #444;
+}
+
+.episode-dev-controls__export-title {
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #f8c878;
+}
+
+.episode-dev-controls__export-button {
+  width: 100%;
+  margin-bottom: 8px;
+  padding: 6px 8px;
+  border: 1px solid #666;
+  background: #2a3a22;
+  color: #fff;
+  font: 11px monospace;
+  cursor: pointer;
+}
+
+.episode-dev-controls__export-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.episode-dev-controls__export-status {
+  margin-bottom: 6px;
+  color: #d0d0d0;
+  line-height: 1.4;
+}
+
+.episode-dev-controls__export-progress {
+  margin-bottom: 6px;
+  color: #9fd4ff;
+  font-weight: bold;
+}
+
+.episode-dev-controls__export-link {
+  display: inline-block;
+  color: #9fd4ff;
+  text-decoration: underline;
+}

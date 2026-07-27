@@ -6,6 +6,7 @@ import {
   BALANCED_FIT_OFFSET_Y,
   BALANCED_FIT_ZOOM,
   CANVAS_HEIGHT,
+  CANVAS_WIDTH,
 } from '../config.js';
 
 export const EPISODE_01_INTRO_TIMING = {
@@ -46,9 +47,11 @@ export const EPISODE_01_FINALS_BASE = '/images/episodes/episode-01/finals';
  * @property {{ x: number, y: number }} cameraPositionEnd
  * @property {string} [dialogue]
  * @property {string} [dialogueTop] Caption shown near the top of the stage (pairs with dialogue).
+ * @property {{ text: string, at: number }[]} [dialogueSections] Timed caption lines; overrides dialogue when set.
+ * @property {'top' | 'bottom'} [captionPosition] Where dialogue captions render (default bottom).
  * @property {string} [secondaryDialogue]
  * @property {number} [secondaryDialogueAt] Seconds into the shot when secondary dialogue replaces primary.
- * @property {number} [captionFontSize] Override default slide caption size (22px).
+ * @property {number} [captionFontSize] Override default slide caption size (20px).
  * @property {number} [captionStrokeWidth] Override default caption stroke width.
  * @property {number} [captionWordWrapWidth] Override default caption wrap width.
  * @property {number} [captionBottomOffset] Distance from bottom of stage to caption baseline.
@@ -225,7 +228,7 @@ const EPISODE_01_SHOTS_RAW = [
     cameraPositionEnd: { x: 24, y: 0 },
     dialogue: 'Another peaceful day in Meow City.',
     secondaryDialogue: 'Bandito is on patrol.',
-    secondaryDialogueAt: 1.2,
+    secondaryDialogueAt: 1.5,
     musicCue: 'adventure-calm',
     visualEffect: 'none',
     status: 'final',
@@ -244,7 +247,7 @@ const EPISODE_01_SHOTS_RAW = [
     cameraScaleEnd: 1.18,
     cameraPositionStart: { x: 8, y: 0 },
     cameraPositionEnd: { x: 0, y: -4 },
-    dialogue: 'Bandito is shocked at what he finds on patrol.',
+    dialogue: 'Bandito is shocked at what he finds.',
     musicCue: 'adventure-calm',
     visualEffect: 'none',
     status: 'final',
@@ -263,7 +266,7 @@ const EPISODE_01_SHOTS_RAW = [
     cameraScaleEnd: 1.12,
     cameraPositionStart: { x: -12, y: 8 },
     cameraPositionEnd: { x: 0, y: 0 },
-    dialogue: 'Is it a regular sock or could it possibly be...',
+    dialogue: 'Is it a regular sock or could it be...?',
     musicCue: 'adventure-calm',
     visualEffect: 'none',
     status: 'final',
@@ -301,7 +304,6 @@ const EPISODE_01_SHOTS_RAW = [
     cameraScaleEnd: 1.05,
     cameraPositionStart: { x: 20, y: 0 },
     cameraPositionEnd: { x: -10, y: 0 },
-    dialogue: 'Bandito Team, assemble!',
     musicCue: 'sock-monster-battle',
     visualEffect: 'none',
     status: 'final',
@@ -366,7 +368,9 @@ const EPISODE_01_SHOTS_RAW = [
     imageFitZoom: 0.70,
     imageFitOffsetX: 0,
     imageFitOffsetY: BALANCED_FIT_OFFSET_Y,
-    dialogue: 'My instruments have never detected anything like this.',
+    dialogue: 'My instruments...',
+    secondaryDialogue: 'have never detected anything like this.',
+    secondaryDialogueAt: 1.4,
     musicCue: 'sock-monster-battle',
     visualEffect: 'none',
     status: 'final',
@@ -464,7 +468,7 @@ const EPISODE_01_SHOTS_RAW = [
     imageFitSlideCropEnd: 0.1,
     imageFitSlideDuration: 1.875,
     flashAt: 1.875,
-    dialogue: 'Professor shoots his ray gun 9000 at the sock monster.',
+    dialogue: 'Professor shoots his ray gun 9000.',
     musicCue: 'sock-monster-battle',
     visualEffect: 'none',
     status: 'final',
@@ -769,7 +773,7 @@ const EPISODE_01_SHOTS_RAW = [
     title: 'Tools We Used',
     type: 'image',
     assetPath: `${EPISODE_01_FINALS_BASE}/shot-12d-tools-used.png`,
-    duration: 3.5,
+    duration: 4,
     transitionIn: 'fade',
     transitionOut: 'fade',
     cameraMovement: 'static',
@@ -777,8 +781,13 @@ const EPISODE_01_SHOTS_RAW = [
     cameraScaleEnd: 1,
     cameraPositionStart: { x: 0, y: 0 },
     cameraPositionEnd: { x: 0, y: 0 },
-    dialogueTop: 'Here are the tools we used to create this.',
-    dialogue: 'Link below if you want more information.',
+    captionPosition: 'top',
+    captionTopOffset: Math.round(CANVAS_HEIGHT * 0.13),
+    captionWordWrapWidth: Math.round(CANVAS_WIDTH * 0.96),
+    dialogueSections: [
+      { at: 0, text: 'The tools we used to create this video.' },
+      { at: 1.5, text: 'Link below for more infomation.' },
+    ],
     musicCue: 'team-theme-credits',
     visualEffect: 'none',
     status: 'final',
@@ -789,7 +798,7 @@ const EPISODE_01_SHOTS_RAW = [
     title: 'Thanks for Watching',
     type: 'image',
     assetPath: `${EPISODE_01_FINALS_BASE}/shot-12e-thanks-for-watching.png`,
-    duration: 3.5,
+    duration: 5,
     transitionIn: 'fade',
     transitionOut: 'fade',
     cameraMovement: 'static',
@@ -797,8 +806,13 @@ const EPISODE_01_SHOTS_RAW = [
     cameraScaleEnd: 1.06,
     cameraPositionStart: { x: 0, y: 0 },
     cameraPositionEnd: { x: 0, y: 0 },
-    dialogueTop: 'Thanks for watching.',
-    dialogue: 'If you want more videos like this, let us know.',
+    captionPosition: 'top',
+    captionTopOffset: Math.round(CANVAS_HEIGHT * 0.08),
+    captionWordWrapWidth: Math.round(CANVAS_WIDTH * 0.96),
+    dialogueSections: [
+      { at: 0, text: 'Thanks for watching!' },
+      { at: 1.7, text: 'Like for more Bandito adventures!' },
+    ],
     musicCue: 'team-theme-credits',
     visualEffect: 'none',
     freezeAtEnd: true,

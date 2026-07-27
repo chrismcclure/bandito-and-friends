@@ -1,3 +1,4 @@
+import { Container } from 'pixi.js';
 import { setActiveAudioLabel } from './audioMonitor.js';
 import { NES_PIXEL_LOAD_TIMING } from '../transitions/nesPixelLoadTransition.js';
 import {
@@ -114,9 +115,7 @@ export function createFullSequencePlayer({
     switch (beat.section) {
       case 'title-menu':
         titleMenu.container.visible = true;
-        if (manualBeatIndex !== null) {
-          titleMenu.seekToPhaseIndex(beat.phaseIndex, localTime);
-        }
+        titleMenu.seekToPhaseIndex(beat.phaseIndex, localTime);
         break;
 
       case 'pixel-load':
@@ -327,6 +326,33 @@ export function createFullSequencePlayer({
     jumpToBeat(index, { loop: options.loop ?? false, localTime: 0 });
   }
 
+  function seekToMasterTime(timeSeconds, { renderOnly = true } = {}) {
+    manualBeatIndex = null;
+    loopCurrentBeat = false;
+    globalElapsed = clamp(timeSeconds, 0, totalDuration);
+    started = true;
+    paused = true;
+    complete = timeSeconds >= totalDuration;
+    timelineMode = false;
+    lastRenderedIndex = -1;
+
+    const { index, localTime } = findBeatAtTime(globalElapsed, beats);
+    const beat = beats[index];
+
+    if (beat.section === 'pixel-load' || beat.section === 'opening') {
+      openingMusicStarted = localTime > 0 || beat.section === 'opening';
+    } else {
+      openingMusicStarted = false;
+    }
+
+    onEnterBeat(index);
+    renderBeat(index, localTime);
+
+    if (!renderOnly) {
+      notifyBeatChange(index, localTime);
+    }
+  }
+
   function resumeTimeline() {
     if (manualBeatIndex === null) {
       return;
@@ -423,6 +449,15 @@ export function createFullSequencePlayer({
     episodePlayer.unlockAudio();
   }
 
+  const exportContainer = new Container();
+  exportContainer.addChild(
+    introScene.container,
+    episodePlayer.container,
+    seriesOpening.container,
+    titleMenu.container,
+    pixelLoad.container,
+  );
+
   titleMenu.setHandoffHandler(() => {
     if (manualBeatIndex !== null || !timelineMode) {
       return;
@@ -439,6 +474,7 @@ export function createFullSequencePlayer({
     resume,
     restart,
     jumpToShot,
+    seekToMasterTime,
     resumeTimeline,
     nextShot,
     previousShot,
@@ -453,5 +489,6 @@ export function createFullSequencePlayer({
     getEpisodeTime,
     unlockAudio,
     update,
+    getExportContainer: () => exportContainer,
   };
 }
