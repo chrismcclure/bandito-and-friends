@@ -1,3 +1,7 @@
+/**
+ * Web Audio synthesizer for procedural chiptune scores.
+ * Used by intro theme, adventure-calm, and credits callback music.
+ */
 import { buildIntroMusicScore } from './introMusicScore.js';
 import { installMasterTap } from '../dev/audioMonitor.js';
 

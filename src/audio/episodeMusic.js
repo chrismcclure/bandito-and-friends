@@ -1,3 +1,9 @@
+/**
+ * Episode shot music — starts/stops cues as shots change.
+ *
+ * Cues are defined in musicLibrary.js. File-based tracks (WAV) and
+ * procedural scores (Web Audio) both go through this module.
+ */
 import { createIntroMusic } from './IntroMusic.js';
 import { buildAdventureCalmMusicScore } from './adventureCalmMusicScore.js';
 import { buildIntroMusicScore } from './introMusicScore.js';

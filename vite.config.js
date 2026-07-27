@@ -1,3 +1,7 @@
+/**
+ * Vite config — dev server plus custom /api/export middleware for MP4 export.
+ * The export API launches Playwright frame capture and FFmpeg encoding.
+ */
 import { defineConfig } from 'vite';
 import {
   createExportApiMiddleware,

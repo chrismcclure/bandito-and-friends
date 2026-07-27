@@ -1,3 +1,9 @@
+/**
+ * Server-side MP4 export pipeline.
+ *
+ * Steps: render frames (Playwright) → mix audio (FFmpeg) → encode H.264 → validate.
+ * Progress is reported via SSE to the browser export button.
+ */
 import { mkdirSync, rmSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';

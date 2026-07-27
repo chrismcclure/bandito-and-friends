@@ -1,3 +1,12 @@
+/**
+ * Episode player — the core shot renderer.
+ *
+ * Takes a shot list (from episode-XX-shots.js) and plays it back:
+ * loads images, applies camera moves, shows captions, triggers music/SFX.
+ *
+ * Used directly for ?scene=episode, and embedded inside createFullSequencePlayer
+ * for the full show. Also used by the MP4 export pipeline (seekShotTime).
+ */
 import {
   Assets,
   Container,
@@ -25,11 +34,11 @@ import {
   lerp,
 } from './camera.js';
 import { createEpisodeAudio } from './EpisodeAudio.js';
+import { ACTIVE_EPISODE } from '../data/activeEpisode.js';
 import {
-  EPISODE_01_SHOTS,
   findShotIndexAtTime,
-  getEpisodeOneTotalDuration,
-} from '../data/episode-01-shots.js';
+  getEpisodeTotalDuration,
+} from './episodeShotHelpers.js';
 import { EPISODE_CARD_CUE_CONFIG } from '../audio/episodeCardCueScore.js';
 import { resolveSubtitleBaselineY, resolveShortsSubtitleCenterX, resolveShortsSubtitleTopOffset, resolveShortsSubtitleWordWrapWidth } from './subtitleLayout.js';
 
@@ -291,8 +300,12 @@ function createSpeedLines() {
   return lines;
 }
 
+/**
+ * Create an episode player for the given shot list.
+ * Defaults to ACTIVE_EPISODE.shots when no shots are passed.
+ */
 export async function createEpisodePlayer({
-  shots = EPISODE_01_SHOTS,
+  shots = ACTIVE_EPISODE.shots,
   autoStart = false,
 } = {}) {
   const container = new Container();
@@ -376,7 +389,10 @@ export async function createEpisodePlayer({
   let onComplete = null;
   let onShotChange = null;
 
-  const totalDuration = getEpisodeOneTotalDuration(shots);
+  const totalDuration = getEpisodeTotalDuration(shots);
+
+  // ─── Playback state ───────────────────────────────────────────────────────
+  // elapsed = time within the episode; manualShotIndex = dev scrub override
 
   function getPlaybackState() {
     if (manualShotIndex !== null) {
@@ -536,6 +552,7 @@ export async function createEpisodePlayer({
     comicText.text = shot.onScreenText ?? '';
   }
 
+  /** Draw the current shot — image fit, camera, overlays, transitions. */
   function renderShot(shot, localTime, previousShot) {
     const camera = interpolateCamera(shot, localTime);
     const shakeIntensity = shot.shakeIntensity ?? 4;
@@ -729,6 +746,7 @@ export async function createEpisodePlayer({
     episodeAudio.playShotSfx(shot.sfx);
   }
 
+  /** Main tick — advance time, sync audio, render the current shot. */
   function update(deltaSeconds) {
     if (!started || paused || complete) {
       return;
@@ -787,6 +805,8 @@ export async function createEpisodePlayer({
 
     return clamp(elapsed, 0, totalDuration);
   }
+
+  // ─── Public playback API (used by dev controls and full-sequence player) ──
 
   function start() {
     started = true;

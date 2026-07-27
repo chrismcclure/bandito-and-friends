@@ -1,3 +1,7 @@
+/**
+ * Browser-side export client — talks to the Vite /api/export endpoints.
+ * Used by the "Export Episode MP4" button in dev controls.
+ */
 const EPISODE_ID = 'episode-1';
 
 function formatPercent(percent) {

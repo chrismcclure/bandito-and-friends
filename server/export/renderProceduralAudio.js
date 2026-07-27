@@ -1,3 +1,9 @@
+/**
+ * Offline procedural audio renderer for export.
+ *
+ * Bakes JavaScript score modules (intro theme, adventure-calm, etc.) to WAV
+ * files in the export cache. File-based cues are read from public/audio/.
+ */
 import { writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';

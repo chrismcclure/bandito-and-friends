@@ -65,8 +65,8 @@ When you send a final still, we:
 
 | Shot | Final asset | Status |
 |------|-------------|--------|
-| 03a Bandito | `finals/shot-03a-bandito-leader.png` | Final — *v1 archived as `shot-03a-bandito-leader-v1-superseded.png`* |
-| 03b Professor | `finals/shot-03b-professor-brains.png` | Final — *v1 archived as `shot-03b-professor-brains-v1-superseded.png`* |
+| 03a Bandito | `finals/shot-03a-bandito-leader.png` | Final — *v1 in `finals/archive/shot-03a-bandito-leader-v1-superseded.png`* |
+| 03b Professor | `finals/shot-03b-professor-brains.png` | Final — *v1 in `finals/archive/shot-03b-professor-brains-v1-superseded.png`* |
 | 03c Girl Frederick | `finals/shot-03c-girl-frederick-muscle.png` | Final |
 | 03d Tortellini | `finals/shot-03d-tortellini-wild-card.png` | Final |
 

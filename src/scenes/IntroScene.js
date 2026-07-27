@@ -1,3 +1,10 @@
+/**
+ * Meet the Team intro — character title cards with the intro theme.
+ *
+ * Plays after the series opening white flash. Shows Bandito, Professor,
+ * Girl Frederick, and Tortellini with "THE LEADER" / "THE BRAINS" labels.
+ * The intro theme stops at the episode card (handled by full-sequence player).
+ */
 import {
   Container,
   Text,
@@ -9,7 +16,7 @@ import {
   Rectangle,
 } from 'pixi.js';
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../config.js';
-import { EPISODE_01_INTRO_TIMING } from '../data/episode-01-shots.js';
+import { ACTIVE_EPISODE } from '../data/activeEpisode.js';
 import { createIntroAudio } from './IntroAudio.js';
 import { createIntroMusic } from '../audio/IntroMusic.js';
 
@@ -601,7 +608,7 @@ export async function createIntroScene() {
     if (episodeIntroMode) {
       loopTime = INTRO_TIMING.TITLE_START + elapsedSeconds;
 
-      if (elapsedSeconds >= EPISODE_01_INTRO_TIMING.TITLE_HOLD) {
+      if (elapsedSeconds >= ACTIVE_EPISODE.introTiming.TITLE_HOLD) {
         finishIntro(loopTime);
         introComplete = true;
         if (!suppressComplete) {

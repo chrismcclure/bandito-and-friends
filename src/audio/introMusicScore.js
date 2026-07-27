@@ -6,13 +6,14 @@
  * Times are expressed in beats; they are converted to seconds at playback.
  */
 
-import { getIntroThemeDuration } from '../data/episode-01-shots.js';
+import { getIntroThemeDuration } from '../episode/episodeShotHelpers.js';
+import { ACTIVE_EPISODE } from '../data/activeEpisode.js';
 
 export const INTRO_MUSIC_CONFIG = {
   /** Target tempo. 145–165 BPM recommended. */
   bpm: 160,
   /** One-shot length — title hold + Meet the Team, ending at the episode card. */
-  loopDuration: getIntroThemeDuration(),
+  loopDuration: getIntroThemeDuration(ACTIVE_EPISODE),
   /** Master music volume. SFX remain independent. */
   volume: 0.546875,
   channels: {

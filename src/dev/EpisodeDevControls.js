@@ -1,8 +1,13 @@
-/** Development controls for reviewing Episode 1 shots. */
+/** Development controls for reviewing episode shots. */
 
+/**
+ * Sidebar UI: play/pause, shot scrubber, loop, step, and optional MP4 export.
+ * Works with EpisodePlayer and createFullSequencePlayer (same API).
+ */
 import { setActiveAudioLabel } from './audioMonitor.js';
 import { createAudioMeterPanel } from './AudioMeterPanel.js';
 import { createExportClient } from '../export/exportClient.js';
+import { ACTIVE_EPISODE } from '../data/activeEpisode.js';
 
 export function createEpisodeDevControls(
   player,
@@ -139,7 +144,7 @@ export function createEpisodeDevControls(
 
     const exportButton = document.createElement('button');
     exportButton.type = 'button';
-    exportButton.textContent = 'Export Episode 1 MP4';
+    exportButton.textContent = `Export Episode ${ACTIVE_EPISODE.number} MP4`;
     exportButton.className = 'episode-dev-controls__export-button';
 
     const exportStatus = document.createElement('div');

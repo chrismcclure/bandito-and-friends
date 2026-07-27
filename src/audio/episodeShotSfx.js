@@ -1,3 +1,9 @@
+/**
+ * Episode shot SFX registry and playback.
+ *
+ * Map shot.sfx ids to WAV paths here. EpisodePlayer calls play(soundId)
+ * when a shot with sfx / sfxAt is active.
+ */
 import { installMediaTap } from '../dev/audioMonitor.js';
 
 /**

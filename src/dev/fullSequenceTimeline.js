@@ -1,11 +1,17 @@
+/**
+ * Full-show timeline — stitches every beat into one flat array.
+ *
+ * Order: NES title menu → pixel load → series opening → main title hold
+ *        → active episode shots (Meet the Team through credits).
+ *
+ * Used by dev controls (scrubber), export (frame count), and audio mix.
+ */
 import { TITLE_MENU_TIMING } from '../data/title-menu-timing.js';
 import { NES_PIXEL_LOAD_TIMING } from '../transitions/nesPixelLoadTransition.js';
 import { SERIES_OPENING_SHOTS } from '../data/series-opening-shots.js';
-import {
-  EPISODE_01_INTRO_TIMING,
-  EPISODE_01_SHOTS,
-} from '../data/episode-01-shots.js';
+import { ACTIVE_EPISODE } from '../data/activeEpisode.js';
 
+/** The four NES menu cursor states before Start is pressed. */
 export const TITLE_MENU_PHASES = [
   {
     id: 'title-press-start',
@@ -38,10 +44,11 @@ const PIXEL_LOAD_DURATION =
   NES_PIXEL_LOAD_TIMING.BLOCK_HOLD_DURATION +
   NES_PIXEL_LOAD_TIMING.DISSOLVE_DURATION;
 
-/** Flat timeline from NES title menu through the end of Episode 1. */
-export function buildFullSequenceBeats() {
+/** Flat timeline from NES title menu through the active episode. */
+export function buildFullSequenceBeats(episode = ACTIVE_EPISODE) {
   const beats = [];
 
+  // 1. NES title menu (cursor blips between PRESS START and Run Away)
   for (const phase of TITLE_MENU_PHASES) {
     beats.push({
       id: phase.id,
@@ -54,6 +61,7 @@ export function buildFullSequenceBeats() {
     });
   }
 
+  // 2. Mega Man-style pixel-block transition after Start is pressed
   beats.push({
     id: 'pixel-load',
     title: 'NES Pixel Load',
@@ -63,6 +71,7 @@ export function buildFullSequenceBeats() {
     status: 'final',
   });
 
+  // 3. Series opening — ordinary house → Meow City (shared across all episodes)
   for (let index = 0; index < SERIES_OPENING_SHOTS.length; index += 1) {
     const shot = SERIES_OPENING_SHOTS[index];
     beats.push({
@@ -75,18 +84,19 @@ export function buildFullSequenceBeats() {
     });
   }
 
+  // 4. Main title hold ("Bandito and Friends") before Meet the Team
   beats.push({
-    id: 'main-title-hold',
     title: 'Bandito and Friends — Title',
     section: 'intro-title',
-    duration: EPISODE_01_INTRO_TIMING.TITLE_HOLD,
+    duration: episode.introTiming.TITLE_HOLD,
     type: 'title',
     musicCue: 'intro-theme',
     status: 'final',
   });
 
-  for (let index = 0; index < EPISODE_01_SHOTS.length; index += 1) {
-    const shot = EPISODE_01_SHOTS[index];
+  // 5. Active episode — Meet the Team, story, credits
+  for (let index = 0; index < episode.shots.length; index += 1) {
+    const shot = episode.shots[index];
     beats.push({
       ...shot,
       id: shot.id,

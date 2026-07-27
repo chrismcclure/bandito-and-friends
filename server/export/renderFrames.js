@@ -1,3 +1,9 @@
+/**
+ * Frame capture for MP4 export.
+ *
+ * Opens Playwright, loads full-show.html, seeks to each frame time,
+ * captures JPEG from canvas, and streams into FFmpeg for H.264 encoding.
+ */
 import { mkdirSync, rmSync, writeFileSync, renameSync } from 'node:fs';
 import { join } from 'node:path';
 import { chromium } from 'playwright';

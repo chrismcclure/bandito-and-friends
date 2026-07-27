@@ -1,9 +1,11 @@
-import { CANVAS_WIDTH } from '../config.js';
-
 /**
  * Camera interpolation helpers for the episode player.
- * Movement is defined in shot config — independent of artwork.
+ *
+ * Shot data defines cameraScaleStart/End and cameraPositionStart/End.
+ * These functions interpolate between them over the shot duration.
+ * Also handles image-fit pan, focal zoom, and screen shake.
  */
+import { CANVAS_WIDTH } from '../config.js';
 
 export function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
