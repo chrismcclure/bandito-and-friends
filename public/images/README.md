@@ -26,6 +26,8 @@ See `art/references/group-artwork.md`, `art/references/bandito/sprite-sheet.md`,
 | File | Status |
 |------|--------|
 | `title/Bandito-and-friends-v2.png` | **Canonical** — active intro title screen |
+| `title/title-menu-press-start-selected.png` | **Final** — NES menu, PRESS START selected |
+| `title/title-menu-run-away-selected.png` | **Final** — NES menu, Run Away selected |
 | `title/Bandito-and-friends-v2-previous.png` | Superseded — prior v2 snapshot |
 | `title/Bandito-and-friends.png` | Superseded — Version 1 |
 | `title/Bandito-and-friends-v1-archived.png` | Archive copy of Version 1 |

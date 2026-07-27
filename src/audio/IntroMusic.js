@@ -1,4 +1,5 @@
 import { buildIntroMusicScore } from './introMusicScore.js';
+import { installMasterTap } from '../dev/audioMonitor.js';
 
 const PITCH_OFFSETS = { C: -9, D: -7, E: -5, F: -4, G: -2, A: 0, B: 2 };
 
@@ -31,7 +32,7 @@ export function createIntroMusic(score = buildIntroMusicScore()) {
       audioContext = new AudioContext();
       masterGain = audioContext.createGain();
       masterGain.gain.value = score.config.volume;
-      masterGain.connect(audioContext.destination);
+      installMasterTap(audioContext, masterGain);
 
       for (const [channel, settings] of Object.entries(score.config.channels)) {
         const gain = audioContext.createGain();
@@ -125,7 +126,7 @@ export function createIntroMusic(score = buildIntroMusicScore()) {
     }
   }
 
-  function beginLoop(generation) {
+  function beginLoop(generation, loop = true) {
     if (!isPlaying || generation !== loopGeneration) {
       return;
     }
@@ -134,13 +135,17 @@ export function createIntroMusic(score = buildIntroMusicScore()) {
     scheduleNotes(loopStart);
     nextLoopAt = loopStart + score.config.loopDuration;
 
+    if (!loop) {
+      return;
+    }
+
     loopTimer = setTimeout(
-      () => beginLoop(generation),
+      () => beginLoop(generation, loop),
       score.config.loopDuration * 1000,
     );
   }
 
-  async function play() {
+  async function play({ startOffsetSec = 0, loop = true } = {}) {
     const ctx = ensureContext();
 
     if (ctx.state === 'suspended') {
@@ -156,8 +161,8 @@ export function createIntroMusic(score = buildIntroMusicScore()) {
       loopTimer = null;
     }
 
-    nextLoopAt = ctx.currentTime + 0.05;
-    beginLoop(generation);
+    nextLoopAt = ctx.currentTime + 0.05 - startOffsetSec;
+    beginLoop(generation, loop);
   }
 
   function stop() {
@@ -167,6 +172,15 @@ export function createIntroMusic(score = buildIntroMusicScore()) {
     if (loopTimer) {
       clearTimeout(loopTimer);
       loopTimer = null;
+    }
+
+    if (audioContext) {
+      masterGain?.gain.setValueAtTime(0, audioContext.currentTime);
+      audioContext.close().catch(() => {});
+      audioContext = null;
+      masterGain = null;
+      channelGains = {};
+      noiseBuffer = null;
     }
   }
 

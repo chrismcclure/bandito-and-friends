@@ -1,4 +1,6 @@
 /** Per-sound volume levels. Adjust these to balance the intro mix. */
+import { installMediaTap } from '../dev/audioMonitor.js';
+
 export const INTRO_AUDIO_VOLUMES = {
   introText01: 0.45,
   introText02: 0.45,
@@ -10,7 +12,7 @@ export const INTRO_AUDIO_VOLUMES = {
   introEnd: 0.35,
 };
 
-const SOUND_FILES = {
+export const INTRO_SFX_FILES = {
   introText01: '/audio/sfx/intro-text-01.wav',
   introText02: '/audio/sfx/intro-text-02.wav',
   introText03: '/audio/sfx/intro-text-03.wav',
@@ -47,7 +49,7 @@ export function createIntroAudio(timing, motion) {
   let unlocked = false;
 
   async function preload() {
-    const entries = Object.entries(SOUND_FILES);
+    const entries = Object.entries(INTRO_SFX_FILES);
 
     await Promise.all(
       entries.map(
@@ -61,6 +63,7 @@ export function createIntroAudio(timing, motion) {
               'canplaythrough',
               () => {
                 audios[soundId] = audio;
+                installMediaTap(audio);
                 resolve();
               },
               { once: true },

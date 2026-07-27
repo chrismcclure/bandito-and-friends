@@ -8,10 +8,19 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "generate:sfx": "node scripts/generate-sfx.js"
+    "export:check": "node scripts/export-check.js",
+    "export:episode1": "node scripts/export-episode-1.js episode-1",
+    "export:episode1:test": "node scripts/export-episode-1.js episode-1 --test",
+    "export:episode1:profile": "node scripts/export-episode-1.js episode-1 --perf-test --profile",
+    "export:episode1:opening-test": "node scripts/export-episode-1.js episode-1 --opening-test",
+    "export:episode1:subtitle-test": "node scripts/export-episode-1.js episode-1 --subtitle-test",
+    "generate:sfx": "node scripts/generate-sfx.js",
+    "generate:music": "node scripts/export-music-wav.js sockMonsterBattleMusicScore.js sock-monster-battle.wav",
+    "generate:placeholders": "node scripts/generate-placeholders.js"
   },
   "devDependencies": {
     "jsfxr": "^1.4.1",
+    "playwright": "^1.54.1",
     "vite": "^8.1.1"
   },
   "dependencies": {
