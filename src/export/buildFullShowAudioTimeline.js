@@ -12,7 +12,7 @@ import { EPISODE_SHOT_SFX_VOLUME } from '../audio/episodeShotSfx.js';
 import { isFullShowExportMusicCue } from '../audio/episodeMusicCues.js';
 import {
   EPISODE_01_SHOTS,
-  EPISODE_01_STORY_START_SHOT_INDEX,
+  EPISODE_01_EPISODE_CARD_SHOT_INDEX,
 } from '../data/episode-01-shots.js';
 import { INTRO_AUDIO_VOLUMES } from '../scenes/IntroAudio.js';
 
@@ -70,7 +70,7 @@ export function buildFullShowAudioTimeline(
     beats,
     (beat) =>
       beat.section === 'episode' &&
-      beat.shotIndex === EPISODE_01_STORY_START_SHOT_INDEX,
+      beat.shotIndex === EPISODE_01_EPISODE_CARD_SHOT_INDEX,
   );
   const episodeSectionStart = findBeatStart(
     beats,

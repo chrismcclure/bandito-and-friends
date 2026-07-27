@@ -327,6 +327,12 @@ export function getCueMixSettings(cue) {
     return { loop: false, volume: buildSeriesOpeningMusicScore().config.volume };
   }
 
+  if (cue === 'team-theme-credits') {
+    const volumeScale =
+      EPISODE_MUSIC_PROCEDURAL_CUES['team-theme-credits'].volumeScale ?? 1;
+    return { loop: true, volume: volumeScale };
+  }
+
   const fileCue = EPISODE_MUSIC_FILE_CUES[cue];
   if (fileCue) {
     return { loop: fileCue.loop ?? true, volume: fileCue.volume };

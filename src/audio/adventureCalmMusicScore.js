@@ -7,7 +7,7 @@ export const ADVENTURE_CALM_MUSIC_CONFIG = {
   bpm: 152,
   /** 16-beat seamless loop (~6.3s). */
   loopDuration: (16 * 60) / 152,
-  volume: 0.468,
+  volume: 0.2,
   channels: {
     melody1: { type: 'square', volume: 0.14 },
     melody2: { type: 'square', volume: 0.09 },

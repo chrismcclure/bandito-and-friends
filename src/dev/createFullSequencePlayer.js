@@ -7,6 +7,7 @@ import {
   getFullSequenceTotalDuration,
   getTitleMenuEndTime,
 } from './fullSequenceTimeline.js';
+import { EPISODE_01_EPISODE_CARD_SHOT_INDEX } from '../data/episode-01-shots.js';
 
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
@@ -100,6 +101,15 @@ export function createFullSequencePlayer({
     }
   }
 
+  function stopIntroMusicForEpisodeCard(beat) {
+    if (
+      beat.section === 'episode' &&
+      beat.shotIndex >= EPISODE_01_EPISODE_CARD_SHOT_INDEX
+    ) {
+      introScene.stopIntroMusic();
+    }
+  }
+
   function renderBeat(index, localTime) {
     const beat = beats[index];
 
@@ -144,9 +154,7 @@ export function createFullSequencePlayer({
       case 'episode':
         episodePlayer.container.visible = true;
         episodePlayer.seekShotTime(beat.shotIndex, localTime);
-        if (beat.shotIndex >= 4) {
-          introScene.stopIntroMusic();
-        }
+        stopIntroMusicForEpisodeCard(beat);
         break;
 
       default:
@@ -201,6 +209,8 @@ export function createFullSequencePlayer({
       if (manualBeatIndex !== null && beat.shotIndex <= 3) {
         introScene.ensureIntroMusic();
       }
+
+      stopIntroMusicForEpisodeCard(beat);
 
       if (beat.shotIndex === 0) {
         episodePlayer.start();
@@ -334,18 +344,16 @@ export function createFullSequencePlayer({
     paused = true;
     complete = timeSeconds >= totalDuration;
     timelineMode = false;
-    lastRenderedIndex = -1;
 
     const { index, localTime } = findBeatAtTime(globalElapsed, beats);
     const beat = beats[index];
 
     if (beat.section === 'pixel-load' || beat.section === 'opening') {
       openingMusicStarted = localTime > 0 || beat.section === 'opening';
-    } else {
+    } else if (index !== lastRenderedIndex) {
       openingMusicStarted = false;
     }
 
-    onEnterBeat(index);
     renderBeat(index, localTime);
 
     if (!renderOnly) {

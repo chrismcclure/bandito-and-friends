@@ -5,7 +5,7 @@ export const EXPORT_FRAME_RATE = 30;
 export const EPISODE_01_EXPORT_CONFIG = {
   id: 'episode-1',
   label: 'Episode 1 — Full Show',
-  outputFilename: 'bandito-and-friends-episode-1.mp4',
+  outputFilename: 'bandito-and-friends-episode-4-v4.mp4',
   width: 1080,
   height: 1920,
   fps: EXPORT_FRAME_RATE,

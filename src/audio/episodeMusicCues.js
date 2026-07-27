@@ -40,6 +40,8 @@ export const EPISODE_MUSIC_PROCEDURAL_CUES = {
     scoreModule: 'introMusicScore.js',
     buildScore: 'buildIntroMusicScore',
     loop: true,
+    /** Applied on top of the baked WAV in export; scales master gain in browser. */
+    volumeScale: 0.792,
   },
 };
 

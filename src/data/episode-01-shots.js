@@ -117,6 +117,9 @@ export const EPISODE_01_BALANCED_FIT_FROM_SHOT_INDEX = 10;
 /** First story beat after the episode card (05a — patrol). */
 export const EPISODE_01_STORY_START_SHOT_INDEX = 5;
 
+/** Episode title card (EPISODE 1 — THE SOCK MONSTER); intro theme ends here. */
+export const EPISODE_01_EPISODE_CARD_SHOT_INDEX = 4;
+
 /** Default caption distance from the bottom of the stage for story dialogue. */
 export const EPISODE_01_CAPTION_BOTTOM_OFFSET = 17;
 
@@ -149,13 +152,13 @@ const EPISODE_01_SHOTS_RAW = [
     transitionIn: 'cut',
     transitionOut: 'cut',
     cameraMovement: 'pan-right',
-    cameraScaleStart: 1.02,
-    cameraScaleEnd: 1.02,
-    cameraPositionStart: { x: -14, y: 0 },
-    cameraPositionEnd: { x: 14, y: 0 },
+    cameraScaleStart: 1,
+    cameraScaleEnd: 1,
+    cameraPositionStart: { x: -14, y: 6 },
+    cameraPositionEnd: { x: 14, y: 12 },
     musicCue: 'intro-theme',
     visualEffect: 'none',
-    notes: 'Meet the Team — titles baked into artwork',
+    notes: 'Meet the Team — titles baked into artwork; slight downward nudge keeps head in frame',
     status: 'final',
   },
   {
@@ -186,12 +189,12 @@ const EPISODE_01_SHOTS_RAW = [
     transitionOut: 'cut',
     cameraMovement: 'slow-zoom',
     cameraScaleStart: 1,
-    cameraScaleEnd: 1.04,
-    cameraPositionStart: { x: 0, y: 0 },
-    cameraPositionEnd: { x: 0, y: 0 },
+    cameraScaleEnd: 1.02,
+    cameraPositionStart: { x: 0, y: 6 },
+    cameraPositionEnd: { x: 0, y: 12 },
     musicCue: 'intro-theme',
     visualEffect: 'none',
-    notes: 'Meet the Team — titles baked into artwork; static comedic hold',
+    notes: 'Meet the Team — titles baked into artwork; slight downward nudge keeps head in frame',
     status: 'final',
   },
   {
@@ -208,7 +211,6 @@ const EPISODE_01_SHOTS_RAW = [
     cameraPositionEnd: { x: 0, y: 0 },
     label: 'EPISODE 1',
     subtitle: 'THE SOCK MONSTER',
-    musicCue: 'intro-theme',
     visualEffect: 'none',
     status: 'final',
     notes: 'Text-only title card — no background art asset',

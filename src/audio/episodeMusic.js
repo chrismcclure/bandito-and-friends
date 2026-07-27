@@ -4,13 +4,32 @@ import { buildIntroMusicScore } from './introMusicScore.js';
 import { createEpisodeMusicFileLoop } from './episodeMusicFileLoop.js';
 import {
   EPISODE_MUSIC_FILE_CUES,
+  EPISODE_MUSIC_PROCEDURAL_CUES,
   isSupportedEpisodeMusicCue,
 } from './episodeMusicCues.js';
+
+function buildIntroMusicScoreForCue(cue) {
+  const score = buildIntroMusicScore();
+  const volumeScale = EPISODE_MUSIC_PROCEDURAL_CUES[cue]?.volumeScale;
+
+  if (volumeScale == null) {
+    return score;
+  }
+
+  return {
+    ...score,
+    config: {
+      ...score.config,
+      volume: score.config.volume * volumeScale,
+    },
+  };
+}
 
 const PROCEDURAL_CUES = {
   'adventure-calm': () => createIntroMusic(buildAdventureCalmMusicScore()),
   /** Credits callback — same score as IntroScene, but not `intro-theme` (that label is IntroScene-only). */
-  'team-theme-credits': () => createIntroMusic(buildIntroMusicScore()),
+  'team-theme-credits': () =>
+    createIntroMusic(buildIntroMusicScoreForCue('team-theme-credits')),
 };
 
 function isSupportedCue(cue) {
