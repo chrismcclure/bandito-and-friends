@@ -1,3 +1,9 @@
+/**
+ * URL query helpers for dev preview modes.
+ *
+ * ?scene=episode|opening|title-menu|crawl|threat-board
+ * ?shot=N  — 0-based beat index to jump to and loop
+ */
 /** Returns the active development scene id from the URL query string. */
 export function getDevSceneId() {
   return new URLSearchParams(window.location.search).get('scene');

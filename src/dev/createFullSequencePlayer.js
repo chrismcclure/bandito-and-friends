@@ -1,3 +1,10 @@
+/**
+ * Full-sequence player — orchestrates every scene in the complete show.
+ *
+ * Composes title menu, pixel load, series opening, intro title, and episode
+ * into one timeline. Delegates rendering to each scene's seek/update methods.
+ * Exposes the same API as EpisodePlayer so dev controls work unchanged.
+ */
 import { Container } from 'pixi.js';
 import { setActiveAudioLabel } from './audioMonitor.js';
 import { NES_PIXEL_LOAD_TIMING } from '../transitions/nesPixelLoadTransition.js';
@@ -7,14 +14,14 @@ import {
   getFullSequenceTotalDuration,
   getTitleMenuEndTime,
 } from './fullSequenceTimeline.js';
-import { EPISODE_01_EPISODE_CARD_SHOT_INDEX } from '../data/episode-01-shots.js';
+import { ACTIVE_EPISODE } from '../data/activeEpisode.js';
 
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
 }
 
 /**
- * Unified playback controller for the full show — NES menu through Episode 1.
+ * Unified playback controller for the full show — NES menu through the active episode.
  * Exposes the same API as EpisodePlayer for the dev controls panel.
  */
 export function createFullSequencePlayer({
@@ -104,12 +111,13 @@ export function createFullSequencePlayer({
   function stopIntroMusicForEpisodeCard(beat) {
     if (
       beat.section === 'episode' &&
-      beat.shotIndex >= EPISODE_01_EPISODE_CARD_SHOT_INDEX
+      beat.shotIndex >= ACTIVE_EPISODE.episodeCardShotIndex
     ) {
       introScene.stopIntroMusic();
     }
   }
 
+  /** Route the current beat to the correct scene and seek it to localTime. */
   function renderBeat(index, localTime) {
     const beat = beats[index];
 

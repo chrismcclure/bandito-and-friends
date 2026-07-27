@@ -1,7 +1,5 @@
-import {
-  EPISODE_01_SHOTS,
-  getEpisodeOneTotalDuration,
-} from '../data/episode-01-shots.js';
+import { ACTIVE_EPISODE } from '../data/activeEpisode.js';
+import { getEpisodeTotalDuration } from '../episode/episodeShotHelpers.js';
 import { EPISODE_SHOT_SFX_VOLUME } from '../audio/episodeShotSfx.js';
 import { isSupportedEpisodeMusicCue } from '../audio/episodeMusicCues.js';
 
@@ -10,8 +8,8 @@ import { isSupportedEpisodeMusicCue } from '../audio/episodeMusicCues.js';
  * Matches EpisodePlayer music/SFX behavior in episode-only preview mode.
  */
 export function buildEpisodeAudioTimeline(
-  shots = EPISODE_01_SHOTS,
-  totalDuration = getEpisodeOneTotalDuration(shots),
+  shots = ACTIVE_EPISODE.shots,
+  totalDuration = getEpisodeTotalDuration(shots),
 ) {
   const musicSegments = [];
   const oneShots = [];

@@ -6,10 +6,14 @@ Drop image assets here. Files in `public/` are served at the site root (e.g. `/i
 
 | Folder | Contents |
 |--------|----------|
-| `title/` | Title screens, logos, and episode branding art |
+| `title/` | Title screens, logos, and NES menu art |
 | `characters/` | Character sprites, portraits, and group reference art |
 | `backgrounds/` | Scene backgrounds and environment art |
 | `props/` | Standalone objects used in scenes |
+| `series-opening/` | Series opening shots — `finals/` for approved art, `placeholders/` for SVG stubs |
+| `episodes/episode-01/` | Episode 1 shots — `finals/` for approved art, `placeholders/` for SVG stubs |
+
+Superseded final art lives in each `finals/archive/` folder (not referenced by shot data).
 
 ## Character artwork
 

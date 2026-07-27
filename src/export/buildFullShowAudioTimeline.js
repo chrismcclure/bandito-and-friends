@@ -1,3 +1,9 @@
+/**
+ * Offline audio mix for the full show export.
+ *
+ * Builds a flat list of music segments and one-shot SFX on the master clock,
+ * matching what the browser plays during full-sequence preview.
+ */
 import {
   TITLE_MENU_TIMING,
 } from '../data/title-menu-timing.js';
@@ -10,10 +16,7 @@ import {
 import { TITLE_MENU_AUDIO_VOLUMES } from '../scenes/TitleMenuAudio.js';
 import { EPISODE_SHOT_SFX_VOLUME } from '../audio/episodeShotSfx.js';
 import { isFullShowExportMusicCue } from '../audio/episodeMusicCues.js';
-import {
-  EPISODE_01_SHOTS,
-  EPISODE_01_EPISODE_CARD_SHOT_INDEX,
-} from '../data/episode-01-shots.js';
+import { ACTIVE_EPISODE } from '../data/activeEpisode.js';
 import { INTRO_AUDIO_VOLUMES } from '../scenes/IntroAudio.js';
 
 function getBeatStartTimes(beats) {
@@ -70,7 +73,7 @@ export function buildFullShowAudioTimeline(
     beats,
     (beat) =>
       beat.section === 'episode' &&
-      beat.shotIndex === EPISODE_01_EPISODE_CARD_SHOT_INDEX,
+      beat.shotIndex === ACTIVE_EPISODE.episodeCardShotIndex,
   );
   const episodeSectionStart = findBeatStart(
     beats,
@@ -130,8 +133,8 @@ export function buildFullShowAudioTimeline(
   let activeCue = null;
   let segmentStart = episodeSectionStart;
 
-  for (let index = 0; index < EPISODE_01_SHOTS.length; index += 1) {
-    const shot = EPISODE_01_SHOTS[index];
+  for (let index = 0; index < ACTIVE_EPISODE.shots.length; index += 1) {
+    const shot = ACTIVE_EPISODE.shots[index];
     const nextCue = isFullShowExportMusicCue(shot.musicCue)
       ? shot.musicCue
       : null;
@@ -199,7 +202,7 @@ export function getFullShowTestRanges() {
   const beats = buildFullSequenceBeats();
   const shotTenEnd =
     findBeatStart(beats, (beat) => beat.section === 'episode' && beat.shotIndex === 10) +
-    EPISODE_01_SHOTS[10].duration;
+    ACTIVE_EPISODE.shots[10].duration;
 
   return {
     openingThroughShotTen: {

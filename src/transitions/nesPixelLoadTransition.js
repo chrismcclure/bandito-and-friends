@@ -1,3 +1,7 @@
+/**
+ * Mega Man-style pixel-block dissolve between title menu and series opening.
+ * White flash → hold on pixel grid → blocks dissolve to reveal the living room.
+ */
 import { Container, Graphics } from 'pixi.js';
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../config.js';
 

@@ -1,4 +1,14 @@
-/** Episode 1 intro timing — used after series opening title flash. */
+/**
+ * Episode 1 shot list — The Sock Monster.
+ *
+ * This is the data layer for Episode 1. Each object describes one beat:
+ * which image to show, how long, camera move, dialogue, music cue, and SFX.
+ *
+ * The EpisodePlayer reads this array and renders it. To make Episode 2,
+ * copy episode-template-shots.js and register in src/data/episodes/.
+ *
+ * Shot IDs (03a, 05b, etc.) match story/episode-01-production.md.
+ */
 
 import {
   BALANCED_FIT_HEIGHT_COVERAGE,
@@ -8,86 +18,21 @@ import {
   CANVAS_HEIGHT,
   CANVAS_WIDTH,
 } from '../config.js';
+import {
+  applyEpisodeShotDefaults,
+  findShotIndexAtTime,
+  getEpisodeShotStarts,
+  getEpisodeTotalDuration,
+} from '../episode/episodeShotHelpers.js';
 
 export const EPISODE_01_INTRO_TIMING = {
   /** Main title hold after crawl fade (seconds). */
   TITLE_HOLD: 2.5,
 };
 
-/** Intro theme should cover title hold + Meet the Team (shots 03a–03d). */
-export function getIntroThemeDuration(shots = EPISODE_01_SHOTS) {
-  const meetTheTeamDuration = shots
-    .slice(0, 4)
-    .reduce((total, shot) => total + shot.duration, 0);
-
-  return EPISODE_01_INTRO_TIMING.TITLE_HOLD + meetTheTeamDuration;
-}
-
 /** Base path for Episode 1 placeholder and final shot assets. */
 export const EPISODE_01_ASSET_BASE = '/images/episodes/episode-01/placeholders';
 export const EPISODE_01_FINALS_BASE = '/images/episodes/episode-01/finals';
-
-/**
- * @typedef {'cut' | 'fade' | 'flash'} EpisodeTransition
- * @typedef {'static' | 'push-in' | 'push-out' | 'pan-left' | 'pan-right' | 'pan-up' | 'pan-down' | 'slow-zoom'} EpisodeCameraMovement
- * @typedef {'none' | 'shake' | 'speed-lines'} EpisodeVisualEffect
- *
- * @typedef {Object} EpisodeShot
- * @property {string} id
- * @property {string} title
- * @property {'image' | 'episode-card' | 'closing-card'} type
- * @property {string} [assetPath]
- * @property {number} duration
- * @property {EpisodeTransition} transitionIn
- * @property {EpisodeTransition} transitionOut
- * @property {EpisodeCameraMovement} cameraMovement
- * @property {number} cameraScaleStart
- * @property {number} cameraScaleEnd
- * @property {{ x: number, y: number }} cameraPositionStart
- * @property {{ x: number, y: number }} cameraPositionEnd
- * @property {string} [dialogue]
- * @property {string} [dialogueTop] Caption shown near the top of the stage (pairs with dialogue).
- * @property {{ text: string, at: number }[]} [dialogueSections] Timed caption lines; overrides dialogue when set.
- * @property {'top' | 'bottom'} [captionPosition] Where dialogue captions render (default bottom).
- * @property {string} [secondaryDialogue]
- * @property {number} [secondaryDialogueAt] Seconds into the shot when secondary dialogue replaces primary.
- * @property {number} [captionFontSize] Override default slide caption size (20px).
- * @property {number} [captionStrokeWidth] Override default caption stroke width.
- * @property {number} [captionWordWrapWidth] Override default caption wrap width.
- * @property {number} [captionBottomOffset] Distance from bottom of stage to caption baseline.
- * @property {number} [captionTopOffset] Distance from top of stage to top caption baseline.
- * @property {boolean} [captionItalic] Render dialogue caption in italics (e.g. sound effects).
- * @property {string} [onScreenText]
- * @property {string} [subtitle]
- * @property {string} [label]
- * @property {string} [musicCue]
- * @property {EpisodeVisualEffect} visualEffect
- * @property {number} [shakeIntensity] Shake strength when visualEffect is shake (default 4).
- * @property {boolean} [freezeAtEnd]
- * @property {string} [notes]
- * @property {'placeholder' | 'final'} [status]
- * @property {'cover' | 'contain' | 'balanced'} [imageFit] Defaults to cover.
- * @property {number} [imageFitCoverage] Balanced mode height fill (0–1). Defaults to config.
- * @property {number} [imageFitZoom] Balanced mode zoom multiplier. Defaults to config.
- * @property {number} [imageFitZoomStart] Animate zoom from this value over the shot (with imageFitZoomEnd).
- * @property {number} [imageFitZoomEnd] Animate zoom to this value over the shot (with imageFitZoomStart).
- * @property {number} [imageFitOffsetX] Balanced mode horizontal nudge in stage pixels.
- * @property {number} [imageFitOffsetY] Balanced mode vertical nudge in stage pixels.
- * @property {number} [imageFitFocalX] Normalized focal point (0–1) to center on while zooming.
- * @property {number} [imageFitFocalY] Normalized focal point (0–1) to center on while zooming.
- * @property {'left-to-right' | 'right-to-left' | 'left' | 'right'} [imageFitSlide] Pan across a wide balanced-fit image over the shot duration, or a limited slide when imageFitSlideAmount is set.
- * @property {number} [imageFitSlideAmount] Fraction of stage width (0–1) for a limited slide with directions left or right.
- * @property {'left' | 'center' | 'right'} [imageFitSlideAlign] Start alignment for pans. Use left or right to pin an edge to the stage.
- * @property {number} [imageFitSlideCropStart] Fraction of image width cropped off-screen on the left at the start of a left-aligned pan.
- * @property {number} [imageFitSlideCropEnd] Fraction of image width allowed off-screen on the right at the end of a left-aligned pan.
- * @property {number} [imageFitSlideDuration] Seconds over which the image pan completes (defaults to shot duration).
- * @property {number} [flashAt] Seconds into the shot when a white flash peaks (overrides transitionIn flash timing).
- * @property {string} [sfx] Episode shot sound effect id (see episodeShotSfx.js).
- * @property {number} [sfxAt] Seconds into the shot when sfx plays once.
- * @property {number} [imageFitRotateStart] Starting tilt as a fraction of 90° (negative = left).
- * @property {number} [imageFitRotateEnd] Ending tilt as a fraction of 90° (defaults to 0).
- * @property {number} [imageFitRotateDuration] Seconds over which rotation completes (defaults to shot duration).
- */
 
 /**
  * Default framing for wide landscape finals on the 9:16 stage.
@@ -102,7 +47,7 @@ export const EPISODE_01_LANDSCAPE_FIT = {
   imageFitOffsetY: BALANCED_FIT_OFFSET_Y,
 };
 
-/** Episode shot index for 06c — Bandito Team, assemble! (order-of-operations #15). */
+/** Index constants — used by shotDefaults to auto-apply framing rules. */
 export const EPISODE_01_ASSEMBLE_SHOT_INDEX = 9;
 
 /**
@@ -823,64 +768,24 @@ const EPISODE_01_SHOTS_RAW = [
   },
 ];
 
-export const EPISODE_01_SHOTS = EPISODE_01_SHOTS_RAW.map((shot, index) => {
-  if (shot.type !== 'image') {
-    return shot;
-  }
+export const EPISODE_01_SHOT_DEFAULTS = {
+  assembleShotIndex: EPISODE_01_ASSEMBLE_SHOT_INDEX,
+  landscapeFitFromShotIndex: EPISODE_01_LANDSCAPE_FIT_FROM_SHOT_INDEX,
+  balancedFitFromShotIndex: EPISODE_01_BALANCED_FIT_FROM_SHOT_INDEX,
+  storyStartShotIndex: EPISODE_01_STORY_START_SHOT_INDEX,
+  landscapeFit: EPISODE_01_LANDSCAPE_FIT,
+  captionBottomOffset: EPISODE_01_CAPTION_BOTTOM_OFFSET,
+};
 
-  let next = shot;
+export const EPISODE_01_SHOTS = applyEpisodeShotDefaults(
+  EPISODE_01_SHOTS_RAW,
+  EPISODE_01_SHOT_DEFAULTS,
+);
 
-  if (
-    index === EPISODE_01_ASSEMBLE_SHOT_INDEX ||
-    index >= EPISODE_01_LANDSCAPE_FIT_FROM_SHOT_INDEX
-  ) {
-    next = { ...EPISODE_01_LANDSCAPE_FIT, ...shot };
-  } else if (index >= EPISODE_01_BALANCED_FIT_FROM_SHOT_INDEX) {
-    next = { ...shot, imageFit: shot.imageFit ?? 'balanced' };
-  }
+/** @deprecated Use getEpisodeTotalDuration from episodeShotHelpers.js */
+export const getEpisodeOneTotalDuration = getEpisodeTotalDuration;
 
-  if (index >= EPISODE_01_STORY_START_SHOT_INDEX && next.dialogue) {
-    next = {
-      ...next,
-      captionBottomOffset:
-        next.captionBottomOffset ?? EPISODE_01_CAPTION_BOTTOM_OFFSET,
-    };
-  }
+/** @deprecated Use getEpisodeShotStarts from episodeShotHelpers.js */
+export const getEpisodeOneShotStarts = getEpisodeShotStarts;
 
-  return next;
-});
-
-export function getEpisodeOneTotalDuration(shots = EPISODE_01_SHOTS) {
-  return shots.reduce((total, shot) => total + shot.duration, 0);
-}
-
-export function getEpisodeOneShotStarts(shots = EPISODE_01_SHOTS) {
-  const starts = [];
-  let elapsed = 0;
-
-  for (const shot of shots) {
-    starts.push(elapsed);
-    elapsed += shot.duration;
-  }
-
-  return starts;
-}
-
-export function findShotIndexAtTime(time, shots = EPISODE_01_SHOTS) {
-  let elapsed = 0;
-
-  for (let index = 0; index < shots.length; index += 1) {
-    const shot = shots[index];
-    if (time < elapsed + shot.duration) {
-      return { index, localTime: time - elapsed, elapsed };
-    }
-    elapsed += shot.duration;
-  }
-
-  const lastIndex = shots.length - 1;
-  return {
-    index: lastIndex,
-    localTime: shots[lastIndex].duration,
-    elapsed: elapsed - shots[lastIndex].duration,
-  };
-}
+export { findShotIndexAtTime };

@@ -1,3 +1,9 @@
+/**
+ * Global stage and image-fit defaults.
+ *
+ * All animation content is positioned in this coordinate system — never
+ * relative to the browser window. The canvas is scaled up for display only.
+ */
 /** Internal movie stage size (9:16 vertical). */
 export const CANVAS_WIDTH = 270;
 export const CANVAS_HEIGHT = 480;

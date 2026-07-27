@@ -13,8 +13,13 @@
 </p>
 
 <p align="center">
+  Want to see the video? <a href="https://youtube.com/shorts/hWR0eq0EQOw?feature=share">Watch Episode 1 on YouTube</a>
+</p>
+
+<p align="center">
   <a href="story/episode-01-the-sock-monster.md">Episode 1 script</a> ·
   <a href="story/order-of-operations.md">Production runbook</a> ·
+  <a href="story/NEW-EPISODE.md">New episode checklist</a> ·
   <a href="art/style-guide.md">Art style guide</a>
 </p>
 
@@ -203,16 +208,22 @@ npm run generate:sfx
 ```
 src/
   app.js                          PixiJS boot, full-show routing, responsive scaling
-  data/episode-01-shots.js        Shot list — timing, camera, dialogue, music cues
-  episode/EpisodePlayer.js        Data-driven episode renderer
-  dev/createFullSequencePlayer.js Unified timeline (menu → opening → episode)
-  dev/EpisodeDevControls.js       Shot scrubber, export button, audio meter
-  audio/                          Procedural music scores and playback
+  data/
+    activeEpisode.js              Which episode plays by default — change for Episode 2+
+    episodes/                     Episode registry and per-episode config
+    episode-XX-shots.js           Shot lists (one file per episode)
+    episode-template-shots.js     Starter template for new episodes
+  episode/                        Data-driven episode renderer and shot helpers
+  dev/                            Full-show timeline, dev controls, audio meter
+  audio/                          Music library, scores, SFX, playback
   scenes/                         Title menu, intro, series opening, crawl
-  export/                         Export config and full-show audio timeline
+  export/                         Export client and full-show audio timeline
+  transitions/                    NES pixel-load transition
+export/                           Playwright render pages (see export/README.md)
+exports/                          Generated MP4 output (gitignored)
 server/export/                    Playwright capture, FFmpeg encode, audio mix
-public/images/episodes/           Episode 1 final artwork
-story/                            Scripts, production docs, shot runbook
+public/images/                    Episode and series-opening final art
+story/                            Scripts, NEW-EPISODE.md checklist, templates
 art/                              Style guide, character canon, Meow City lore
 ```
 

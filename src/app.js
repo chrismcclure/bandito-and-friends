@@ -1,3 +1,18 @@
+/**
+ * Application bootstrap and scene routing.
+ *
+ * This file wires PixiJS to the 270×480 internal stage and picks which
+ * "mode" to run based on ?scene= in the URL:
+ *
+ *   (default)     Full show — title menu → opening → episode → credits
+ *   ?scene=title-menu   NES title screen only
+ *   ?scene=opening      Series opening only
+ *   ?scene=episode      Active episode with dev controls (+ export button)
+ *   ?scene=crawl        Legacy scroll crawl prototype
+ *   ?scene=threat-board Professor Threat Board component preview
+ *
+ * Add ?shot=N (0-based) to jump to a specific beat and loop it for review.
+ */
 import { Application, Assets } from 'pixi.js';
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from './config.js';
 import { createIntroScene } from './scenes/IntroScene.js';
@@ -10,9 +25,11 @@ import { createEpisodeDevControls } from './dev/EpisodeDevControls.js';
 import { createFullSequencePlayer } from './dev/createFullSequencePlayer.js';
 import { getDevSceneId, getDevShotIndex } from './dev/sceneParam.js';
 import { createNesPixelLoadTransition } from './transitions/nesPixelLoadTransition.js';
+import { ACTIVE_EPISODE } from './data/activeEpisode.js';
 
 const FRAME_BORDER = 1;
 
+/** Scale the internal 270×480 canvas to fill the browser window without blurring pixels. */
 function fitCanvasToWindow(canvas) {
   const workspace = canvas.closest('.dev-workspace');
   const sidebar = workspace?.querySelector(
@@ -42,6 +59,7 @@ function fitCanvasToWindow(canvas) {
   canvas.style.height = `${CANVAS_HEIGHT * integerScale}px`;
 }
 
+/** Create the PixiJS app, canvas, and movie frame wrapper. */
 async function createStage(container) {
   await Assets.init();
 
@@ -71,6 +89,7 @@ async function createStage(container) {
   return { app, frame, canvas };
 }
 
+/** Attach the dev controls sidebar (shot scrubber, play/pause, export). */
 function attachEpisodeDevControls(frame, player, options = {}) {
   const canvas = frame.querySelector('canvas');
   const refit = () => fitCanvasToWindow(canvas);
@@ -86,6 +105,8 @@ function attachEpisodeDevControls(frame, player, options = {}) {
 
   refit();
 }
+
+// ─── Preview modes (one scene at a time for iteration) ─────────────────────
 
 async function runOpeningCrawlOnly(app, frame) {
   const crawlScene = createOpeningCrawlScene();
@@ -116,6 +137,7 @@ async function runOpeningCrawlOnly(app, frame) {
   });
 }
 
+/** Jump to a shot and loop it — used by ?shot=N preview links. */
 function previewShot(player, shotIndex) {
   if (shotIndex === null) {
     player.update(0);
@@ -181,7 +203,7 @@ async function runEpisodeOnly(app, frame) {
   episodePlayer.container.visible = Boolean(previewShotIndex !== null);
   app.stage.addChild(episodePlayer.container);
   attachEpisodeDevControls(frame, episodePlayer, {
-    title: 'Episode 1 Dev Controls',
+    title: `Episode ${ACTIVE_EPISODE.number} Dev Controls`,
     enableExport: true,
   });
 
@@ -263,6 +285,8 @@ async function runTitleMenuOnly(app, frame) {
   });
 }
 
+// ─── Full show (default route) ───────────────────────────────────────────────
+
 async function runOpeningSequence(app, frame) {
   const titleMenu = await createTitleMenuScene();
   const seriesOpening = await createSeriesOpeningScene();
@@ -329,6 +353,7 @@ async function runThreatBoardPreview(app) {
   });
 }
 
+/** Route to the correct scene based on ?scene= URL param. */
 export async function createApp(container) {
   const { app, frame } = await createStage(container);
   const devScene = getDevSceneId();

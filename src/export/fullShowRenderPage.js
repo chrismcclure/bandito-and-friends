@@ -1,3 +1,9 @@
+/**
+ * Playwright render page for MP4 export.
+ *
+ * Boots the full show at native 270×480, exposes window.__BANDITO_EXPORT__
+ * so the server can seekToMasterTime(t) and capture frames deterministically.
+ */
 import { Application, Assets } from 'pixi.js';
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../config.js';
 import { createTitleMenuScene } from '../scenes/TitleMenuScene.js';

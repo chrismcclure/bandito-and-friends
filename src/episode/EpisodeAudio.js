@@ -2,6 +2,12 @@ import { createEpisodeCardCue } from '../audio/EpisodeCardCue.js';
 import { createEpisodeShotSfx } from '../audio/episodeShotSfx.js';
 import { createEpisodeMusic } from '../audio/episodeMusic.js';
 
+/**
+ * Episode audio facade — wires together music, SFX, and the episode card sting.
+ *
+ * EpisodePlayer calls syncMusicCue when the active shot changes, and
+ * playShotSfx / playEpisodeCardCue at the right moments.
+ */
 /** Series-wide episode title card sound design cue. */
 export function createEpisodeAudio() {
   const episodeCardCue = createEpisodeCardCue();

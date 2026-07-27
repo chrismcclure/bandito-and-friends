@@ -1,3 +1,9 @@
+/**
+ * Series opening shot list — plays once before every episode.
+ *
+ * Teaches the audience: humans see an ordinary house, cats see Meow City.
+ * Not episode-specific; shared across the whole series.
+ */
 /** Paths for the series opening (replaces scroll crawl in default playback). */
 
 export const SERIES_OPENING_ASSET_BASE = '/images/series-opening/placeholders';

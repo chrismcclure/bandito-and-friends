@@ -23,8 +23,17 @@ When implementing animation, audio, or code for an episode:
 ```
 story/
   README.md
+  NEW-EPISODE.md              Checklist for creating Episode 2+
+  episode-template.md         Screenplay template
   episode-01-the-sock-monster.md
-  episode-02-...md          (future episodes)
+  episode-02-...md            (future episodes)
 ```
 
 Each episode file contains an overview, character list, scene structure, detailed scene breakdowns, and production notes for the series.
+
+## Creating a New Episode
+
+1. Read `NEW-EPISODE.md` for the full checklist.
+2. Copy `episode-template.md` for the screenplay.
+3. Copy `src/data/episode-template-shots.js` for shot data.
+4. Register the episode in `src/data/episodes/registry.js` and set `ACTIVE_EPISODE` when ready.

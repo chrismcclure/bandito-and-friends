@@ -1,3 +1,9 @@
+/**
+ * Series opening scene — reuses EpisodePlayer with series-opening-shots.js.
+ *
+ * Same renderer as episodes; just a different shot list. Music is deferred
+ * until the pixel-load transition reveals the living room.
+ */
 import { createEpisodePlayer } from '../episode/EpisodePlayer.js';
 import { SERIES_OPENING_SHOTS } from '../data/series-opening-shots.js';
 import { createSeriesOpeningMusic } from '../audio/SeriesOpeningMusic.js';
