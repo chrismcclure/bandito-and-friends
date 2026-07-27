@@ -5,15 +5,19 @@
 <h1 align="center">Bandito and Friends</h1>
 
 <p align="center">
+  <strong>See the YouTube video? This is the final product.</strong>
+</p>
+
+<p align="center">
+  <a href="https://youtube.com/shorts/hWR0eq0EQOw?feature=share" style="font-size: 1.5em; font-weight: bold;">▶ Watch Episode 1: The Sock Monster</a>
+</p>
+
+<p align="center">
   <strong>A code-driven 8-bit animated short series — built, scored, and exported entirely in JavaScript.</strong>
 </p>
 
 <p align="center">
   <em>Inspired by classic NES intros and cutscenes. Produced for vertical video — YouTube Shorts and TikTok.</em>
-</p>
-
-<p align="center">
-  Want to see the video? <a href="https://youtube.com/shorts/hWR0eq0EQOw?feature=share">Watch Episode 1 on YouTube</a>
 </p>
 
 <p align="center">
