@@ -1,155 +1,240 @@
-# Bandito and Friends
+<p align="center">
+  <img src="docs/readme/title-screen.png" alt="Bandito and Friends title art" width="480" />
+</p>
 
-A JavaScript-based 8-bit animated short series inspired by classic NES games such as Mega Man and DuckTales. This project uses a timeline-driven approach to produce vertical animated content for YouTube Shorts and TikTok.
+<h1 align="center">Bandito and Friends</h1>
 
-## Requirements
+<p align="center">
+  <strong>A code-driven 8-bit animated short series — built, scored, and exported entirely in JavaScript.</strong>
+</p>
 
-- [Node.js](https://nodejs.org/) (v18 or later recommended)
-- npm
-- [FFmpeg](https://ffmpeg.org/) (required for video export)
+<p align="center">
+  <em>Inspired by classic NES intros and cutscenes. Produced for vertical video — YouTube Shorts and TikTok.</em>
+</p>
 
-### Install FFmpeg (macOS)
+<p align="center">
+  <a href="story/episode-01-the-sock-monster.md">Episode 1 script</a> ·
+  <a href="story/order-of-operations.md">Production runbook</a> ·
+  <a href="art/style-guide.md">Art style guide</a>
+</p>
+
+---
+
+## What is this?
+
+**Bandito and Friends** is not a traditional video edit. It is a **timeline-driven animation engine** — a miniature NES-era production studio written in code.
+
+Every frame of Episode 1 is orchestrated from data: shot timing, camera moves, subtitles, sound effects, and music cues. The browser renders a crisp **270 × 480** pixel stage (9:16). A custom export pipeline captures that stage frame-by-frame and upscales it to **1080 × 1920** for delivery.
+
+The result is a complete ~**114-second** show:
+
+**NES title menu → pixel-load transition → series opening → Meet the Team → Episode 1: The Sock Monster → credits**
+
+No game engine. No After Effects timeline. No video editor as the source of truth. **The repo is the studio.**
+
+---
+
+## Built in code
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+### 🎬 Animation & story
+
+- **PixiJS** renderer with nearest-neighbor scaling — pixel art stays sharp
+- **Data-driven episode player** — 33 shots defined in `episode-01-shots.js`
+- Camera system: pan, push-in, focal zoom, letterbox/cover fit, shake
+- NES title menu, Mega Man–style pixel load, series opening crawl
+- Shorts-safe subtitle layout with timed dialogue sections
+
+</td>
+<td width="50%" valign="top">
+
+### 🎵 Music & sound
+
+- **Original procedural scores** — square waves, triangle bass, drums, all composed in JavaScript
+- Intro theme, series opening, patrol music, battle themes, victory stinger, credits callback
+- **SFX library** — menu blips, title reveal, flash, battle stings, episode card cue
+- Offline WAV generation for export; live Web Audio playback in the browser
+- Built-in **audio meter** for mix-level monitoring during dev
+
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+
+### 🖼️ Visual art
+
+- Episode artwork created with **ChatGPT** (DALL·E), curated and finalized for vertical framing
+- Character sprite sheets, Meow City environments, battle shots, and end cards
+- Canon art docs, style guide, and production references in `art/`
+
+</td>
+<td width="50%" valign="top">
+
+### 📤 Video export
+
+- Custom **full-show exporter** — Playwright frame capture + FFmpeg encode
+- Deterministic `seekToMasterTime()` rendering — same frame every time
+- Full-show audio timeline mix (title menu → episode → credits)
+- Parallel chunk rendering, H.264/AAC output, automated validation
+- Dev UI **and** CLI — one button or `npm run export:episode1`
+
+</td>
+</tr>
+</table>
+
+---
+
+## See it in action
+
+<p align="center">
+  <img src="docs/readme/nes-title-menu.png" alt="NES-style title menu — PRESS START" width="270" />
+  &nbsp;&nbsp;
+  <img src="docs/readme/dev-controls.png" alt="Full Show Dev Controls with audio meter" width="270" />
+</p>
+
+<p align="center">
+  <sub><strong>Left:</strong> NES title menu in the browser &nbsp;·&nbsp; <strong>Right:</strong> Full Show Dev Controls — scrub any of 44 beats, monitor audio levels, export MP4</sub>
+</p>
+
+The **Full Show Dev Controls** panel is the project's control room: play, pause, scrub, loop individual shots, jump to any beat in the ~114s timeline, and watch a live master audio meter while you mix.
+
+---
+
+## Episode 1 at a glance
+
+| | |
+|---|---|
+| **Title** | The Sock Monster |
+| **Runtime** | ~114 seconds (full show) |
+| **Shots** | 33 story beats + title menu, opening, intros, credits |
+| **Format** | 9:16 vertical (270×480 internal → 1080×1920 export) |
+| **Stack** | Vite · PixiJS · Plain JavaScript · FFmpeg · Playwright |
+
+**Story beats:** Bandito patrols Meow City → discovers a sock → Sir Sockington attacks → the team assembles → Tortellini saves the day → reality shifts to the human living room → heroic celebration → credits.
+
+👉 **[Clickable shot-by-shot runbook](story/order-of-operations.md)** — preview every beat in the browser.
+
+---
+
+## Quick start
+
+### Requirements
+
+- [Node.js](https://nodejs.org/) v18+
+- [FFmpeg](https://ffmpeg.org/) (for video export)
 
 ```bash
-brew install ffmpeg
+brew install ffmpeg   # macOS
+npm run export:check  # verify FFmpeg is available
 ```
 
-Verify the installation:
-
-```bash
-npm run export:check
-```
-
-## Installation
+### Run locally
 
 ```bash
 npm install
-```
-
-## Development
-
-Start the local dev server:
-
-```bash
 npm run dev
 ```
 
-Open the URL shown in your terminal (typically `http://localhost:5173`).
+Open **http://localhost:5173/** to watch the full show.
 
-### Export Episode 1 video
+**Preview modes:**
 
-Episode 1 developer controls include an **Export Episode 1 MP4** button.
+| URL | What plays |
+|-----|------------|
+| `/` | Full show (title menu → Episode 1 → credits) |
+| `/?scene=title-menu` | NES title screen only |
+| `/?scene=opening` | Series opening |
+| `/?scene=episode` | Episode 1 with dev controls |
+| `/?scene=episode&shot=16` | Jump to a specific shot (0-based index) |
 
-1. Start the dev server: `npm run dev`
+---
+
+## Export a finished MP4
+
+The exporter renders the **complete show timeline** — not just the episode — including title menu SFX, series opening music, intro theme, and all episode music/SFX.
+
+### From the browser
+
+1. `npm run dev`
 2. Open `http://localhost:5173/?scene=episode`
 3. Click **Export Episode 1 MP4**
-4. Wait for progress updates (frame rendering, audio mix, encoding)
-5. Download the finished file when the export completes
+4. Download when complete
 
-The final MP4 is saved at:
-
-```
-exports/episode-1/bandito-and-friends-episode-1.mp4
-```
-
-The export includes the complete show timeline: NES title menu, pixel-load transition, series opening, intro title hold, and all of Episode 1. Audio includes title-menu SFX, series opening music, intro theme (continuing through early episode shots), and all episode music/SFX.
-
-### Command-line export
-
-You can also export from the terminal (useful for automation or troubleshooting):
+### From the terminal
 
 ```bash
-npm run export:episode1
+npm run export:episode1          # full ~114s export
+npm run export:episode1:test     # 5-second smoke test
+npm run export:episode1:profile  # profile a representative section
 ```
 
-Short 5-second test export:
+Output lands in `exports/episode-1/`. Procedural audio is cached under `exports/episode-1/audio/cache/` — clear that folder after changing procedural cue volumes.
+
+---
+
+## How the music is made
+
+Music is not imported from a DAW. Each cue is a **JavaScript score module** — note arrays with beat timing, pitch, and channel envelopes — rendered through a Web Audio synthesizer at runtime and baked to WAV for export.
+
+| Cue | Used for |
+|-----|----------|
+| `intro-theme` | Meet the Team character intros |
+| `series-opening-music` | Meow City establishing sequence |
+| `adventure-calm` | Bandito patrol (shots 05a–05c) |
+| `sock-monster-battle` | Battle sequence |
+| `living-room-reveal-1` | Human living room reveal |
+| `heroes-victory-1` | Rooftop celebration |
+| `team-theme-credits` | Credits, tools, and thanks slides |
+
+Regenerate WAV assets:
 
 ```bash
-npm run export:episode1:test
+npm run generate:music
+npm run generate:sfx
 ```
 
-Profile a representative 10-second section:
+---
 
-```bash
-npm run export:episode1:profile
-```
-
-Validate title menu through episode shot 10:
-
-```bash
-npm run export:episode1:opening-test
-```
-
-If FFmpeg is missing, `npm run export:check` prints setup instructions.
-
-## Build
-
-Create a production build:
-
-```bash
-npm run build
-```
-
-Preview the production build locally:
-
-```bash
-npm run preview
-```
-
-## Project Structure
+## Project structure
 
 ```
 src/
-  config.js                        Internal stage size (270×480, 9:16 vertical)
-  app.js                           PixiJS boot, responsive scaling, dev scene routing
-  main.js                          Entry point
-  style.css                        Page layout and movie frame styling
-  props/ThreatBoard.js             Reusable Threat Board visual component
-  props/threatBoardModel.js        Threat Board data shape and status colors
-  data/episode-01-shots.js         Episode 1 shot list (timing, camera, dialogue)
-  data/episode-01-threat-board.js Episode 1 peaceful assessment data
-  episode/EpisodePlayer.js        Reusable data-driven episode player
-  episode/camera.js               Camera interpolation helpers
-  dev/EpisodeDevControls.js       Development shot review controls
-  scenes/                          Intro, crawl, and preview scenes
-  dev/sceneParam.js                Development scene query parameter helper
+  app.js                          PixiJS boot, full-show routing, responsive scaling
+  data/episode-01-shots.js        Shot list — timing, camera, dialogue, music cues
+  episode/EpisodePlayer.js        Data-driven episode renderer
+  dev/createFullSequencePlayer.js Unified timeline (menu → opening → episode)
+  dev/EpisodeDevControls.js       Shot scrubber, export button, audio meter
+  audio/                          Procedural music scores and playback
+  scenes/                         Title menu, intro, series opening, crawl
+  export/                         Export config and full-show audio timeline
+server/export/                    Playwright capture, FFmpeg encode, audio mix
+public/images/episodes/           Episode 1 final artwork
+story/                            Scripts, production docs, shot runbook
+art/                              Style guide, character canon, Meow City lore
 ```
 
-The PixiJS stage renders at 270×480 pixels (9:16). The canvas scales up to fill as much of the browser window as possible while staying fully visible, centered, and crisp.
+Internal stage: **270 × 480** pixels. Scales up with nearest-neighbor filtering — no blur on pixel art.
 
-## Meow City Threat Board
+---
 
-Professor SpaghettiO's **Threat Board** is a reusable story prop for displaying Daily Threat Assessment data.
-
-| Item | Location |
-|------|----------|
-| Visual component | `src/props/ThreatBoard.js` |
-| Data model / status colors | `src/props/threatBoardModel.js` |
-| Episode-specific entries | `src/data/` (e.g. `episode-01-threat-board.js`) |
-
-### Development preview
-
-Preview the Threat Board without replaying the intro:
+## Build
 
 ```bash
-npm run dev
+npm run build    # production bundle
+npm run preview  # preview the production build
 ```
 
-Open:
+---
 
-```
-http://localhost:5173/?scene=threat-board
-http://localhost:5173/?scene=opening
-http://localhost:5173/?scene=crawl
-http://localhost:5173/?scene=episode
-```
+## Credits
 
-The default route at `http://localhost:5173/` plays the full Episode 1 sequence (visual series opening → title → Meet the Team → story).
+**Created by Audrey and Chris McClure.**
 
-See `story/episode-01-production.md` and `art/canon/series-opening.md` for shot lists.
+Artwork generated with ChatGPT · Music and SFX composed in code · Animation engine, export pipeline, and dev tools built from scratch.
 
-**Clickable production runbook:** [`story/order-of-operations.md`](story/order-of-operations.md) — open in the editor middle panel to jump to any shot.
-
-### Future episodes
-
-Provide new threat data by creating a file in `src/data/` and passing it to `createThreatBoard(data)`. Do not hard-code episode content inside the component.
+<p align="center">
+  <sub>Meow City Studios 🐾</sub>
+</p>
